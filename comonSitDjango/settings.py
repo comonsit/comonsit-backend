@@ -25,7 +25,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['.comonsitcateltic.com', '167.172.204.199']
+ALLOWED_HOSTS = ['localhost', '.comonsitcateltic.com', '167.172.204.199']
 
 
 # Application definition
@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'psycopg2',
     'rest_framework',
-    'corsheaders'
+    'corsheaders',
+    'acopios'
 ]
 
 MIDDLEWARE = [
@@ -72,17 +73,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'comonSitDjango.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/2.2/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
 
 
 # Password validation

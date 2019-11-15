@@ -1,3 +1,9 @@
 from django.contrib import admin
+from .models import Acopios
 
-# Register your models here.
+
+class AcopiosAdmin(admin.ModelAdmin):
+    model = Acopios
+
+
+admin.site.register(Acopios, AcopiosAdmin)

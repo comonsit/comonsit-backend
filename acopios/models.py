@@ -1,3 +1,21 @@
 from django.db import models
 
-# Create your models here.
+
+class Acopios(models.Model):
+    CAFE = 'CF'
+    MIEL = 'MI'
+    JABON = 'JA'
+    SUELDOS = 'SL'
+    PRODUCTO_CHOICES = [
+        (CAFE, 'Cafe'),
+        (MIEL, 'Miel'),
+        (JABON, 'Jabon'),
+        (SUELDOS, 'Sueldos'),
+    ]
+
+    id = models.AutoField(primary_key=True)
+    # claveSocio = models.ForeignKey(Users.claveSocio, on_delete=models.CASCADE, blank=False)  # TODO: on delete?
+    fecha = models.DateField(auto_now_add=True)  # TODO: usar como timespamp? default=datetime.date.today
+    ingreso = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
+    kilosDeProducto = models.IntegerField(blank=True, null=True)  # TODO: meter límites máximo y mínimo?
+    tipoDeProducto = models.CharField(max_length=2, choices=PRODUCTO_CHOICES, blank=True)
