@@ -18,5 +18,5 @@ class ComunidadesAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Cargos, CargosAdmin)
-admin.site.register(Comunidades, RegionesAdmin)
-admin.site.register(Regiones, ComunidadesAdmin)
+admin.site.register(Regiones, RegionesAdmin)
+admin.site.register(Comunidades, ComunidadesAdmin)
