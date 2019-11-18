@@ -8,6 +8,9 @@ class Cargos(models.Model):
 class Regiones(models.Model):
     nombre_de_region = models.CharField(max_length=40, blank=False)
 
+    def __str__(self):
+        return "{nombre}".format(nombre=self.nombre_de_region)
+
 
 class Comunidades(models.Model):
     nombre_de_comunidad = models.CharField(max_length=40, blank=False)

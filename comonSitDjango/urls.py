@@ -18,10 +18,14 @@ from django.urls import path, include
 from rest_framework import routers
 
 from acopios.views import AcopiosViewSet
+from tsumbalil.views import CargosViewSet, RegionesViewSet, ComunidadesViewSet
 
 
 routers = routers.DefaultRouter()
 routers.register(r"acopios", AcopiosViewSet)
+routers.register(r"cargos", CargosViewSet)
+routers.register(r"regiones", RegionesViewSet)
+routers.register(r"comunidades", ComunidadesViewSet)
 
 
 urlpatterns = [
