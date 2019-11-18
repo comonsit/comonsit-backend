@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'psycopg2',
     'rest_framework',
     'corsheaders',
-    'acopios'
+    'acopios',
+    'tsumbalil'
 ]
 
 MIDDLEWARE = [
