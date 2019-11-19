@@ -20,6 +20,7 @@ from rest_framework import routers
 from acopios.views import AcopiosViewSet
 from tsumbalil.views import CargosViewSet, RegionesViewSet, ComunidadesViewSet
 from socios.views import SociosViewSet
+from users.views import UserViewSet
 
 
 routers = routers.DefaultRouter()
@@ -28,6 +29,7 @@ routers.register(r"cargos", CargosViewSet)
 routers.register(r"regiones", RegionesViewSet)
 routers.register(r"comunidades", ComunidadesViewSet)
 routers.register(r"socios", SociosViewSet)
+routers.register(r"users", UserViewSet)
 
 
 urlpatterns = [
