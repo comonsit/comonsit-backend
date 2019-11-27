@@ -1,9 +1,9 @@
 from rest_framework import viewsets
 
-from .models import Acopios
-from .serializers import AcopiosSerializer
+from .models import Acopio
+from .serializers import AcopioSerializer
 
 
-class AcopiosViewSet(viewsets.ModelViewSet):
-    queryset = Acopios.objects.all()
-    serializer_class = AcopiosSerializer
+class AcopioViewSet(viewsets.ModelViewSet):
+    queryset = Acopio.objects.all()
+    serializer_class = AcopioSerializer

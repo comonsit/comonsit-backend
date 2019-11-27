@@ -1,10 +1,10 @@
 from rest_framework import viewsets
 
-from .models import Socios
-from .serializers import SociosSerializer
+from .models import Socio
+from .serializers import SocioSerializer
 
 
-class SociosViewSet(viewsets.ModelViewSet):
-    queryset = Socios.objects.all()
-    serializer_class = SociosSerializer
+class SocioViewSet(viewsets.ModelViewSet):
+    queryset = Socio.objects.all()
+    serializer_class = SocioSerializer
     lookup_field = 'clave_socio'

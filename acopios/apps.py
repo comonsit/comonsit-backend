@@ -1,5 +1,5 @@
 from django.apps import AppConfig
 
 
-class AcopiosConfig(AppConfig):
-    name = 'acopios'
+class AcopioConfig(AppConfig):
+    name = 'acopio'

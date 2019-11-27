@@ -18,18 +18,18 @@ from django.urls import path, include
 from rest_framework import routers
 from rest_framework_simplejwt import views as jwt_views
 
-from acopios.views import AcopiosViewSet
-from tsumbalil.views import CargosViewSet, RegionesViewSet, ComunidadesViewSet
-from socios.views import SociosViewSet
+from acopios.views import AcopioViewSet
+from tsumbalil.views import CargoViewSet, RegionViewSet, ComunidadViewSet
+from socios.views import SocioViewSet
 from users.views import UserViewSet
 
 
 routers = routers.DefaultRouter()
-routers.register(r"acopios", AcopiosViewSet)
-routers.register(r"cargos", CargosViewSet)
-routers.register(r"regiones", RegionesViewSet)
-routers.register(r"comunidades", ComunidadesViewSet)
-routers.register(r"socios", SociosViewSet)
+routers.register(r"acopios", AcopioViewSet)
+routers.register(r"cargos", CargoViewSet)
+routers.register(r"regiones", RegionViewSet)
+routers.register(r"comunidades", ComunidadViewSet)
+routers.register(r"socios", SocioViewSet)
 routers.register(r"users", UserViewSet)
 
 

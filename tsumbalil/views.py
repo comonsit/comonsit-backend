@@ -1,19 +1,19 @@
 from rest_framework import viewsets
 
-from .models import Cargos, Regiones, Comunidades
-from .serializers import CargosSerializer, RegionesSerializer, ComunidadesSerializer
+from .models import Cargo, Region, Comunidad
+from .serializers import CargoSerializer, RegionSerializer, ComunidadSerializer
 
 
-class CargosViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Cargos.objects.all()
-    serializer_class = CargosSerializer
+class CargoViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Cargo.objects.all()
+    serializer_class = CargoSerializer
 
 
-class RegionesViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Regiones.objects.all()
-    serializer_class = RegionesSerializer
+class RegionViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Region.objects.all()
+    serializer_class = RegionSerializer
 
 
-class ComunidadesViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Comunidades.objects.all()
-    serializer_class = ComunidadesSerializer
+class ComunidadViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Comunidad.objects.all()
+    serializer_class = ComunidadSerializer

@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class Acopios(models.Model):
+class Acopio(models.Model):
     CAFE = 'CF'
     MIEL = 'MI'
     JABON = 'JA'

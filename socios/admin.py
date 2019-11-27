@@ -1,9 +1,9 @@
 from django.contrib import admin
-from .models import Socios
+from .models import Socio
 
 
-class SociosAdmin(admin.ModelAdmin):
-    model = Socios
+class SocioAdmin(admin.ModelAdmin):
+    model = Socio
 
 
-admin.site.register(Socios, SociosAdmin)
+admin.site.register(Socio, SocioAdmin)

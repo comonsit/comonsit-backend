@@ -1,22 +1,22 @@
 from django.contrib import admin
-from .models import Cargos, Comunidades, Regiones
+from .models import Cargo, Comunidad, Region
 
 
-class CargosAdmin(admin.ModelAdmin):
-    model = Cargos
+class CargoAdmin(admin.ModelAdmin):
+    model = Cargo
     list_display = ("nombre_de_cargo",)
 
 
-class RegionesAdmin(admin.ModelAdmin):
-    model = Regiones
+class RegionAdmin(admin.ModelAdmin):
+    model = Region
     list_display = ("nombre_de_region",)
 
 
-class ComunidadesAdmin(admin.ModelAdmin):
-    model = Comunidades
+class ComunidadAdmin(admin.ModelAdmin):
+    model = Comunidad
     list_display = ("nombre_de_comunidad", "region")
 
 
-admin.site.register(Cargos, CargosAdmin)
-admin.site.register(Regiones, RegionesAdmin)
-admin.site.register(Comunidades, ComunidadesAdmin)
+admin.site.register(Cargo, CargoAdmin)
+admin.site.register(Region, RegionAdmin)
+admin.site.register(Comunidad, ComunidadAdmin)

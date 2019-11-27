@@ -1,9 +1,9 @@
 from django.contrib import admin
-from .models import Acopios
+from .models import Acopio
 
 
-class AcopiosAdmin(admin.ModelAdmin):
-    model = Acopios
+class AcopioAdmin(admin.ModelAdmin):
+    model = Acopio
 
 
-admin.site.register(Acopios, AcopiosAdmin)
+admin.site.register(Acopio, AcopioAdmin)
