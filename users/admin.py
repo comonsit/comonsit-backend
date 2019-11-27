@@ -13,7 +13,7 @@ class CustomUserAdmin(UserAdmin):
     form = CustomUserChangeForm
 
     fieldsets = UserAdmin.fieldsets + (
-        (None,  {'fields': ('phone', 'role', 'extra')}),
+        (None,  {'fields': ('phone', 'role', 'clave_socio')}),
     )
 
 
