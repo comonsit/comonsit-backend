@@ -35,3 +35,6 @@ class Socios(models.Model):
     estatus_yip = models.CharField(max_length=2, choices=ESTATUS_CHOICES, blank=False)
     estatus_gral = models.CharField(max_length=2, choices=ESTATUS_CHOICES, blank=False)
     # foto = models.imageField()
+
+    def __str__(self):
+        return '{0}: {1} {2}'.format(self.clave_socio, self.nombres, self.apellidos)
