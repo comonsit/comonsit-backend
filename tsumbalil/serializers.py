@@ -21,4 +21,4 @@ class ComunidadSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comunidad
-        fields = ['nombre_de_comunidad', 'nombre_region']
+        fields = "__all__"
