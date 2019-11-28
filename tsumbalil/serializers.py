@@ -5,8 +5,7 @@ from .models import Cargo, Region, Comunidad
 class CargoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cargo
-        fields = ['nombre_de_cargo']
-        read_only_fields = ['nombre_de_cargo']
+        fields = "__all__"
 
 
 class RegionSerializer(serializers.ModelSerializer):
