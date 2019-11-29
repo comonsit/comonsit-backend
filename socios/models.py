@@ -17,7 +17,7 @@ class Socio(models.Model):
         (BAJA, 'Baja'),
     ]
 
-    clave_socio = models.CharField(max_length=10, primary_key=True)  # TODO: RESTRICCIONES!
+    clave_socio = models.AutoField(primary_key=True)
     nombres = models.CharField(max_length=30)
     apellidos = models.CharField(max_length=50)
     comunidad = models.ForeignKey('tsumbalil.Comunidad', on_delete=models.SET_NULL, null=True, blank=True)
