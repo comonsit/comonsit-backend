@@ -2,12 +2,6 @@ from django.db import models
 
 
 class Socio(models.Model):
-    PRODUCTOR = 'PR'
-    TRABAJADOR = 'TR'
-    PROD_TRAB_CHOICES = [
-        (PRODUCTOR, 'Productor'),
-        (TRABAJADOR, 'Trabajador'),
-    ]
     ACTIVO = 'AC'
     NO_PARTICIPA = 'NP'
     BAJA = 'BA'
@@ -27,7 +21,8 @@ class Socio(models.Model):
     fecha_ingr_yomol_atel = models.DateField()
     fecha_ingr_programa = models.DateField()
     cargo = models.ForeignKey('tsumbalil.Cargo', on_delete=models.SET_NULL, null=True, blank=True)
-    prod_trab = models.CharField(max_length=2, choices=PROD_TRAB_CHOICES, blank=False)
+    productor = models.BooleanField(blank=False, default=False)
+    trabajador = models.BooleanField(blank=False, default=False)
     clave_anterior = models.CharField(max_length=10, blank=True, null=True)
     estatus_cafe = models.CharField(max_length=2, choices=ESTATUS_CHOICES, blank=False)
     estatus_miel = models.CharField(max_length=2, choices=ESTATUS_CHOICES, blank=False)
