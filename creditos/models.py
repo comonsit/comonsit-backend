@@ -90,6 +90,7 @@ class SolicitudCredito(models.Model):
     justificacion_credito = models.CharField(max_length=100, blank=True)
     comentarios_promotor = models.CharField(max_length=100, blank=True)
     comentarios_coordinador = models.CharField(max_length=100, blank=True)
+    autor = models.ForeignKey('users.User', on_delete=models.CASCADE, blank=False)
 
     def __str__(self):
         '{0}: {1} ${2}'.format(self.folio_solicitud, self.clave_socio, self.monto_solicitado)
