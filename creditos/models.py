@@ -93,4 +93,4 @@ class SolicitudCredito(models.Model):
     autor = models.ForeignKey('users.User', on_delete=models.CASCADE, blank=False)
 
     def __str__(self):
-        '{0}: {1} ${2}'.format(self.folio_solicitud, self.clave_socio, self.monto_solicitado)
+        return '{0}- ({1}) ${2}'.format(self.folio_solicitud, self.clave_socio, self.monto_solicitado)
