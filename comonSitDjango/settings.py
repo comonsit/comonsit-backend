@@ -10,7 +10,6 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
-from .settings_secret import *
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -24,8 +23,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '.comonsitcateltic.com', '167.172.204.199']
+ALLOWED_HOSTS = ['localhost']
 
+# OVERWRITE IN settings_secret.py
+SECRET_KEY = 'SomeSecret3'
 
 # Application definition
 
@@ -79,6 +80,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'comonSitDjango.wsgi.application'
 
+# OVERWRITE IN settings_secret.py
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -140,3 +148,7 @@ REST_FRAMEWORK = {
 #             'STATS_FILE': os.path.join(BASE_DIR, 'webpack-stats.json'),
 #         }
 # }
+
+
+# OVERRIDE WITH PRIVATE DATABASE AND SECRET_KEY
+from .settings_secret import *
