@@ -91,6 +91,12 @@ class SolicitudCredito(models.Model):
     comentarios_promotor = models.CharField(max_length=100, blank=True)
     comentarios_coordinador = models.CharField(max_length=100, blank=True)
     autor = models.ForeignKey('users.User', on_delete=models.CASCADE, blank=False)
+    pregunta_1 = models.BooleanField(default=False)
+    pregunta_2 = models.BooleanField(default=False)
+    pregunta_3 = models.BooleanField(default=False)
+    pregunta_4 = models.BooleanField(default=False)
+    irregularidades = models.CharField(max_length=100, blank=True)
+
 
     def __str__(self):
         return '{0}- ({1}) ${2}'.format(self.folio_solicitud, self.clave_socio, self.monto_solicitado)
