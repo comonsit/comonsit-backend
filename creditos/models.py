@@ -73,7 +73,7 @@ class SolicitudCredito(models.Model):
     ]
 
     folio_solicitud = models.AutoField(primary_key=True)
-    clave_socio = models.ForeignKey('socios.Socio', on_delete=models.CASCADE, blank=False)
+    clave_socio = models.ForeignKey('socios.Socio', on_delete=models.CASCADE, blank=False, related_name='solicitud')
     fecha_solicitud = models.DateField(blank=False)
     tipo_credito = models.CharField(max_length=2, choices=TIPO_CREDITO_CHOICES, blank=False)
     act_productiva = models.CharField(max_length=2, choices=TIPO_ACTIV_PROD_CHOICES, blank=True)
@@ -96,7 +96,8 @@ class SolicitudCredito(models.Model):
     pregunta_3 = models.BooleanField(default=False)
     pregunta_4 = models.BooleanField(default=False)
     irregularidades = models.CharField(max_length=100, blank=True)
-
+    aval = models.ForeignKey('socios.Socio', on_delete=models.CASCADE, blank=False, related_name='aval')
+    familiar_responsable = models.CharField(max_length=100, blank=False)
 
     def __str__(self):
         return '{0}- ({1}) ${2}'.format(self.folio_solicitud, self.clave_socio, self.monto_solicitado)
