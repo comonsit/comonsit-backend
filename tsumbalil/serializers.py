@@ -11,8 +11,7 @@ class CargoSerializer(serializers.ModelSerializer):
 class RegionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Region
-        fields = ['nombre_de_region']
-        read_only_fields = ['nombre_de_region']
+        fields = "__all__"
 
 
 class ComunidadSerializer(serializers.ModelSerializer):

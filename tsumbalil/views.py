@@ -14,6 +14,6 @@ class RegionViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = RegionSerializer
 
 
-class ComunidadViewSet(viewsets.ReadOnlyModelViewSet):
+class ComunidadViewSet(viewsets.ModelViewSet):
     queryset = Comunidad.objects.all()
     serializer_class = ComunidadSerializer
