@@ -1,6 +1,6 @@
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
-from .serializers import UserSerializer  # , UserChangePasswordSerializer
+from .serializers import UserSerializer, UserChangePasswordSerializer
 # from rest_framework_tracking.mixins import LoggingMixin
 from rest_framework.exceptions import NotFound
 
@@ -33,10 +33,10 @@ class UserViewSet(viewsets.ModelViewSet):
         self.kwargs[self.lookup_field] = self.request.user.id
         return super().get_object()
 
-    # def get_serializer_class(self):
-    #     if self.action in ['update', 'partial_update']:
-    #         return UserChangePasswordSerializer
-    #     return UserSerializer
+    def get_serializer_class(self):
+        if self.action in ['update', 'partial_update']:
+            return UserChangePasswordSerializer
+        return UserSerializer
 
     def get_permissions(self):
         if self.action in ['update', 'partial_update', 'destroy']:
