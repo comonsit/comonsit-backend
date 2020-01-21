@@ -1,10 +1,16 @@
 from rest_framework import serializers
-from .models import Cargo, Region, Comunidad
+from .models import Cargo, CargoCoop, Region, Comunidad
 
 
 class CargoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cargo
+        fields = "__all__"
+
+
+class CargoCoopSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CargoCoop
         fields = "__all__"
 
 

@@ -1,12 +1,17 @@
 from rest_framework import viewsets
 
-from .models import Cargo, Region, Comunidad
-from .serializers import CargoSerializer, RegionSerializer, ComunidadSerializer
+from .models import Cargo, CargoCoop, Region, Comunidad
+from .serializers import CargoSerializer, CargoCoopSerializer, RegionSerializer, ComunidadSerializer
 
 
 class CargoViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Cargo.objects.all()
     serializer_class = CargoSerializer
+
+
+class CargoCoopViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = CargoCoop.objects.all()
+    serializer_class = CargoCoopSerializer
 
 
 class RegionViewSet(viewsets.ReadOnlyModelViewSet):
