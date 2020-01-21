@@ -12,7 +12,7 @@ class CargoCoop(models.Model):
     nombre_cargo_coop = models.CharField(max_length=40, blank=False)
 
     def __str__(self):
-        return "{nombre}".format(nombre=self.nombre_de_cargo)
+        return "{nombre}".format(nombre=self.nombre_cargo_coop)
 
 
 class Region(models.Model):
