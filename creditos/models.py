@@ -90,6 +90,7 @@ class SolicitudCredito(models.Model):
     justificacion_credito = models.CharField(max_length=100, blank=True)
     comentarios_promotor = models.CharField(max_length=100, blank=True)
     comentarios_coordinador = models.CharField(max_length=100, blank=True)
+    comentarios_gerente = models.CharField(max_length=100, blank=True)
     autor = models.ForeignKey('users.User', on_delete=models.CASCADE, blank=False)
     pregunta_1 = models.BooleanField(default=False)
     pregunta_2 = models.BooleanField(default=False)
