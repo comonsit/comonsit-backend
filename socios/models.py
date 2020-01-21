@@ -21,6 +21,7 @@ class Socio(models.Model):
     fecha_ingr_yomol_atel = models.DateField()
     fecha_ingr_programa = models.DateField()
     cargo = models.ForeignKey('tsumbalil.Cargo', on_delete=models.SET_NULL, null=True, blank=True)
+    cargo_coop = models.ForeignKey('tsumbalil.CargoCoop', on_delete=models.CASCADE, default=1)  # 1 = Ninguno
     productor = models.BooleanField(blank=False, default=False)
     trabajador = models.BooleanField(blank=False, default=False)
     clave_anterior = models.CharField(max_length=10, blank=True, null=True)
