@@ -21,6 +21,4 @@ class User(AbstractUser):
         return self.username
 
     def is_gerencia(self):
-        if self.role == 'GE' or self.role == 'CO':
-            return True
-        return False
+        return self.role == User.ROL_GERENTE or self.role == User.ROL_COORDINADOR
