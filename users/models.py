@@ -19,3 +19,8 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
+
+    def is_gerencia(self):
+        if self.role == 'GE' or self.role == 'CO':
+            return True
+        return False
