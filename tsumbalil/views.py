@@ -1,7 +1,7 @@
 from rest_framework import viewsets, permissions
 
-from .models import Cargo, CargoCoop, Region, Comunidad
-from .serializers import CargoSerializer, CargoCoopSerializer, RegionSerializer, ComunidadSerializer
+from .models import Cargo, CargoCoop, Region, Comunidad, Empresa
+from .serializers import CargoSerializer, CargoCoopSerializer, RegionSerializer, ComunidadSerializer, EmpresaSerializer
 from .permissions import IsGerencia
 
 
@@ -18,6 +18,11 @@ class CargoCoopViewSet(viewsets.ReadOnlyModelViewSet):
 class RegionViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Region.objects.all()
     serializer_class = RegionSerializer
+
+
+class EmpresaViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Empresa.objects.all()
+    serializer_class = EmpresaSerializer
 
 
 class ComunidadViewSet(viewsets.ModelViewSet):

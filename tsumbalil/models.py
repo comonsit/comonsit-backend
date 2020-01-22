@@ -34,3 +34,10 @@ class Comunidad(models.Model):
 
     class Meta:
         verbose_name_plural = "Comunidades"
+
+
+class Empresa(models.Model):
+    nombre_empresa = models.CharField(max_length=40, blank=False)
+
+    def __str__(self):
+        return "{nombre}".format(nombre=self.nombre_empresa)
