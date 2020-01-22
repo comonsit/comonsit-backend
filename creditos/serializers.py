@@ -8,3 +8,11 @@ class SolicitudCreditoSerializer(serializers.ModelSerializer):
     class Meta:
         model = SolicitudCredito
         fields = '__all__'
+
+    def validate(self, data):
+        """
+        Check that requestor and authorizor are not the same
+        """
+        if data['clave_socio'] == data['aval']:
+            raise serializers.ValidationError("Aval y Solicitante deben ser diferentes")
+        return data
