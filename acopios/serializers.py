@@ -4,6 +4,8 @@ from .models import Acopio
 
 class AcopioSerializer(serializers.ModelSerializer):
     nombre_socio = serializers.SerializerMethodField(read_only=True)
+    comunidad = serializers.SerializerMethodField(read_only=True)
+    region = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Acopio
@@ -11,3 +13,9 @@ class AcopioSerializer(serializers.ModelSerializer):
 
     def get_nombre_socio(self, object):
         return object.clave_socio.nombres + ' ' + object.clave_socio.apellidos
+
+    def get_comunidad(self, object):
+        return object.clave_socio.comunidad.nombre_de_comunidad
+
+    def get_region(self, object):
+        return object.clave_socio.comunidad.region.id
