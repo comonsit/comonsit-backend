@@ -5,5 +5,5 @@ from .serializers import AcopioSerializer
 
 
 class AcopioViewSet(viewsets.ModelViewSet):
-    queryset = Acopio.objects.all()
+    queryset = Acopio.objects.all().order_by('-fecha')
     serializer_class = AcopioSerializer
