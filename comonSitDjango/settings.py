@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'tsumbalil',
     'socios',
     'users',
-    'creditos'
+    'creditos',
+    'movimientos'
 ]
 
 MIDDLEWARE = [

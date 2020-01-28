@@ -20,6 +20,7 @@ from rest_framework_simplejwt import views as jwt_views
 
 from acopios.views import AcopioViewSet
 from creditos.views import SolicitudCreditoViewSet
+from movimientos.views import MovimientoViewSet
 from socios.views import SocioViewSet, SocioViewSetXLSX
 from tsumbalil.views import CargoViewSet, CargoCoopViewSet, RegionViewSet, ComunidadViewSet, EmpresaViewSet
 from users.views import UserViewSet
@@ -31,6 +32,7 @@ routers.register(r"cargos", CargoViewSet)
 routers.register(r"empresas", EmpresaViewSet)
 routers.register(r"cargos-coop", CargoCoopViewSet, basename='cargos-coop')
 routers.register(r"comunidades", ComunidadViewSet)
+routers.register(r"movimientos", MovimientoViewSet, basename='movimientos')
 routers.register(r"solic-creditos", SolicitudCreditoViewSet)
 routers.register(r"regiones", RegionViewSet)
 routers.register(r"socios", SocioViewSet)
