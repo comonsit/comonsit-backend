@@ -10,4 +10,4 @@ class SolicitudCreditoViewSet(viewsets.ModelViewSet):
     lookup_field = 'folio_solicitud'
 
     def perform_create(self, serializer):
-        serializer.save(autor=self.request.user)
+        serializer.save(promotor=self.request.user)
