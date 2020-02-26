@@ -28,4 +28,4 @@ class EmpresaViewSet(viewsets.ReadOnlyModelViewSet):
 class ComunidadViewSet(viewsets.ModelViewSet):
     queryset = Comunidad.objects.all()
     serializer_class = ComunidadSerializer
-    permission_classes = [permissions.IsAuthenticated, IsGerencia]
+    # permission_classes = [permissions.IsAuthenticated, IsGerencia]

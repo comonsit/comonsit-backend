@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from .models import SolicitudCredito
+from users.models import User
+
 
 
 class SolicitudCreditoSerializer(serializers.ModelSerializer):
@@ -24,4 +26,18 @@ class SolicitudCreditoSerializer(serializers.ModelSerializer):
            monto_solicitado=data['monto_solicitado']):
             raise serializers.ValidationError("Ya existe un crédito con esa fecha y monto")
 
+        return data
+
+
+class SolicitudPartialUpdatelizer(serializers.ModelSerializer):
+    promotor = serializers.StringRelatedField(read_only=True)
+
+    class Meta:
+        model = SolicitudCredito
+        fields = '__all__'
+
+    def validate(self, data):
+        user = self.context['request'].user
+        print('EL ROL ES:')
+        print(user.role)
         return data
