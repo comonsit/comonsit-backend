@@ -7,6 +7,4 @@ class IsGerencia(permissions.BasePermission):
      R  pemission for all
     """
     def has_permission(self, request, view):
-        if request.method in permissions.SAFE_METHODS:
-            return True
-        return request.user.is_gerencia()
+        return request.user.is_gerencia() or request.method in permissions.SAFE_METHODS
