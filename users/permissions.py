@@ -5,20 +5,19 @@ from users.models import User
 
 class gerenciaOrReadOnly(BasePermission):
     """
-    CRUD permission for Gerencia
+    CRU permission for Gerencia
      R  pemission for all
     """
     def has_permission(self, request, view):
-        return request.user.is_gerencia() or request.method in SAFE_METHODS
+        return request.method != "DELETE" and request.user.is_gerencia() or request.method in SAFE_METHODS
 
 
-class gerenciaOnly(BasePermission):
+class ReadOnly(BasePermission):
     """
-    CRUD permission for Gerencia
-         No permissions anyone else
+     R  pemission for all
     """
     def has_permission(self, request, view):
-        return request.user.is_gerencia()
+        return request.method in SAFE_METHODS
 
 
 class IsOwnerOrStaff(BasePermission):
