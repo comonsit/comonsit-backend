@@ -1,6 +1,24 @@
-from rest_framework.permissions import BasePermission
+from rest_framework.permissions import BasePermission, SAFE_METHODS
 
 from users.models import User
+
+
+class gerenciaOrReadOnly(BasePermission):
+    """
+    CRUD permission for Gerencia
+     R  pemission for all
+    """
+    def has_permission(self, request, view):
+        return request.user.is_gerencia() or request.method in SAFE_METHODS
+
+
+class gerenciaOnly(BasePermission):
+    """
+    CRUD permission for Gerencia
+         No permissions anyone else
+    """
+    def has_permission(self, request, view):
+        return request.user.is_gerencia()
 
 
 class IsOwnerOrStaff(BasePermission):

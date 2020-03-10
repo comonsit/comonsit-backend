@@ -2,7 +2,7 @@ from rest_framework import viewsets, permissions
 
 from .models import Cargo, CargoCoop, Region, Comunidad, Empresa
 from .serializers import CargoSerializer, CargoCoopSerializer, RegionSerializer, ComunidadSerializer, EmpresaSerializer
-from .permissions import IsGerencia
+from users.permissions import gerenciaOrReadOnly
 
 
 class CargoViewSet(viewsets.ReadOnlyModelViewSet):
@@ -28,4 +28,4 @@ class EmpresaViewSet(viewsets.ReadOnlyModelViewSet):
 class ComunidadViewSet(viewsets.ModelViewSet):
     queryset = Comunidad.objects.all()
     serializer_class = ComunidadSerializer
-    permission_classes = [permissions.IsAuthenticated, IsGerencia]
+    permission_classes = [permissions.IsAuthenticated, gerenciaOrReadOnly]
