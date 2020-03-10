@@ -10,12 +10,18 @@ from .models import User
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     password = serializers.CharField(write_only=True)
     confirm_password = serializers.CharField(write_only=True)
+    clave_socio = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = User
         fields = (
             'url', 'username', 'first_name', 'last_name', 'clave_socio',
             'password', 'confirm_password', 'email', 'role', 'phone')
+
+    def get_clave_socio(self, object):
+        if object.clave_socio:
+            return object.clave_socio.clave_socio
+        return ''
 
     # TODO: ADAPTAR PARA CREACIÓN DE SOCIOS
     # def create(self, validated_data):

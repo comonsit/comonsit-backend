@@ -12,6 +12,12 @@ class SocioViewSet(viewsets.ModelViewSet):
     serializer_class = SocioSerializer
     lookup_field = 'clave_socio'
 
+    def get_queryset(self):
+        if self.request.user.is_gerencia():
+            return Socio.objects.all()
+
+        return Socio.objects.filter(comunidad__region=self.request.user.clave_socio.comunidad.region)
+
 
 class SocioViewSetXLSX(XLSXFileMixin, viewsets.ReadOnlyModelViewSet):
     queryset = Socio.objects.all()
