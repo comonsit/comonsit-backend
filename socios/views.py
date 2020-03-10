@@ -1,6 +1,7 @@
 from rest_framework import viewsets, permissions
 from drf_renderer_xlsx.mixins import XLSXFileMixin
 from drf_renderer_xlsx.renderers import XLSXRenderer
+from .permissions import gerenciaOrRegion
 
 from .models import Socio
 from .serializers import SocioSerializer
@@ -11,6 +12,7 @@ class SocioViewSet(viewsets.ModelViewSet):
     queryset = Socio.objects.all()
     serializer_class = SocioSerializer
     lookup_field = 'clave_socio'
+    permission_classes = [permissions.IsAuthenticated, gerenciaOrRegion]
 
     def get_queryset(self):
         if self.request.user.is_gerencia():
