@@ -3,11 +3,15 @@ from rest_framework.permissions import BasePermission
 
 class gerenciaOrRegion(BasePermission):
     """
-    CRUD permission for Gerencia
+    CRU  permission for Gerencia
     CR   pemission per Region
     """
     def has_permission(self, request, view):
-        return request.method == "GET" or request.method == "POST" or request.user.is_gerencia()
+        if request.method == "GET" or request.method == "POST":
+            return True
+        elif request.method == "PUT" or request.method == "PATCH":
+            return request.user.is_gerencia()
+        return False
 
     def has_object_permission(self, request, view, obj):
         if request.user.is_gerencia():
