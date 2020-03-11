@@ -5,7 +5,7 @@ from .permissions import gerenciaOrRegion
 
 from .models import Socio
 from .serializers import SocioSerializer
-from users.permissions import gerenciaOrReadOnly
+from users.permissions import gerenciaOnly
 
 
 class SocioViewSet(viewsets.ModelViewSet):
@@ -25,5 +25,5 @@ class SocioViewSetXLSX(XLSXFileMixin, viewsets.ReadOnlyModelViewSet):
     queryset = Socio.objects.all()
     serializer_class = SocioSerializer
     renderer_classes = [XLSXRenderer]
-    permission_classes = [permissions.IsAuthenticated, gerenciaOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated, gerenciaOnly]
     filename = 'socios.xlsx'

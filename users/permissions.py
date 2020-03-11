@@ -3,6 +3,15 @@ from rest_framework.permissions import BasePermission, SAFE_METHODS
 from users.models import User
 
 
+class gerenciaOnly(BasePermission):
+    """
+    CRUD permission for Gerencia
+         No pemissions for others
+    """
+    def has_permission(self, request, view):
+        return request.user.is_gerencia()
+
+
 class gerenciaOrReadOnly(BasePermission):
     """
     CRU permission for Gerencia
