@@ -18,7 +18,7 @@ from django.urls import path, include
 from rest_framework import routers
 from rest_framework_simplejwt import views as jwt_views
 
-from acopios.views import AcopioViewSet
+from acopios.views import AcopioViewSet, AcopioViewSetXLSX
 from creditos.views import SolicitudCreditoViewSet
 from movimientos.views import MovimientoViewSet
 from socios.views import SocioViewSet, SocioViewSetXLSX
@@ -28,6 +28,7 @@ from users.views import UserViewSet
 
 routers = routers.DefaultRouter()
 routers.register(r"acopios", AcopioViewSet)
+routers.register(r"acopiosXLSX", AcopioViewSetXLSX, basename='acopiosxlsx')
 routers.register(r"cargos", CargoViewSet)
 routers.register(r"empresas", EmpresaViewSet)
 routers.register(r"cargos-coop", CargoCoopViewSet, basename='cargos-coop')
