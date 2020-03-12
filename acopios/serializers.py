@@ -19,3 +19,12 @@ class AcopioSerializer(serializers.ModelSerializer):
 
     def get_region(self, object):
         return object.clave_socio.comunidad.region.id
+
+
+class AcopioTotalsSerializer(serializers.ModelSerializer):
+    fecha__year = serializers.IntegerField()
+    year_sum = serializers.DecimalField(max_digits=10, decimal_places=2)
+
+    class Meta:
+        model = Acopio
+        fields = ['fecha__year', 'year_sum']
