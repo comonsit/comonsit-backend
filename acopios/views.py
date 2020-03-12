@@ -1,4 +1,4 @@
-from django.db.models import Sum
+from django.db.models import Sum, Q
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import viewsets, permissions
@@ -27,8 +27,13 @@ class AcopioViewSet(viewsets.ModelViewSet):
 
     @action(methods=['get'], detail=False, url_path='year_sum', url_name='year_sum')
     def year_sum(self, request):
-        yearly_income = Acopio.objects.values('fecha__year').annotate(year_sum=Sum('ingreso'))
-        serializer = self.get_serializer(yearly_income, many=True)
+        q = Acopio.objects.values('fecha__year').annotate(
+                year_sum_cf=Sum('ingreso', filter=Q(tipo_de_producto='CF')),
+                year_sum_mi=Sum('ingreso', filter=Q(tipo_de_producto='MI')),
+                year_sum_ja=Sum('ingreso', filter=Q(tipo_de_producto='JA')),
+                year_sum_sl=Sum('ingreso', filter=Q(tipo_de_producto='SL'))
+                )
+        serializer = self.get_serializer(q, many=True)
         return Response(serializer.data)
 
 

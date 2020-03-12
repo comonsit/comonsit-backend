@@ -23,8 +23,11 @@ class AcopioSerializer(serializers.ModelSerializer):
 
 class AcopioTotalsSerializer(serializers.ModelSerializer):
     fecha__year = serializers.IntegerField()
-    year_sum = serializers.DecimalField(max_digits=10, decimal_places=2)
+    year_sum_cf = serializers.DecimalField(max_digits=10, decimal_places=2)
+    year_sum_mi = serializers.DecimalField(max_digits=10, decimal_places=2)
+    year_sum_ja = serializers.DecimalField(max_digits=10, decimal_places=2)
+    year_sum_sl = serializers.DecimalField(max_digits=10, decimal_places=2)
 
     class Meta:
         model = Acopio
-        fields = ['fecha__year', 'year_sum']
+        fields = ['fecha__year', 'year_sum_cf', 'year_sum_mi', 'year_sum_ja', 'year_sum_sl']
