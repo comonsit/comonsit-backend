@@ -4,13 +4,12 @@ from drf_renderer_xlsx.renderers import XLSXRenderer
 from .permissions import gerenciaOrRegion
 
 from .models import Socio
-from .serializers import SocioSerializer
+from .serializers import SocioSerializer, SocioListSerializer
 from users.permissions import gerenciaOnly
 
 
 class SocioViewSet(viewsets.ModelViewSet):
     queryset = Socio.objects.all()
-    serializer_class = SocioSerializer
     lookup_field = 'clave_socio'
     permission_classes = [permissions.IsAuthenticated, gerenciaOrRegion]
 
@@ -19,6 +18,11 @@ class SocioViewSet(viewsets.ModelViewSet):
             return Socio.objects.all()
 
         return Socio.objects.filter(comunidad__region=self.request.user.clave_socio.comunidad.region)
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return SocioListSerializer
+        return SocioSerializer
 
 
 class SocioViewSetXLSX(XLSXFileMixin, viewsets.ReadOnlyModelViewSet):
