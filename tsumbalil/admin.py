@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Cargo, CargoCoop, Comunidad, Region, Empresa
+from .models import Cargo, CargoCoop, Comunidad, Region, Empresa, Puesto_Trabajo, Fuente
 
 
 class CargoAdmin(admin.ModelAdmin):
@@ -27,8 +27,19 @@ class EmpresaAdmin(admin.ModelAdmin):
     list_display = ("nombre_empresa",)
 
 
+class PuestoAdmin(admin.ModelAdmin):
+    model = Puesto_Trabajo
+    list_display = ("puesto",)
+
+
+class FuenteAdmin(admin.ModelAdmin):
+    model = Fuente
+    list_display = ("fuente",)
+
+
 admin.site.register(Cargo, CargoAdmin)
 admin.site.register(CargoCoop, CargoCoopAdmin)
 admin.site.register(Region, RegionAdmin)
 admin.site.register(Comunidad, ComunidadAdmin)
-admin.site.register(Empresa, EmpresaAdmin)
+admin.site.register(Puesto_Trabajo, PuestoAdmin)
+admin.site.register(Fuente, FuenteAdmin)

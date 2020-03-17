@@ -41,3 +41,17 @@ class Empresa(models.Model):
 
     def __str__(self):
         return "{nombre}".format(nombre=self.nombre_empresa)
+
+
+class Puesto_Trabajo(models.Model):
+    puesto = models.CharField(max_length=40, blank=False)
+
+    def __str__(self):
+        return "{puesto}".format(puesto=self.puesto)
+
+
+class Fuente(models.Model):
+    fuente = models.CharField(max_length=40, blank=False)
+
+    def __str__(self):
+        return "{fuente}".format(fuente=self.fuente)
