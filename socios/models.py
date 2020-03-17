@@ -22,7 +22,8 @@ class Socio(models.Model):
 
     clave_socio = models.AutoField(primary_key=True)
     nombres = models.CharField(max_length=30)
-    apellidos = models.CharField(max_length=50)
+    apellido_paterno = models.CharField(max_length=50)
+    apellido_materno = models.CharField(max_length=50)
     comunidad = models.ForeignKey('tsumbalil.Comunidad', on_delete=models.SET_NULL, null=True, blank=True)
     curp = models.CharField(max_length=18, verbose_name='CURP', blank=True)  # TODO: Revisar Restricciones, homoclave?
     telefono = models.CharField(max_length=20)
