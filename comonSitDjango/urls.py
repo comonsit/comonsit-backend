@@ -22,7 +22,8 @@ from acopios.views import AcopioViewSet, AcopioViewSetXLSX
 from creditos.views import SolicitudCreditoViewSet
 from movimientos.views import MovimientoViewSet
 from socios.views import SocioViewSet, SocioViewSetXLSX
-from tsumbalil.views import CargoViewSet, CargoCoopViewSet, RegionViewSet, ComunidadViewSet, EmpresaViewSet
+from tsumbalil.views import CargoViewSet, CargoCoopViewSet, RegionViewSet, \
+    ComunidadViewSet, EmpresaViewSet, FuenteViewSet, PuestoViewSet
 from users.views import UserViewSet
 
 
@@ -31,6 +32,8 @@ routers.register(r"acopios", AcopioViewSet)
 routers.register(r"acopiosXLSX", AcopioViewSetXLSX, basename='acopiosxlsx')
 routers.register(r"cargos", CargoViewSet)
 routers.register(r"empresas", EmpresaViewSet)
+routers.register(r"fuentes", FuenteViewSet)
+routers.register(r"puestos", PuestoViewSet)
 routers.register(r"cargos-coop", CargoCoopViewSet, basename='cargos-coop')
 routers.register(r"comunidades", ComunidadViewSet)
 routers.register(r"movimientos", MovimientoViewSet, basename='movimientos')
