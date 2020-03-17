@@ -31,7 +31,7 @@ class Socio(models.Model):
     fecha_ingr_yomol_atel = models.DateField()
     fecha_ingr_programa = models.DateField()
     cargo = models.ForeignKey('tsumbalil.Cargo', on_delete=models.SET_NULL, null=True, blank=True)
-    cargo_coop = models.ManyToManyField(CargoCoop, related_name='Socio_cargo_coop', default=1)  # 1 = Ninguno
+    cargo_coop = models.ManyToManyField(CargoCoop, related_name='Socio_cargo_coop', blank=True, default=1)  # 1 = Ninguno
     empresa = models.ForeignKey('tsumbalil.Empresa', on_delete=models.CASCADE, null=True, default=None)
     puesto = models.ForeignKey('tsumbalil.Puesto_Trabajo', on_delete=models.CASCADE, related_name='Socio_puesto', null=True)
     fuente = models.ForeignKey('tsumbalil.Fuente', on_delete=models.CASCADE, related_name='Socio_fuente', null=True)
