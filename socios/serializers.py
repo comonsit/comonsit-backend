@@ -18,7 +18,7 @@ class SocioListSerializer(serializers.ModelSerializer):
         fields = [
             "clave_socio", "nombres", "apellido_paterno", "apellido_materno",
             "region", "nombre_comunidad", "clave_anterior", "estatus_cafe",
-            "estatus_miel", "estatus_yip", "estatus_trabajador", "estatus_gral",
+            "estatus_miel", "estatus_yip", "estatus_trabajador", "estatus_comonSit",
             "created", "updated"
         ]
 
@@ -45,7 +45,7 @@ class SocioSerializerXLS(serializers.ModelSerializer):
             "comunidad", "curp", "genero", "telefono", "clave_anterior", "fecha_nacimiento",
             "fecha_ingr_yomol_atel", "fecha_ingr_programa", "cargo", "cargo_coop",
             "empresa", "puesto", "fuente", "estatus_cafe", "estatus_miel", "estatus_yip",
-            "estatus_trabajador", "estatus_gral", "doc_curp", "doc_act_nac", "doc_ine",
+            "estatus_trabajador", "estatus_comonSit", "doc_curp", "doc_act_nac", "doc_ine",
             "doc_domicilio", "created", "updated"
         ]
 

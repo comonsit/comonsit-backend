@@ -41,7 +41,7 @@ class Socio(models.Model):
     estatus_miel = models.CharField(max_length=2, choices=ESTATUS_CHOICES, blank=False)
     estatus_yip = models.CharField(max_length=2, choices=ESTATUS_CHOICES, blank=False)
     estatus_trabajador = models.CharField(max_length=2, choices=ESTATUS_CHOICES, blank=False)
-    estatus_gral = models.CharField(max_length=2, choices=ESTATUS_CHOICES, blank=False)
+    estatus_comonSit = models.CharField(max_length=2, choices=ESTATUS_CHOICES, blank=False)
     doc_curp = models.BooleanField(blank=False, default=False)
     doc_act_nac = models.BooleanField(blank=False, default=False)
     doc_ine = models.BooleanField(blank=False, default=False)
