@@ -51,4 +51,4 @@ class Socio(models.Model):
     # foto = models.imageField()
 
     def __str__(self):
-        return '{0}: {1} {2}'.format(self.clave_socio, self.nombres, self.apellidos)
+        return '{0}: {1} {2} {3}'.format(self.clave_socio, self.nombres, self.apellido_paterno, self.apellido_materno)

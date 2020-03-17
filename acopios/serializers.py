@@ -12,7 +12,9 @@ class AcopioSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def get_nombre_socio(self, object):
-        return object.clave_socio.nombres + ' ' + object.clave_socio.apellidos
+        return object.clave_socio.nombres + ' ' + \
+            object.clave_socio.apellido_paterno + ' ' + \
+            object.clave_socio.apellido_materno
 
     def get_comunidad(self, object):
         return object.clave_socio.comunidad.nombre_de_comunidad
