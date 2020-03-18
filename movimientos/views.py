@@ -26,11 +26,11 @@ class MovimientoViewSet(viewsets.ModelViewSet):
 
     @action(methods=['get'], detail=False, url_path='saldo', url_name='saldo')
     def saldo(self, request, lookup=None):
-        print('EN TOTAL')
-        print(lookup)
         clave_socio = request.query_params.get('clave_socio', None)
         if clave_socio:
-            q = Movimiento.objects.filter(clave_socio=clave_socio)
+            q = self.get_queryset()
+            if q.count() == 0:
+                return Response({'message': 'No hay información disponible'})
             a = q.filter(aportacion=True).aggregate(total=Sum('monto'))['total']
             r = q.filter(aportacion=False).aggregate(total=Sum('monto'))['total']
             aportaciones = a if a else 0
