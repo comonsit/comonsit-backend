@@ -24,6 +24,9 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         # TODO: limit view if no query to ???
         return queryset
 
+    def perform_create(self, serializer):
+        serializer.save(autor=self.request.user)
+
     @action(methods=['get'], detail=False, url_path='saldo', url_name='saldo')
     def saldo(self, request, lookup=None):
         clave_socio = request.query_params.get('clave_socio', None)

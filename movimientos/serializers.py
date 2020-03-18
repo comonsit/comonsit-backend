@@ -3,6 +3,7 @@ from .models import Movimiento
 
 
 class MovimientoSerializer(serializers.ModelSerializer):
+    autor = serializers.StringRelatedField(read_only=True)
 
     class Meta:
         model = Movimiento
