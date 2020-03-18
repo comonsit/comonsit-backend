@@ -1,4 +1,7 @@
+from django.db.models import Sum
 from rest_framework import viewsets, permissions
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
 from .models import Movimiento
 from .serializers import MovimientoSerializer
@@ -20,3 +23,18 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(clave_socio=clave_socio)
         # TODO: limit view if no query to ???
         return queryset
+
+    @action(methods=['get'], detail=False, url_path='saldo', url_name='saldo')
+    def saldo(self, request, lookup=None):
+        print('EN TOTAL')
+        print(lookup)
+        clave_socio = request.query_params.get('clave_socio', None)
+        if clave_socio:
+            q = Movimiento.objects.filter(clave_socio=clave_socio)
+            a = q.filter(aportacion=True).aggregate(total=Sum('monto'))['total']
+            r = q.filter(aportacion=False).aggregate(total=Sum('monto'))['total']
+            aportaciones = a if a else 0
+            retiros = r if r else 0
+            total = aportaciones - retiros
+            return Response({'saldo': total, 'aportaciones': aportaciones, 'retiros': retiros})
+        return Response({'message': 'Agrega la clave de un socio a consultar'})
