@@ -21,7 +21,7 @@ class SolicitudCreditoSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def get_nombre_productor(self, object):
-        return object.clave_socio.nombres + ' ' + object.clave_socio.apellidos
+        return object.clave_socio.nombres + ' ' + object.aval.apellido_paterno +' ' + object.aval.apellido_materno
 
     def get_region(self, object):
         return object.clave_socio.comunidad.region.id
@@ -30,13 +30,13 @@ class SolicitudCreditoSerializer(serializers.ModelSerializer):
         return object.clave_socio.comunidad.nombre_de_comunidad
 
     def get_aval_nombre(self, object):
-        return object.aval.nombres + ' ' + object.aval.apellidos
+        return object.aval.nombres + ' ' + object.aval.apellido_paterno + ' ' + object.aval.apellido_materno
 
     def get_cargo(self, object):
         return object.clave_socio.cargo.nombre_de_cargo
 
     def get_cargo_coop(self, object):
-        return object.clave_socio.cargo_coop.nombre_cargo_coop
+        return ', '.join([c.nombre_cargo_coop for c in object.clave_socio.cargo_coop.all()])
 
     def get_fecha_ingr_yomol_atel(self, object):
         return object.clave_socio.fecha_ingr_yomol_atel
