@@ -58,10 +58,18 @@ class SolicitudCredito(models.Model):
     REVISION = 'RV'
     RECHAZADO = 'RE'
     CANCELADO = 'CA'
-    ESTATUS_CHOICES = [
+    ESTATUS_S_CHOICES = [
         (APROBADO, 'Aprobado'),
         (REVISION, 'Revisión'),
         (RECHAZADO, 'Rechazado'),
+        (CANCELADO, 'Cancelado')
+    ]
+
+    NEGOCIACION = 'NE'
+    ESTATUS_E_CHOICES = [
+        (APROBADO, 'Aprobado'),
+        (REVISION, 'Revisión'),
+        (NEGOCIACION, 'Negociación'),
         (CANCELADO, 'Cancelado')
     ]
 
@@ -84,8 +92,8 @@ class SolicitudCredito(models.Model):
     # comprobante_medico = models.ImageField(blank=True)
     monto_solicitado = models.DecimalField(max_digits=9, decimal_places=2, blank=False)
     plazo_de_pago_solicitado = models.PositiveSmallIntegerField(blank=False)
-    estatus_solicitud = models.CharField(max_length=2, choices=ESTATUS_CHOICES, blank=False)
-    estatus_evaluacion = models.CharField(max_length=2, choices=ESTATUS_CHOICES, blank=False)
+    estatus_solicitud = models.CharField(max_length=2, choices=ESTATUS_S_CHOICES, blank=False)
+    estatus_evaluacion = models.CharField(max_length=2, choices=ESTATUS_E_CHOICES, blank=False)
     estatus_ej_credito = models.CharField(max_length=2, choices=ESTATUS_EJ_CHOICES, blank=False)
     justificacion_credito = models.CharField(max_length=100, blank=True)
     comentarios_promotor = models.CharField(max_length=100, blank=True)
