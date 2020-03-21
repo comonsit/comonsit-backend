@@ -19,7 +19,10 @@ class SolicitudCreditoViewSet(viewsets.ModelViewSet):
         return SolicitudCreditoSerializer
 
     def perform_create(self, serializer):
-        serializer.save(promotor=self.request.user)
+        serializer.save(promotor=self.request.user,
+                        estatus_solicitud=SolicitudCredito.REVISION,
+                        estatus_evaluacion=SolicitudCredito.REVISION
+                        )
 
     # Is Gerencia or Owner
     def get_queryset(self):

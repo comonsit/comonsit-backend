@@ -6,6 +6,9 @@ from users.models import User
 
 class SolicitudCreditoSerializer(serializers.ModelSerializer):
     promotor = serializers.StringRelatedField(read_only=True)
+    estatus_solicitud = serializers.CharField(read_only=True)
+    estatus_evaluacion = serializers.CharField(read_only=True)
+    estatus_ej_credito = serializers.CharField(read_only=True)
     nombre_productor = serializers.SerializerMethodField(read_only=True)
     region = serializers.SerializerMethodField(read_only=True)
     comunidad = serializers.SerializerMethodField(read_only=True)
