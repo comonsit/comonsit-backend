@@ -2,6 +2,15 @@ from rest_framework import serializers
 from .models import SolicitudCredito, ChatSolicitudCredito
 
 
+class ChatSolStartSerializer(serializers.ModelSerializer):
+    user = serializers.StringRelatedField(read_only=True)
+
+    class Meta:
+        model = ChatSolicitudCredito
+        fields = '__all__'
+        read_only_fields = ('solicitud', 'user')
+
+
 class SolicitudCreditoSerializer(serializers.ModelSerializer):
     promotor = serializers.StringRelatedField(read_only=True)
     estatus_solicitud = serializers.CharField(read_only=True)
@@ -15,6 +24,7 @@ class SolicitudCreditoSerializer(serializers.ModelSerializer):
     cargo_coop = serializers.SerializerMethodField(read_only=True)
     # cargo_mision = serializers.SerializerMethodField(read_only=True)
     fecha_ingr_yomol_atel = serializers.SerializerMethodField(read_only=True)
+    chat = ChatSolStartSerializer(many=True)
 
     class Meta:
         model = SolicitudCredito
@@ -58,11 +68,18 @@ class SolicitudCreditoSerializer(serializers.ModelSerializer):
 
         return data
 
+    def create(self, validated_data):
+        comentario_data = validated_data.pop('chat')
+        instance = SolicitudCredito.objects.create(**validated_data)
+        # Only one comment will be saved upon create
+        ChatSolicitudCredito.objects.create(solicitud=instance, user=self.context['request'].user, **comentario_data[0])
+        return instance
+
 
 class SolicitudListSerializer(serializers.ModelSerializer):
     class Meta:
         model = SolicitudCredito
-        fields = ['folio_solicitud', 'fecha_solicitud', 'clave_socio', 'tipo_credito',
+        fields = ['folio_solicitud', 'fecha_solicitud', 'clave_socio', 'tipo_credito', 'monto_solicitado',
                   'plazo_de_pago_solicitado', 'estatus_solicitud', 'estatus_evaluacion']
 
 
