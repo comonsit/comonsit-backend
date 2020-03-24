@@ -73,13 +73,6 @@ class SolicitudCredito(models.Model):
         (CANCELADO, 'Cancelado')
     ]
 
-    COBRADO = 'CO'
-    ESTATUS_EJ_CHOICES = [
-        (COBRADO, 'Cobrado'),
-        (CANCELADO, 'Cancelado'),
-        (REVISION, 'Revisión')
-    ]
-
     folio_solicitud = models.AutoField(primary_key=True)
     clave_socio = models.ForeignKey('socios.Socio', on_delete=models.CASCADE, blank=False, related_name='solicitud')
     fecha_solicitud = models.DateField(blank=False)
@@ -94,13 +87,8 @@ class SolicitudCredito(models.Model):
     plazo_de_pago_solicitado = models.PositiveSmallIntegerField(blank=False)
     estatus_solicitud = models.CharField(max_length=2, choices=ESTATUS_S_CHOICES, blank=False)
     estatus_evaluacion = models.CharField(max_length=2, choices=ESTATUS_E_CHOICES, blank=False)
-    estatus_ej_credito = models.CharField(max_length=2, choices=ESTATUS_EJ_CHOICES, blank=False)
     justificacion_credito = models.CharField(max_length=100, blank=True)
-    comentarios_promotor = models.CharField(max_length=100, blank=True)
-    comentarios_coordinador = models.CharField(max_length=100, blank=True)
-    comentarios_gerente = models.CharField(max_length=100, blank=True)
     promotor = models.ForeignKey('users.User', on_delete=models.CASCADE, blank=False, related_name='solic_promotor')
-    coordinador = models.ForeignKey('users.User', on_delete=models.CASCADE, blank=True, null=True, related_name='solic_coord')
     pregunta_1 = models.BooleanField(default=False)
     pregunta_2 = models.BooleanField(default=False)
     pregunta_3 = models.BooleanField(default=False)
@@ -111,3 +99,11 @@ class SolicitudCredito(models.Model):
 
     def __str__(self):
         return '{0}- ({1}) ${2}'.format(self.folio_solicitud, self.clave_socio, self.monto_solicitado)
+
+
+class ChatSolicitudCredito(models.Model):
+    solicitud = models.ForeignKey('creditos.SolicitudCredito', on_delete=models.CASCADE, blank=False, related_name='chat')
+    comentario = models.CharField(max_length=100, blank=True)
+    fecha = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey('users.User', on_delete=models.CASCADE, blank=False, related_name='chat_solic')
+    # current_status = models.CharField(max_length=2, choices=SolicitudCredito.ESTATUS_S_CHOICES, blank=False)

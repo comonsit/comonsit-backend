@@ -1,14 +1,11 @@
 from rest_framework import serializers
-from .models import SolicitudCredito
-from socios.serializers import SocioSerializer
-from users.models import User
+from .models import SolicitudCredito, ChatSolicitudCredito
 
 
 class SolicitudCreditoSerializer(serializers.ModelSerializer):
     promotor = serializers.StringRelatedField(read_only=True)
     estatus_solicitud = serializers.CharField(read_only=True)
     estatus_evaluacion = serializers.CharField(read_only=True)
-    estatus_ej_credito = serializers.CharField(read_only=True)
     nombre_productor = serializers.SerializerMethodField(read_only=True)
     region = serializers.SerializerMethodField(read_only=True)
     comunidad = serializers.SerializerMethodField(read_only=True)
@@ -66,7 +63,7 @@ class SolicitudListSerializer(serializers.ModelSerializer):
     class Meta:
         model = SolicitudCredito
         fields = ['folio_solicitud', 'fecha_solicitud', 'clave_socio', 'tipo_credito',
-                  'plazo_de_pago_solicitado', 'estatus_solicitud', 'estatus_ej_credito']
+                  'plazo_de_pago_solicitado', 'estatus_solicitud', 'estatus_evaluacion']
 
 
 class SolicitudPartialUpdateSerializer(serializers.ModelSerializer):
@@ -81,3 +78,24 @@ class SolicitudPartialUpdateSerializer(serializers.ModelSerializer):
         print('EL ROL ES:')
         print(user.role)
         return data
+
+
+class ChatSolicitudSerializer(serializers.ModelSerializer):
+    user = serializers.StringRelatedField(read_only=True)
+
+    class Meta:
+        model = ChatSolicitudCredito
+        fields = '__all__'
+
+    def create(self, validated_data):
+        current_user = self.context['request'].user
+        solicitud = validated_data.pop('solicitud', None)
+
+        # Only Gerencia or Creators of Solicitud can comment.
+        if solicitud.promotor != current_user and not current_user.is_gerencia():
+            raise serializers.ValidationError({
+                'message': 'No tienes permiso para comentar en esta Solicitud'
+            })
+
+        chat = ChatSolicitudCredito.objects.create(solicitud=solicitud, **validated_data)
+        return chat
