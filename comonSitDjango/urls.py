@@ -19,7 +19,7 @@ from rest_framework import routers
 from rest_framework_simplejwt import views as jwt_views
 
 from acopios.views import AcopioViewSet, AcopioViewSetXLSX
-from creditos.views import SolicitudCreditoViewSet
+from creditos.views import SolicitudCreditoViewSet, ChatSolicitudViewSet
 from movimientos.views import MovimientoViewSet
 from socios.views import SocioViewSet, SocioViewSetXLSX
 from tsumbalil.views import CargoViewSet, CargoCoopViewSet, RegionViewSet, \
@@ -38,6 +38,7 @@ routers.register(r"cargos-coop", CargoCoopViewSet, basename='cargos-coop')
 routers.register(r"comunidades", ComunidadViewSet)
 routers.register(r"movimientos", MovimientoViewSet, basename='movimientos')
 routers.register(r"solic-creditos", SolicitudCreditoViewSet)
+routers.register(r"solic-creditos-comm", ChatSolicitudViewSet, basename='solic-creditos-comm')
 routers.register(r"regiones", RegionViewSet)
 routers.register(r"socios", SocioViewSet)
 routers.register(r"sociosXLSX", SocioViewSetXLSX, basename='sociosxlsx')
@@ -50,5 +51,5 @@ urlpatterns = [
     path('api/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
     # path('api/token/verify/', jwt_views.TokenVerifyView.as_view(), name='token_verify'),
-    # path('api-auth/', include('rest_framework.urls')),
+    path('api-auth/', include('rest_framework.urls')),
 ]
