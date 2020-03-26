@@ -25,6 +25,9 @@ class SolicitudCreditoSerializer(serializers.ModelSerializer):
     # cargo_mision = serializers.SerializerMethodField(read_only=True)
     fecha_ingr_yomol_atel = serializers.SerializerMethodField(read_only=True)
     chat = ChatSolStartSerializer(many=True)
+    tipo_credito_nombre = serializers.SerializerMethodField(read_only=True)
+    act_productiva_nombre = serializers.SerializerMethodField(read_only=True)
+    mot_credito_nombre = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = SolicitudCredito
@@ -50,6 +53,15 @@ class SolicitudCreditoSerializer(serializers.ModelSerializer):
 
     def get_fecha_ingr_yomol_atel(self, object):
         return object.clave_socio.fecha_ingr_yomol_atel
+
+    def get_tipo_credito_nombre(self, object):
+        return object.get_tipo_credito_display()
+
+    def get_act_productiva_nombre(self, object):
+        return object.get_act_productiva_display()
+
+    def get_mot_credito_nombre(self, object):
+        return object.get_mot_credito_display()
 
     def validate(self, data):
         """

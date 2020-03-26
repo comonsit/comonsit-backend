@@ -36,7 +36,7 @@ class SolicitudCredito(models.Model):
         (ELAB_ALIMENTOS, 'Elaboración de Alimentos'),
         (ELAB_ARTESANIA, 'Elaboración de Artesanía'),
         (HERRAMIENTA, 'Herramientas y Equipo de Trabajo'),
-        (OTRO, 'Otro, especificar')
+        (OTRO, 'Otro')
 
     ]
 
@@ -51,7 +51,7 @@ class SolicitudCredito(models.Model):
         (TRABAJO, 'Trabajo'),
         (EDUCACION, 'Educación'),
         (FIESTAS, 'Fiestas'),
-        (OTRO, 'Otro, especificar')
+        (OTRO, 'Otro')
     ]
 
     APROBADO = 'AP'
