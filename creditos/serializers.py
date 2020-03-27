@@ -28,6 +28,7 @@ class SolicitudCreditoSerializer(serializers.ModelSerializer):
     tipo_credito_nombre = serializers.SerializerMethodField(read_only=True)
     act_productiva_nombre = serializers.SerializerMethodField(read_only=True)
     mot_credito_nombre = serializers.SerializerMethodField(read_only=True)
+    proceso_nombre = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = SolicitudCredito
@@ -63,6 +64,9 @@ class SolicitudCreditoSerializer(serializers.ModelSerializer):
 
     def get_mot_credito_nombre(self, object):
         return object.get_mot_credito_display()
+
+    def get_proceso_nombre(self, object):
+        return object.get_proceso_display()
 
     def validate(self, data):
         """

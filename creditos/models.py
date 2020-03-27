@@ -1,4 +1,5 @@
 from django.db import models
+from comonSitDjango.constants import PROCESOS
 
 
 class SolicitudCredito(models.Model):
@@ -76,6 +77,7 @@ class SolicitudCredito(models.Model):
     folio_solicitud = models.AutoField(primary_key=True)
     clave_socio = models.ForeignKey('socios.Socio', on_delete=models.CASCADE, blank=False, related_name='solicitud')
     fecha_solicitud = models.DateField(blank=False)
+    proceso = models.CharField(max_length=2, choices=PROCESOS, blank=False)
     tipo_credito = models.CharField(max_length=2, choices=TIPO_CREDITO_CHOICES, blank=False)
     act_productiva = models.CharField(max_length=2, choices=TIPO_ACTIV_PROD_CHOICES, blank=True)
     act_productiva_otro = models.CharField(max_length=40, blank=True, null=True)

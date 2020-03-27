@@ -1,4 +1,5 @@
 from django.db import models
+from comonSitDjango.constants import PROCESOS
 
 
 class Movimiento(models.Model):
@@ -10,22 +11,11 @@ class Movimiento(models.Model):
         (BANCOS, 'Bancos'),
         (TRANSFERENCIA, 'Transferencia')
     ]
-    # TODO: duplicated with acopios, centralize in single place
-    CAFE = 'CF'
-    MIEL = 'MI'
-    JABON = 'JA'
-    SUELDOS = 'SL'
-    PROCESO_CHOICES = [
-        (CAFE, 'Cafe'),
-        (MIEL, 'Miel'),
-        (JABON, 'Jabon'),
-        (SUELDOS, 'Sueldos'),
-    ]
     id = models.AutoField(primary_key=True)
     clave_socio = models.ForeignKey('socios.Socio', on_delete=models.CASCADE, blank=False, related_name='movimiento')
     fecha_entrega = models.DateField()
     monto = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
-    proceso = models.CharField(max_length=2, choices=PROCESO_CHOICES, default='CF')
+    proceso = models.CharField(max_length=2, choices=PROCESOS, default='CF')
     aportacion = models.BooleanField(blank=False, default=True)  # false = retiro
     tipo_de_movimiento = models.CharField(max_length=2, choices=MOVIMIENTO_CHOICES, blank=True)
     responsable_entrega = models.CharField(max_length=50, blank=True)
