@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import SolicitudCredito, ChatSolicitudCredito
-
+from users.models import User
 
 class ChatSolStartSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField(read_only=True)
@@ -102,16 +102,42 @@ class SolicitudListSerializer(serializers.ModelSerializer):
 
 class SolicitudPartialUpdateSerializer(serializers.ModelSerializer):
     promotor = serializers.StringRelatedField(read_only=True)
+    chat = ChatSolStartSerializer(many=True)
 
     class Meta:
         model = SolicitudCredito
         fields = '__all__'
 
-    def validate(self, data):
-        user = self.context['request'].user
-        print('EL ROL ES:')
-        print(user.role)
-        return data
+    def update(self, instance, validated_data):
+        current_user = self.context['request'].user
+        comentario_data = validated_data.pop('chat')
+        ChatSolicitudCredito.objects.create(solicitud=instance, user=current_user, **comentario_data[0])
+
+        solicitud_status = validated_data.get('estatus_solicitud', None)
+        eval_status = validated_data.get('estatus_evaluacion', None)
+        print('EL EVAL STATUS ES:')
+        print(eval_status)
+
+        if solicitud_status:
+            if current_user.role == User.ROL_PROMOTOR:
+                if solicitud_status != SolicitudCredito.APROBADO:
+                    instance.estatus_solicitud = solicitud_status
+                else:
+                    raise serializers.ValidationError("Promotores no pueden aprobar una Solicitud")
+            elif current_user.is_gerencia():
+                instance.estatus_solicitud = solicitud_status
+                instance.irregularidades = validated_data.get('irregularidades', instance.irregularidades)
+                instance.pregunta_1 = validated_data.get('pregunta_1', instance.pregunta_1)
+                instance.pregunta_2 = validated_data.get('pregunta_2', instance.pregunta_2)
+                instance.pregunta_3 = validated_data.get('pregunta_3', instance.pregunta_3)
+                instance.pregunta_4 = validated_data.get('pregunta_4', instance.pregunta_4)
+        elif eval_status and current_user.role == User.ROL_GERENTE:
+            instance.estatus_evaluacion = validated_data.get('estatus_evaluacion', instance.estatus_evaluacion)
+        else:
+            raise serializers.ValidationError("Patch inesperado")
+
+        instance.save()
+        return instance
 
 
 class ChatSolicitudSerializer(serializers.ModelSerializer):
