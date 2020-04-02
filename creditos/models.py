@@ -89,7 +89,7 @@ class SolicitudCredito(models.Model):
     plazo_de_pago_solicitado = models.PositiveSmallIntegerField(blank=False)
     estatus_solicitud = models.CharField(max_length=2, choices=ESTATUS_S_CHOICES, blank=False)
     estatus_evaluacion = models.CharField(max_length=2, choices=ESTATUS_E_CHOICES, blank=False)
-    justificacion_credito = models.CharField(max_length=100, blank=True)
+    justificacion_credito = models.CharField(max_length=100)
     promotor = models.ForeignKey('users.User', on_delete=models.CASCADE, blank=False, related_name='solic_promotor')
     pregunta_1 = models.BooleanField(null=True, default=None)
     pregunta_2 = models.BooleanField(null=True, default=None)
