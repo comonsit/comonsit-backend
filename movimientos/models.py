@@ -14,7 +14,7 @@ class Movimiento(models.Model):
     id = models.AutoField(primary_key=True)
     clave_socio = models.ForeignKey('socios.Socio', on_delete=models.CASCADE, blank=False, related_name='movimiento')
     fecha_entrega = models.DateField()
-    monto = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
+    monto = models.DecimalField(max_digits=9, decimal_places=2, blank=False)
     proceso = models.CharField(max_length=2, choices=PROCESOS, default='CF')
     aportacion = models.BooleanField(blank=False, default=True)  # false = retiro
     tipo_de_movimiento = models.CharField(max_length=2, choices=MOVIMIENTO_CHOICES, blank=True)
