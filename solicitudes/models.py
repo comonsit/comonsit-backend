@@ -104,7 +104,7 @@ class SolicitudCredito(models.Model):
 
 
 class ChatSolicitudCredito(models.Model):
-    solicitud = models.ForeignKey('creditos.SolicitudCredito', on_delete=models.CASCADE, blank=False, related_name='chat')
+    solicitud = models.ForeignKey(SolicitudCredito, on_delete=models.CASCADE, blank=False, related_name='chat')
     comentario = models.CharField(max_length=100, blank=True)
     fecha = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey('users.User', on_delete=models.CASCADE, blank=False, related_name='chat_solic')

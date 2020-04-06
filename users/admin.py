@@ -11,6 +11,7 @@ class CustomUserChangeForm(UserChangeForm):
 
 class CustomUserAdmin(UserAdmin):
     form = CustomUserChangeForm
+    list_display = ("username", "first_name", "last_name", "role", "is_staff")
 
     fieldsets = UserAdmin.fieldsets + (
         (None,  {'fields': ('phone', 'role', 'clave_socio')}),

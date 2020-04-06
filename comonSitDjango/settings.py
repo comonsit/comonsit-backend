@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     'tsumbalil',
     'socios',
     'users',
-    'creditos',
+    'solicitudes',
     'movimientos'
 ]
 
