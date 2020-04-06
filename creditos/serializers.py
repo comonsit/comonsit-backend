@@ -111,19 +111,16 @@ class SolicitudPartialUpdateSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         current_user = self.context['request'].user
         comentario_data = validated_data.pop('chat')
-        ChatSolicitudCredito.objects.create(solicitud=instance, user=current_user, **comentario_data[0])
-
         solicitud_status = validated_data.get('estatus_solicitud', None)
         eval_status = validated_data.get('estatus_evaluacion', None)
-        print('EL EVAL STATUS ES:')
-        print(eval_status)
 
         if solicitud_status:
             if current_user.role == User.ROL_PROMOTOR:
-                if solicitud_status != SolicitudCredito.APROBADO:
+                # Promotor requesting revision
+                if solicitud_status and solicitud_status != SolicitudCredito.APROBADO:
                     instance.estatus_solicitud = solicitud_status
                 else:
-                    raise serializers.ValidationError("Promotores no pueden aprobar una Solicitud")
+                    raise serializers.ValidationError("Promotores sólo pueden solicitar revisiones")
             elif current_user.is_gerencia():
                 instance.estatus_solicitud = solicitud_status
                 instance.irregularidades = validated_data.get('irregularidades', instance.irregularidades)
@@ -131,11 +128,23 @@ class SolicitudPartialUpdateSerializer(serializers.ModelSerializer):
                 instance.pregunta_2 = validated_data.get('pregunta_2', instance.pregunta_2)
                 instance.pregunta_3 = validated_data.get('pregunta_3', instance.pregunta_3)
                 instance.pregunta_4 = validated_data.get('pregunta_4', instance.pregunta_4)
-        elif eval_status and current_user.role == User.ROL_GERENTE:
-            instance.estatus_evaluacion = validated_data.get('estatus_evaluacion', instance.estatus_evaluacion)
+        elif eval_status:
+            if current_user.role == User.ROL_GERENTE:
+                instance.estatus_evaluacion = validated_data.get('estatus_evaluacion', instance.estatus_evaluacion)
+                # TODO:
+                # if instance.estatus_evaluacion:
+                #     dispatch CONTRATO CREATION
+
+            # Promotor/Coord requesting reNegotiation
+            elif(eval_status == SolicitudCredito.REVISION and
+                    instance.estatus_evaluacion == SolicitudCredito.NEGOCIACION and
+                    instance.estatus_solicitud == SolicitudCredito.APROBADO):
+                print('ACTUALIZANDO el estatus eval...')
+                instance.estatus_evaluacion = eval_status
         else:
             raise serializers.ValidationError("Patch inesperado")
 
+        ChatSolicitudCredito.objects.create(solicitud=instance, user=current_user, **comentario_data[0])
         instance.save()
         return instance
 
