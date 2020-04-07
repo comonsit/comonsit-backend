@@ -1,6 +1,9 @@
 from rest_framework import serializers
 from .models import SolicitudCredito, ChatSolicitudCredito
+from contratos.models import ContratoCredito
+from contratos.serializers import ContratoCreditoSerializer
 from users.models import User
+
 
 class ChatSolStartSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField(read_only=True)
@@ -29,6 +32,7 @@ class SolicitudCreditoSerializer(serializers.ModelSerializer):
     act_productiva_nombre = serializers.SerializerMethodField(read_only=True)
     mot_credito_nombre = serializers.SerializerMethodField(read_only=True)
     proceso_nombre = serializers.SerializerMethodField(read_only=True)
+    contrato = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = SolicitudCredito
@@ -68,6 +72,11 @@ class SolicitudCreditoSerializer(serializers.ModelSerializer):
     def get_proceso_nombre(self, object):
         return object.get_proceso_display()
 
+    def get_contrato(self, object):
+        if ContratoCredito.objects.filter(solicitud=object).exists():
+            return object.contrato.folio
+        return None
+
     def validate(self, data):
         """
         Check that requestor and authorizor are not the same
@@ -103,6 +112,15 @@ class SolicitudListSerializer(serializers.ModelSerializer):
 class SolicitudPartialUpdateSerializer(serializers.ModelSerializer):
     promotor = serializers.StringRelatedField(read_only=True)
     chat = ChatSolStartSerializer(many=True)
+    contrato = ContratoCreditoSerializer()
+    monto_aprobado = serializers.DecimalField(max_digits=9, decimal_places=2, write_only=True)
+    plazo_aprobado = serializers.IntegerField(min_value=1, write_only=True)
+    contrato = serializers.SerializerMethodField(read_only=True)
+
+    def get_contrato(self, object):
+        if ContratoCredito.objects.filter(solicitud=object).exists():
+            return object.contrato.folio
+        return None
 
     class Meta:
         model = SolicitudCredito
@@ -131,9 +149,20 @@ class SolicitudPartialUpdateSerializer(serializers.ModelSerializer):
         elif eval_status:
             if current_user.role == User.ROL_GERENTE:
                 instance.estatus_evaluacion = validated_data.get('estatus_evaluacion', instance.estatus_evaluacion)
-                # TODO:
-                # if instance.estatus_evaluacion:
-                #     dispatch CONTRATO CREATION
+                monto_aprobado = validated_data.get('monto_aprobado', None)
+                plazo_aprobado = validated_data.get('plazo_aprobado', None)
+
+                # Approve and Create new Credit Contract
+                if instance.estatus_evaluacion == SolicitudCredito.APROBADO and monto_aprobado and plazo_aprobado:
+                    ContratoCredito.objects.create(
+                        solicitud=instance,
+                        clave_socio=instance.clave_socio,
+                        promotor=instance.promotor, monto=monto_aprobado,
+                        plazo=plazo_aprobado,
+                        estatus=ContratoCredito.EN_CURSO,
+                        estatus_efectivo=ContratoCredito.POR_COBRAR,
+                        estatus_ejecucion=ContratoCredito.POR_COBRAR
+                    )
 
             # Promotor/Coord requesting reNegotiation
             elif(eval_status == SolicitudCredito.REVISION and
