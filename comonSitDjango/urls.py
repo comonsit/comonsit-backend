@@ -19,6 +19,7 @@ from rest_framework import routers
 from rest_framework_simplejwt import views as jwt_views
 
 from acopios.views import AcopioViewSet, AcopioViewSetXLSX
+from contratos.views import ContratoCreditoViewSet
 from solicitudes.views import SolicitudCreditoViewSet, ChatSolicitudViewSet
 from movimientos.views import MovimientoViewSet
 from socios.views import SocioViewSet, SocioViewSetXLSX
@@ -31,6 +32,7 @@ routers = routers.DefaultRouter()
 routers.register(r"acopios", AcopioViewSet)
 routers.register(r"acopiosXLSX", AcopioViewSetXLSX, basename='acopiosxlsx')
 routers.register(r"cargos", CargoViewSet)
+routers.register(r"contratos", ContratoCreditoViewSet)
 routers.register(r"empresas", EmpresaViewSet)
 routers.register(r"fuentes", FuenteViewSet)
 routers.register(r"puestos", PuestoViewSet)

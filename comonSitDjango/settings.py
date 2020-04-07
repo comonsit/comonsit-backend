@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'corsheaders',
 
     'acopios',
+    'contratos',
     'tsumbalil',
     'socios',
     'users',
