@@ -2,7 +2,7 @@ from rest_framework import viewsets, permissions
 
 from .models import ContratoCredito
 from .permissions import ContratoCreditoPermissions
-from .serializers import ContratoCreditoSerializer
+from .serializers import ContratoCreditoSerializer, ContratoCreditoListSerializer
 
 
 class ContratoCreditoViewSet(viewsets.ModelViewSet):
@@ -10,6 +10,11 @@ class ContratoCreditoViewSet(viewsets.ModelViewSet):
     serializer_class = ContratoCreditoSerializer
     lookup_field = 'folio'  # clave_socio?
     permission_classes = [permissions.IsAuthenticated, ContratoCreditoPermissions]
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return ContratoCreditoListSerializer
+        return ContratoCreditoSerializer
 
     # Is Gerencia or Owner
     def get_queryset(self):
