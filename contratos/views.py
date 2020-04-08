@@ -8,7 +8,7 @@ from .serializers import ContratoCreditoSerializer
 class ContratoCreditoViewSet(viewsets.ModelViewSet):
     queryset = ContratoCredito.objects.all().order_by('-fecha_inicio')
     serializer_class = ContratoCreditoSerializer
-    lookup_field = 'folio_solicitud'  # clave_socio?
+    lookup_field = 'folio'  # clave_socio?
     permission_classes = [permissions.IsAuthenticated, ContratoCreditoPermissions]
 
     # Is Gerencia or Owner

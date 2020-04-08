@@ -115,6 +115,7 @@ class SolicitudPartialUpdateSerializer(serializers.ModelSerializer):
     contrato = ContratoCreditoSerializer()
     monto_aprobado = serializers.DecimalField(max_digits=9, decimal_places=2, write_only=True)
     plazo_aprobado = serializers.IntegerField(min_value=1, write_only=True)
+    tasa_aprobada = serializers.DecimalField(max_digits=7, decimal_places=4, write_only=True)
     contrato = serializers.SerializerMethodField(read_only=True)
 
     def get_contrato(self, object):
@@ -149,18 +150,19 @@ class SolicitudPartialUpdateSerializer(serializers.ModelSerializer):
         elif eval_status:
             if current_user.role == User.ROL_GERENTE:
                 instance.estatus_evaluacion = validated_data.get('estatus_evaluacion', instance.estatus_evaluacion)
-                monto_aprobado = validated_data.get('monto_aprobado', None)
-                plazo_aprobado = validated_data.get('plazo_aprobado', None)
 
                 # Approve and Create new Credit Contract
-                if instance.estatus_evaluacion == SolicitudCredito.APROBADO and monto_aprobado and plazo_aprobado:
+                if instance.estatus_evaluacion == SolicitudCredito.APROBADO:
+                    monto_aprobado = validated_data.get('monto_aprobado', None)
+                    plazo_aprobado = validated_data.get('plazo_aprobado', None)
+                    tasa_aprobada = validated_data.get('tasa_aprobada', None)
                     ContratoCredito.objects.create(
                         solicitud=instance,
                         clave_socio=instance.clave_socio,
-                        promotor=instance.promotor, monto=monto_aprobado,
+                        monto=monto_aprobado,
                         plazo=plazo_aprobado,
-                        estatus=ContratoCredito.EN_CURSO,
-                        estatus_efectivo=ContratoCredito.POR_COBRAR,
+                        tasa=tasa_aprobada,
+                        estatus=ContratoCredito.DEUDA_PENDIENTE,
                         estatus_ejecucion=ContratoCredito.POR_COBRAR
                     )
 
