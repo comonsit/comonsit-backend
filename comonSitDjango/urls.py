@@ -25,7 +25,8 @@ from movimientos.views import MovimientoViewSet
 from pagos.views import PagoViewSet
 from socios.views import SocioViewSet, SocioViewSetXLSX
 from tsumbalil.views import CargoViewSet, CargoCoopViewSet, RegionViewSet, \
-    ComunidadViewSet, EmpresaViewSet, FuenteViewSet, PuestoViewSet
+                            ComunidadViewSet, EmpresaViewSet, FuenteViewSet, \
+                            PuestoViewSet, SubCuentaViewSet
 from users.views import UserViewSet
 
 
@@ -46,6 +47,7 @@ routers.register(r"solic-creditos-comm", ChatSolicitudViewSet, basename='solic-c
 routers.register(r"regiones", RegionViewSet)
 routers.register(r"socios", SocioViewSet)
 routers.register(r"sociosXLSX", SocioViewSetXLSX, basename='sociosxlsx')
+routers.register(r"subcuentas", SubCuentaViewSet)
 routers.register(r"users", UserViewSet)
 
 
