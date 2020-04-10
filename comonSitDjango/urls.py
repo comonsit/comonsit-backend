@@ -22,6 +22,7 @@ from acopios.views import AcopioViewSet, AcopioViewSetXLSX
 from contratos.views import ContratoCreditoViewSet
 from solicitudes.views import SolicitudCreditoViewSet, ChatSolicitudViewSet
 from movimientos.views import MovimientoViewSet
+from pagos.views import PagoViewSet
 from socios.views import SocioViewSet, SocioViewSetXLSX
 from tsumbalil.views import CargoViewSet, CargoCoopViewSet, RegionViewSet, \
     ComunidadViewSet, EmpresaViewSet, FuenteViewSet, PuestoViewSet
@@ -36,6 +37,7 @@ routers.register(r"contratos", ContratoCreditoViewSet)
 routers.register(r"empresas", EmpresaViewSet)
 routers.register(r"fuentes", FuenteViewSet)
 routers.register(r"puestos", PuestoViewSet)
+routers.register(r"pagos", PagoViewSet, basename='pagos')
 routers.register(r"cargos-coop", CargoCoopViewSet, basename='cargos-coop')
 routers.register(r"comunidades", ComunidadViewSet)
 routers.register(r"movimientos", MovimientoViewSet, basename='movimientos')
