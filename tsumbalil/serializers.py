@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Cargo, CargoCoop, Region, Comunidad, Empresa, \
-                    Puesto_Trabajo, Fuente, SubCuenta
+                    Puesto_Trabajo, Fuente
 
 
 class CargoSerializer(serializers.ModelSerializer):
@@ -44,10 +44,4 @@ class PuestoSerializer(serializers.ModelSerializer):
 class FuenteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Fuente
-        fields = "__all__"
-
-
-class SubCuentaSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SubCuenta
         fields = "__all__"

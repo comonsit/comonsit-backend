@@ -19,6 +19,7 @@ from rest_framework import routers
 from rest_framework_simplejwt import views as jwt_views
 
 from acopios.views import AcopioViewSet, AcopioViewSetXLSX
+from bancos.views import ConceptoBancoViewSet, SubCuentaViewSet, MovimientoBancoViewSet
 from contratos.views import ContratoCreditoViewSet
 from solicitudes.views import SolicitudCreditoViewSet, ChatSolicitudViewSet
 from movimientos.views import MovimientoViewSet
@@ -26,7 +27,7 @@ from pagos.views import PagoViewSet
 from socios.views import SocioViewSet, SocioViewSetXLSX
 from tsumbalil.views import CargoViewSet, CargoCoopViewSet, RegionViewSet, \
                             ComunidadViewSet, EmpresaViewSet, FuenteViewSet, \
-                            PuestoViewSet, SubCuentaViewSet
+                            PuestoViewSet
 from users.views import UserViewSet
 
 
@@ -34,6 +35,7 @@ routers = routers.DefaultRouter()
 routers.register(r"acopios", AcopioViewSet)
 routers.register(r"acopiosXLSX", AcopioViewSetXLSX, basename='acopiosxlsx')
 routers.register(r"cargos", CargoViewSet)
+routers.register(r"conceptos-banco", ConceptoBancoViewSet, basename='conceptos-banco')
 routers.register(r"contratos", ContratoCreditoViewSet)
 routers.register(r"empresas", EmpresaViewSet)
 routers.register(r"fuentes", FuenteViewSet)
@@ -42,6 +44,7 @@ routers.register(r"pagos", PagoViewSet, basename='pagos')
 routers.register(r"cargos-coop", CargoCoopViewSet, basename='cargos-coop')
 routers.register(r"comunidades", ComunidadViewSet)
 routers.register(r"movimientos", MovimientoViewSet, basename='movimientos')
+routers.register(r"mov-bancos", MovimientoBancoViewSet, basename='mov-bancos')
 routers.register(r"solic-creditos", SolicitudCreditoViewSet)
 routers.register(r"solic-creditos-comm", ChatSolicitudViewSet, basename='solic-creditos-comm')
 routers.register(r"regiones", RegionViewSet)

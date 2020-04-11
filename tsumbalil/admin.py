@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import Cargo, CargoCoop, Comunidad, Region, Empresa, \
-                    Puesto_Trabajo, Fuente, SubCuenta
+                    Puesto_Trabajo, Fuente
 
 
 class CargoAdmin(admin.ModelAdmin):
@@ -38,15 +38,9 @@ class FuenteAdmin(admin.ModelAdmin):
     list_display = ("fuente",)
 
 
-class SubCuentaAdmin(admin.ModelAdmin):
-    model = SubCuenta
-    list_display = ("nombre_cuenta",)
-
-
 admin.site.register(Cargo, CargoAdmin)
 admin.site.register(CargoCoop, CargoCoopAdmin)
 admin.site.register(Region, RegionAdmin)
 admin.site.register(Comunidad, ComunidadAdmin)
 admin.site.register(Puesto_Trabajo, PuestoAdmin)
 admin.site.register(Fuente, FuenteAdmin)
-admin.site.register(SubCuenta, SubCuentaAdmin)

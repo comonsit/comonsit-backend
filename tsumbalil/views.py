@@ -3,7 +3,7 @@ from rest_framework import viewsets, permissions
 from .models import Cargo, CargoCoop, Region, Comunidad, Empresa, Puesto_Trabajo, Fuente
 from .serializers import CargoSerializer, CargoCoopSerializer, RegionSerializer, \
                          ComunidadSerializer, EmpresaSerializer, PuestoSerializer, \
-                         FuenteSerializer, SubCuentaSerializer
+                         FuenteSerializer
 from users.permissions import gerenciaOrReadOnly, ReadOnly
 
 
@@ -46,10 +46,4 @@ class PuestoViewSet(viewsets.ReadOnlyModelViewSet):
 class FuenteViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Fuente.objects.all()
     serializer_class = FuenteSerializer
-    permission_classes = [permissions.IsAuthenticated, ReadOnly]
-
-
-class SubCuentaViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Fuente.objects.all()
-    serializer_class = SubCuentaSerializer
     permission_classes = [permissions.IsAuthenticated, ReadOnly]
