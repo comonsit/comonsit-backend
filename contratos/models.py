@@ -24,9 +24,9 @@ class ContratoCredito(models.Model):
     clave_socio = models.ForeignKey('socios.Socio', on_delete=models.CASCADE, blank=False, related_name='contrato')
     fecha_inicio = models.DateTimeField(blank=True, null=True)
     monto = models.DecimalField(max_digits=9, decimal_places=2, blank=False)
-    plazo = models.PositiveSmallIntegerField(blank=False)
-    tasa = models.DecimalField(max_digits=7, decimal_places=4)
-    prorroga = models.DateField(blank=True, null=True)
+    plazo = models.PositiveSmallIntegerField(blank=False)  # number of months
+    tasa = models.DecimalField(max_digits=7, decimal_places=4, blank=False)
+    prorroga = models.PositiveSmallIntegerField(blank=False, default=0)  # number of months
     estatus = models.CharField(max_length=2, choices=ESTATUS_CHOICES, blank=False)
     referencia_banco = models.CharField(max_length=20, blank=True, null=True)
     fecha_salida_banco = models.DateField(blank=True, null=True)

@@ -1,14 +1,22 @@
-from datetime import date
+import pytz
+from datetime import datetime
 from rest_framework import serializers
 from .models import ContratoCredito
+from .utility import deuda_calculator
+
+utc = pytz.UTC
 
 
 class ContratoCreditoSerializer(serializers.ModelSerializer):
     promotor = serializers.StringRelatedField(read_only=True)
+    deuda_al_dia = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = ContratoCredito
         fields = '__all__'
+
+    def get_deuda_al_dia(self, object):
+        return deuda_calculator(object)
 
     # def update(self, instance, validated_data):
     #     pass
@@ -36,12 +44,11 @@ class ContratoCreditoListSerializer(serializers.ModelSerializer):
     def get_estatus(self, object):
         if object.estatus == ContratoCredito.DEUDA_PENDIENTE:
             if object.fecha_inicio:
-                if object.fecha_inicio <= date.today():
-                    return 'VI'  #VIGENTE
+                if object.fecha_inicio <= datetime.now().replace(tzinfo=utc):
+                    return 'VI'  # VIGENTE
                 return 'VE'  # VENCIDO
-            return 'PF' #POR FIRMAR
+            return 'PF' # POR FIRMAR
         return object.estatus  # PAGADO
 
     def get_deuda_al_dia(self, object):
-        # TODO: include moratorio, dynamic date and payments
-        return object.monto + object.monto*(object.tasa/100)*object.plazo
+        return deuda_calculator(object)
