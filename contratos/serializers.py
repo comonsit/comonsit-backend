@@ -8,7 +8,6 @@ utc = pytz.UTC
 
 
 class ContratoCreditoSerializer(serializers.ModelSerializer):
-    promotor = serializers.StringRelatedField(read_only=True)
     deuda_al_dia = serializers.SerializerMethodField(read_only=True)
 
     class Meta:

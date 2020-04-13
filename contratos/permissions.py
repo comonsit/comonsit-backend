@@ -11,4 +11,4 @@ class ContratoCreditoPermissions(BasePermission):
 
     def has_object_permission(self, request, view, obj):
         # Is gerencia or Owner
-        return request.user.is_gerencia() or obj.promotor == request.user
+        return request.user.is_gerencia() or obj.solicitud.promotor == request.user
