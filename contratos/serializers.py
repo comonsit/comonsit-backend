@@ -23,12 +23,13 @@ class ContratoCreditoListSerializer(serializers.ModelSerializer):
     tipo_credito = serializers.SerializerMethodField(read_only=True)
     estatus = serializers.SerializerMethodField(read_only=True)
     deuda_al_dia = serializers.SerializerMethodField(read_only=True)
+    region = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = ContratoCredito
         fields = ['folio', 'fecha_inicio', 'clave_socio', 'nombres',
                   'tipo_credito', 'monto', 'plazo', 'tasa', 'estatus',
-                  'estatus_ejecucion', 'deuda_al_dia']
+                  'estatus_ejecucion', 'deuda_al_dia', 'region']
 
     def get_nombres(self, object):
         return object.clave_socio.nombres + ' ' + object.clave_socio.apellido_paterno \
@@ -42,3 +43,6 @@ class ContratoCreditoListSerializer(serializers.ModelSerializer):
 
     def get_deuda_al_dia(self, object):
         return deuda_calculator(object)
+
+    def get_region(self, object):
+        return object.clave_socio.comunidad.region.id
