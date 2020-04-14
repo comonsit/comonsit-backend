@@ -1,9 +1,13 @@
+from datetime import date
+from dateutil.relativedelta import relativedelta
 from django.db import models
 
 
 class ContratoCredito(models.Model):
 
-    DEUDA_PENDIENTE = 'DP'  # VENCIDO / VIGENTE
+    DEUDA_PENDIENTE = 'DP'
+    VENCIDO = 'VE'
+    VIGENTE = 'VI'
     PAGADO = 'PA'
     ESTATUS_CHOICES = [
         (DEUDA_PENDIENTE, 'Deuda Pendiente'),
@@ -22,7 +26,7 @@ class ContratoCredito(models.Model):
     folio = models.AutoField(primary_key=True)
     solicitud = models.OneToOneField('solicitudes.SolicitudCredito', on_delete=models.CASCADE, blank=False, related_name='contrato')
     clave_socio = models.ForeignKey('socios.Socio', on_delete=models.CASCADE, blank=False, related_name='contrato')
-    fecha_inicio = models.DateTimeField(blank=True, null=True)
+    fecha_inicio = models.DateField(blank=True, null=True)
     monto = models.DecimalField(max_digits=9, decimal_places=2, blank=False)
     plazo = models.PositiveSmallIntegerField(blank=False)  # number of months
     tasa = models.DecimalField(max_digits=7, decimal_places=4, blank=False)
@@ -34,3 +38,17 @@ class ContratoCredito(models.Model):
 
     def __str__(self):
         return '{0}- ({1}) ${2}'.format(self.folio, self.clave_socio, self.estatus)
+
+    def get_validity(self):
+        if self.estatus == ContratoCredito.DEUDA_PENDIENTE and self.fecha_inicio:
+            if date.today() <= self.fecha_vencimiento():
+                return ContratoCredito.VIGENTE
+            return ContratoCredito.VENCIDO
+        return self.estatus  # PAGADO
+
+    def fecha_vencimiento(self):
+        # TODO: verify fecha here?
+        if not self.fecha_inicio:
+            return None
+        plazo_total = self.plazo + self.prorroga
+        return self.fecha_inicio + relativedelta(months=+plazo_total)

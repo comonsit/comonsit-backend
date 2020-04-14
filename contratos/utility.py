@@ -1,29 +1,25 @@
-from datetime import datetime
+from datetime import date
 from dateutil.relativedelta import relativedelta
-import pytz
 from rest_framework.serializers import ValidationError
 from .models import ContratoCredito
 
 
-def deuda_calculator(credito, fecha=datetime.today()):
+def deuda_calculator(credito, fecha=date.today()):
     if (not credito.fecha_inicio or
             credito.estatus_ejecucion != ContratoCredito.COBRADO or
             credito.estatus != ContratoCredito.DEUDA_PENDIENTE):
         return None
 
-    # To make datetime "aware" and comparable with Django DateTime
-    utc = pytz.UTC
-    fecha = fecha.replace(tzinfo=utc)
+    # To make date "aware" and comparable with Django DateTime
     if fecha < credito.fecha_inicio:
         raise ValidationError("La fecha es previa al inicio del Crédito")
 
     meses_transcurridos = relativedelta(fecha, credito.fecha_inicio).months
     interes_ordinario = credito.monto*(credito.tasa/100)*meses_transcurridos
+
+    plazo_total = credito.plazo + credito.prorroga
     interes_moratorio = 0
-    prorroga = credito.prorroga if credito.prorroga else 0  # TODO: substitute by a default 0 in create of model?
-    plazo_total = credito.plazo + prorroga
-    fecha_vencimiento = credito.fecha_inicio + relativedelta(months=+plazo_total)
-    if fecha > fecha_vencimiento:
+    if fecha > credito.fecha_vencimiento():
         interes_moratorio = credito.monto*(credito.tasa/100)*(meses_transcurridos-plazo_total)
 
     return {

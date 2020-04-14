@@ -1,10 +1,7 @@
-import pytz
-from datetime import datetime
+from datetime import date
 from rest_framework import serializers
 from .models import ContratoCredito
 from .utility import deuda_calculator
-
-utc = pytz.UTC
 
 
 class ContratoCreditoSerializer(serializers.ModelSerializer):
@@ -41,13 +38,7 @@ class ContratoCreditoListSerializer(serializers.ModelSerializer):
         return object.solicitud.get_tipo_credito_display()
 
     def get_estatus(self, object):
-        if object.estatus == ContratoCredito.DEUDA_PENDIENTE:
-            if object.fecha_inicio:
-                if object.fecha_inicio <= datetime.now().replace(tzinfo=utc):
-                    return 'VI'  # VIGENTE
-                return 'VE'  # VENCIDO
-            return 'PF' # POR FIRMAR
-        return object.estatus  # PAGADO
+        return object.get_validity()
 
     def get_deuda_al_dia(self, object):
         return deuda_calculator(object)
