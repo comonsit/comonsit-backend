@@ -1,4 +1,3 @@
-from datetime import date
 from rest_framework import serializers
 from .models import ContratoCredito
 from .utility import deuda_calculator
@@ -6,6 +5,8 @@ from .utility import deuda_calculator
 
 class ContratoCreditoSerializer(serializers.ModelSerializer):
     deuda_al_dia = serializers.SerializerMethodField(read_only=True)
+    estatus_detail = serializers.SerializerMethodField(read_only=True)
+    fecha_vencimiento = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = ContratoCredito
@@ -13,6 +14,12 @@ class ContratoCreditoSerializer(serializers.ModelSerializer):
 
     def get_deuda_al_dia(self, object):
         return deuda_calculator(object)
+
+    def get_estatus_detail(self, object):
+        return object.get_validity()
+
+    def get_fecha_vencimiento(self, object):
+        return object.fecha_vencimiento()
 
     # def update(self, instance, validated_data):
     #     pass
