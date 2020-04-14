@@ -20,7 +20,7 @@ from rest_framework_simplejwt import views as jwt_views
 
 from acopios.views import AcopioViewSet, AcopioViewSetXLSX
 from bancos.views import ConceptoBancoViewSet, SubCuentaViewSet, MovimientoBancoViewSet
-from contratos.views import ContratoCreditoViewSet
+from contratos.views import ContratoCreditoViewSet, ContratoViewSetXLSX
 from solicitudes.views import SolicitudCreditoViewSet, ChatSolicitudViewSet
 from movimientos.views import MovimientoViewSet
 from pagos.views import PagoViewSet
@@ -37,6 +37,7 @@ routers.register(r"acopiosXLSX", AcopioViewSetXLSX, basename='acopiosxlsx')
 routers.register(r"cargos", CargoViewSet)
 routers.register(r"conceptos-banco", ConceptoBancoViewSet, basename='conceptos-banco')
 routers.register(r"contratos", ContratoCreditoViewSet)
+routers.register(r"contratosXLSX", ContratoViewSetXLSX, basename='contratosXLSX')
 routers.register(r"empresas", EmpresaViewSet)
 routers.register(r"fuentes", FuenteViewSet)
 routers.register(r"puestos", PuestoViewSet)
