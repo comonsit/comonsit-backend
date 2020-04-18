@@ -1,6 +1,8 @@
+from django.db.models import Sum
 from rest_framework import serializers
 from .models import ContratoCredito
 from .utility import deuda_calculator
+from pagos.models import Pago
 
 
 class ContratoCreditoSerializer(serializers.ModelSerializer):
@@ -61,12 +63,15 @@ class ContratoCreditoListSerializer(serializers.ModelSerializer):
     estatus = serializers.SerializerMethodField(read_only=True)
     deuda_al_dia = serializers.SerializerMethodField(read_only=True)
     region = serializers.SerializerMethodField(read_only=True)
+    fecha_vencimiento = serializers.SerializerMethodField(read_only=True)
+    plazo_disp = serializers.SerializerMethodField(read_only=True)
+    pagado = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = ContratoCredito
         fields = ['folio', 'fecha_inicio', 'clave_socio', 'nombres',
-                  'monto', 'plazo', 'tasa', 'estatus', 'estatus_ejecucion',
-                  'deuda_al_dia', 'region']
+                  'monto', 'plazo_disp', 'tasa', 'estatus', 'estatus_ejecucion',
+                  'deuda_al_dia', 'region', 'fecha_vencimiento', 'pagado']
 
     def get_nombres(self, object):
         return object.clave_socio.nombres + ' ' + object.clave_socio.apellido_paterno \
@@ -80,6 +85,16 @@ class ContratoCreditoListSerializer(serializers.ModelSerializer):
 
     def get_region(self, object):
         return object.clave_socio.comunidad.region.id
+
+    def get_plazo_disp(self, object):
+        prorroga = f'+{object.prorroga}' if object.prorroga > 0 else ''
+        return str(object.plazo) + prorroga
+
+    def get_fecha_vencimiento(self, object):
+        return object.fecha_vencimiento()
+
+    def get_pagado(self, object):
+        return Pago.objects.filter(credito=object).aggregate(Sum('cantidad'))['cantidad__sum']
 
 
 class ContratoXLSXSerializer(serializers.ModelSerializer):
