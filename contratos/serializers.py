@@ -58,7 +58,6 @@ class ContratoCreditoSerializer(serializers.ModelSerializer):
 
 class ContratoCreditoListSerializer(serializers.ModelSerializer):
     nombres = serializers.SerializerMethodField(read_only=True)
-    tipo_credito = serializers.SerializerMethodField(read_only=True)
     estatus = serializers.SerializerMethodField(read_only=True)
     deuda_al_dia = serializers.SerializerMethodField(read_only=True)
     region = serializers.SerializerMethodField(read_only=True)
@@ -66,15 +65,12 @@ class ContratoCreditoListSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContratoCredito
         fields = ['folio', 'fecha_inicio', 'clave_socio', 'nombres',
-                  'tipo_credito', 'monto', 'plazo', 'tasa', 'estatus',
-                  'estatus_ejecucion', 'deuda_al_dia', 'region']
+                  'monto', 'plazo', 'tasa', 'estatus', 'estatus_ejecucion',
+                  'deuda_al_dia', 'region']
 
     def get_nombres(self, object):
         return object.clave_socio.nombres + ' ' + object.clave_socio.apellido_paterno \
                 + ' ' + object.clave_socio.apellido_materno
-
-    def get_tipo_credito(self, object):
-        return object.solicitud.get_tipo_credito_display()
 
     def get_estatus(self, object):
         return object.get_validity()
