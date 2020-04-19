@@ -116,7 +116,10 @@ class ContratoXLSXSerializer(serializers.ModelSerializer):
                 + ' ' + object.clave_socio.apellido_materno
 
     def get_deuda_al_dia(self, object):
-        return deuda_calculator(object)
+        deuda = deuda_calculator(object)
+        if deuda:
+            return deuda['total']
+        return 0
 
     def get_estatus_detail(self, object):
         return object.get_validity()
