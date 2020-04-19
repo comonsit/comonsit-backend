@@ -116,6 +116,7 @@ class SolicitudPartialUpdateSerializer(serializers.ModelSerializer):
     monto_aprobado = serializers.DecimalField(max_digits=9, decimal_places=2, write_only=True)
     plazo_aprobado = serializers.IntegerField(min_value=1, write_only=True)
     tasa_aprobada = serializers.DecimalField(max_digits=7, decimal_places=4, write_only=True)
+    tasa_mor_aprobada = serializers.DecimalField(max_digits=7, decimal_places=4, write_only=True)
     contrato = serializers.SerializerMethodField(read_only=True)
 
     def get_contrato(self, object):
@@ -156,12 +157,14 @@ class SolicitudPartialUpdateSerializer(serializers.ModelSerializer):
                     monto_aprobado = validated_data.get('monto_aprobado', None)
                     plazo_aprobado = validated_data.get('plazo_aprobado', None)
                     tasa_aprobada = validated_data.get('tasa_aprobada', None)
+                    tasa_mor_aprobada = validated_data.get('tasa_mor_aprobada', None)
                     ContratoCredito.objects.create(
                         solicitud=instance,
                         clave_socio=instance.clave_socio,
                         monto=monto_aprobado,
                         plazo=plazo_aprobado,
                         tasa=tasa_aprobada,
+                        tasa_moratoria=tasa_mor_aprobada,
                         estatus=ContratoCredito.DEUDA_PENDIENTE,
                         estatus_ejecucion=ContratoCredito.POR_COBRAR
                     )

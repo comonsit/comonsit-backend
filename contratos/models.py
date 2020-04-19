@@ -30,6 +30,7 @@ class ContratoCredito(models.Model):
     monto = models.DecimalField(max_digits=9, decimal_places=2, blank=False)
     plazo = models.PositiveSmallIntegerField(blank=False)  # number of months
     tasa = models.DecimalField(max_digits=7, decimal_places=4, blank=False)
+    tasa_moratoria = models.DecimalField(max_digits=7, decimal_places=4, blank=False)
     prorroga = models.PositiveSmallIntegerField(blank=False, default=0)  # number of months
     estatus = models.CharField(max_length=2, choices=ESTATUS_CHOICES, blank=False)
     referencia_banco = models.CharField(max_length=20, blank=True, null=True)
