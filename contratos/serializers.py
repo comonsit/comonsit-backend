@@ -71,7 +71,8 @@ class ContratoCreditoListSerializer(serializers.ModelSerializer):
         model = ContratoCredito
         fields = ['folio', 'fecha_inicio', 'clave_socio', 'nombres',
                   'monto', 'plazo_disp', 'tasa', 'estatus', 'estatus_ejecucion',
-                  'deuda_al_dia', 'region', 'fecha_vencimiento', 'pagado']
+                  'deuda_al_dia', 'region', 'fecha_vencimiento', 'pagado',
+                  'tasa_moratoria']
 
     def get_nombres(self, object):
         return object.clave_socio.nombres + ' ' + object.clave_socio.apellido_paterno \
