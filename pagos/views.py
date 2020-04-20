@@ -20,6 +20,3 @@ class PagoViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(clave_socio=clave_socio)
         # TODO: limit view if no query to ???
         return queryset
-
-    def perform_create(self, serializer):
-        serializer.save(autor=self.request.user)
