@@ -16,6 +16,7 @@ class ContratoCreditoSerializer(serializers.ModelSerializer):
     tipo_credito = serializers.SerializerMethodField(read_only=True)
     intereses = serializers.SerializerMethodField(read_only=True)
     total = serializers.SerializerMethodField(read_only=True)
+    pagado = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = ContratoCredito
@@ -53,6 +54,9 @@ class ContratoCreditoSerializer(serializers.ModelSerializer):
 
     def get_total(self, object):
         return object.monto + object.monto*(object.tasa/100)*object.plazo
+
+    def get_pagado(self, object):
+        return Pago.objects.filter(credito=object).aggregate(Sum('cantidad'))['cantidad__sum']
 
     # def update(self, instance, validated_data):
     #     pass
@@ -107,6 +111,7 @@ class ContratoXLSXSerializer(serializers.ModelSerializer):
     deuda_al_dia = serializers.SerializerMethodField(read_only=True)
     estatus_detail = serializers.SerializerMethodField(read_only=True)
     fecha_vencimiento = serializers.SerializerMethodField(read_only=True)
+    pagado = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = ContratoCredito
@@ -139,3 +144,6 @@ class ContratoXLSXSerializer(serializers.ModelSerializer):
 
     def get_tipo_credito(self, object):
         return object.solicitud.get_tipo_credito_display()
+
+    def get_pagado(self, object):
+        return Pago.objects.filter(credito=object).aggregate(Sum('cantidad'))['cantidad__sum']
