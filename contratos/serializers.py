@@ -17,6 +17,10 @@ class ContratoCreditoSerializer(serializers.ModelSerializer):
     intereses = serializers.SerializerMethodField(read_only=True)
     total = serializers.SerializerMethodField(read_only=True)
     pagado = serializers.SerializerMethodField(read_only=True)
+    extra_kwargs = {
+        'estatus': {'read_only': True},
+        'solicitud': {'read_only': True}
+        }
 
     class Meta:
         model = ContratoCredito
@@ -73,7 +77,7 @@ class ContratoCreditoListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ContratoCredito
-        fields = ['folio', 'fecha_inicio', 'clave_socio', 'nombres',
+        fields = ['id', 'fecha_inicio', 'clave_socio', 'nombres',
                   'monto', 'plazo_disp', 'tasa', 'estatus', 'estatus_ejecucion',
                   'deuda_al_dia', 'region', 'fecha_vencimiento', 'pagado',
                   'tasa_moratoria']

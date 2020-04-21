@@ -30,7 +30,6 @@ class ContratoCredito(models.Model):
         (VARIABLE, 'Variable')
     ]
 
-    folio = models.AutoField(primary_key=True)
     solicitud = models.OneToOneField('solicitudes.SolicitudCredito', on_delete=models.CASCADE, blank=False, related_name='contrato')
     clave_socio = models.ForeignKey('socios.Socio', on_delete=models.CASCADE, blank=False, related_name='contrato')
     fecha_inicio = models.DateField(blank=True, null=True)
@@ -46,7 +45,7 @@ class ContratoCredito(models.Model):
     estatus_ejecucion = models.CharField(max_length=2, choices=ESTATUS_EJE_CHOICES, blank=False)
 
     def __str__(self):
-        return '{0}- ({1}) ${2}'.format(self.folio, self.clave_socio, self.estatus)
+        return '{0}- ({1}) ${2}'.format(self.pk, self.clave_socio, self.estatus)
 
     def get_validity(self):
         if self.estatus == ContratoCredito.DEUDA_PENDIENTE and self.fecha_inicio:

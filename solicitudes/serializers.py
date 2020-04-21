@@ -52,7 +52,9 @@ class SolicitudCreditoSerializer(serializers.ModelSerializer):
         return object.aval.nombres + ' ' + object.aval.apellido_paterno + ' ' + object.aval.apellido_materno
 
     def get_cargo(self, object):
-        return object.clave_socio.cargo.nombre_de_cargo
+        if object.clave_socio.cargo:
+            return object.clave_socio.cargo.nombre_de_cargo
+        return None
 
     def get_cargo_coop(self, object):
         return ', '.join([c.nombre_cargo_coop for c in object.clave_socio.cargo_coop.all()])
@@ -74,7 +76,7 @@ class SolicitudCreditoSerializer(serializers.ModelSerializer):
 
     def get_contrato(self, object):
         if ContratoCredito.objects.filter(solicitud=object).exists():
-            return object.contrato.folio
+            return object.contrato.pk
         return None
 
     def validate(self, data):
@@ -121,7 +123,7 @@ class SolicitudPartialUpdateSerializer(serializers.ModelSerializer):
 
     def get_contrato(self, object):
         if ContratoCredito.objects.filter(solicitud=object).exists():
-            return object.contrato.folio
+            return object.contrato.pk
         return None
 
     class Meta:
