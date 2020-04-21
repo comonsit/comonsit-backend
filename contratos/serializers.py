@@ -3,6 +3,7 @@ from rest_framework import serializers
 from .models import ContratoCredito
 from .utility import deuda_calculator
 from pagos.models import Pago
+from users.models import User
 
 
 class ContratoCreditoSerializer(serializers.ModelSerializer):
@@ -72,7 +73,7 @@ class ContratoCreditoSerializer(serializers.ModelSerializer):
         tipo_tasa = validated_data.get('tipo_tasa', None)
         if fecha_inicio:
             if instance.fecha_inicio:
-                raise serializers.ValidationError("fecha_inicio": "Este crédito ya tiene fecha inicio")
+                raise serializers.ValidationError({"fecha_inicio": "Este crédito ya tiene fecha inicio"})
             else:
                 instance.fecha_inicio = fecha_inicio
                 instance.tipo_tasa = tipo_tasa
@@ -82,10 +83,10 @@ class ContratoCreditoSerializer(serializers.ModelSerializer):
         referencia_banco = validated_data.get('referencia_banco', None)
         fecha_salida_banco = validated_data.get('fecha_salida_banco', None)
         if estatus_ejecucion == ContratoCredito.POR_COBRAR and instance.estatus_ejecucion != ContratoCredito.POR_COBRAR:
-            raise serializers.ValidationError("estatus_ejecucion": "Un crédito no puede regresarse a estatus Por Cobrar")
+            raise serializers.ValidationError({"estatus_ejecucion": "Un crédito no puede regresarse a estatus Por Cobrar"})
         # TODO: Check special cancellation case!
         elif estatus_ejecucion == ContratoCredito.CANCELADO and current_user.role != User.ROL_GERENTE:
-            raise serializers.ValidationError("estatus_ejecucion": "Sólo un gerente puede CANCELAR")
+            raise serializers.ValidationError({"estatus_ejecucion": "Sólo un gerente puede CANCELAR"})
         instance.estatus_ejecucion = estatus_ejecucion
         instance.referencia_banco = referencia_banco
         instance.fecha_salida_banco = fecha_salida_banco
