@@ -7,13 +7,15 @@ from drf_renderer_xlsx.renderers import XLSXRenderer
 from .models import ContratoCredito
 from .permissions import ContratoCreditoPermissions
 from .serializers import ContratoCreditoSerializer, ContratoCreditoListSerializer, ContratoXLSXSerializer
+from pagos.models import Pago
+from pagos.serializers import PagoSerializer
 from users.permissions import gerenciaOnly
 
 
 class ContratoCreditoViewSet(viewsets.ModelViewSet):
     queryset = ContratoCredito.objects.all().order_by('-fecha_inicio')
     serializer_class = ContratoCreditoSerializer
-    lookup_field = 'folio'  # clave_socio?
+    lookup_field = 'pk'  # clave_socio?
     permission_classes = [permissions.IsAuthenticated, ContratoCreditoPermissions]
 
     def get_serializer_class(self):
@@ -36,6 +38,13 @@ class ContratoCreditoViewSet(viewsets.ModelViewSet):
     def all(self, request):
         q = self.get_queryset()
         serializer = self.get_serializer(q, many=True)
+        return Response(serializer.data)
+
+    @action(methods=['get'], detail=True)
+    def pagos(self, request, pk=None):
+        credito = self.get_object()
+        q = Pago.objects.filter(credito=credito).order_by('-fecha_pago')
+        serializer = PagoSerializer(q, many=True)
         return Response(serializer.data)
 
 
