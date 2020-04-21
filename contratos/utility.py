@@ -32,7 +32,7 @@ def deuda_calculator(credito, fecha=date.today()):
         # INTERES MORATORIO
         plazo_total = credito.plazo + credito.prorroga
         tasa_moratoria = credito.tasa_moratoria if fecha > credito.fecha_vencimiento() else 0
-        interes_moratorio = capital_pendiente*(tasa_moratoria/100)*(meses_transcurridos-plazo_total)
+        interes_moratorio = capital_pendiente*Decimal(tasa_moratoria/100)*(meses_transcurridos-plazo_total)
 
     elif credito.tipo_tasa == ContratoCredito.VARIABLE:
         # CAPITAL (calculated over original ammount, or pending ammount)
