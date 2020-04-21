@@ -19,7 +19,10 @@ class ContratoCreditoSerializer(serializers.ModelSerializer):
     pagado = serializers.SerializerMethodField(read_only=True)
     extra_kwargs = {
         'estatus': {'read_only': True},
-        'solicitud': {'read_only': True}
+        'solicitud': {'read_only': True},
+        'monto': {'read_only': True},
+        'tasa': {'read_only': True},
+        'tasa_moratoria': {'read_only': True}
         }
 
     class Meta:
@@ -62,8 +65,33 @@ class ContratoCreditoSerializer(serializers.ModelSerializer):
     def get_pagado(self, object):
         return Pago.objects.filter(credito=object).aggregate(Sum('cantidad'))['cantidad__sum']
 
-    # def update(self, instance, validated_data):
-    #     pass
+    def update(self, instance, validated_data):
+        current_user = self.context['request'].user
+        # Signing Contract and starting Credit
+        fecha_inicio = validated_data.get('fecha_inicio', None)
+        tipo_tasa = validated_data.get('tipo_tasa', None)
+        if fecha_inicio:
+            if instance.fecha_inicio:
+                raise serializers.ValidationError("fecha_inicio": "Este crédito ya tiene fecha inicio")
+            else:
+                instance.fecha_inicio = fecha_inicio
+                instance.tipo_tasa = tipo_tasa
+
+        # Updating Payment
+        estatus_ejecucion = validated_data.get('estatus_ejecucion', None)
+        referencia_banco = validated_data.get('referencia_banco', None)
+        fecha_salida_banco = validated_data.get('fecha_salida_banco', None)
+        if estatus_ejecucion == ContratoCredito.POR_COBRAR and instance.estatus_ejecucion != ContratoCredito.POR_COBRAR:
+            raise serializers.ValidationError("estatus_ejecucion": "Un crédito no puede regresarse a estatus Por Cobrar")
+        # TODO: Check special cancellation case!
+        elif estatus_ejecucion == ContratoCredito.CANCELADO and current_user.role != User.ROL_GERENTE:
+            raise serializers.ValidationError("estatus_ejecucion": "Sólo un gerente puede CANCELAR")
+        instance.estatus_ejecucion = estatus_ejecucion
+        instance.referencia_banco = referencia_banco
+        instance.fecha_salida_banco = fecha_salida_banco
+
+        instance.save()
+        return instance
 
 
 class ContratoCreditoListSerializer(serializers.ModelSerializer):
