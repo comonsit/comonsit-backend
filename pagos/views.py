@@ -1,13 +1,18 @@
 from rest_framework import viewsets, permissions
 
 from .models import Pago
-from .serializers import PagoSerializer
+from .serializers import PagoSerializer, PagoListSerializer
 from .permissions import gerenciaOrRegion
 
 
 class PagoViewSet(viewsets.ModelViewSet):
     serializer_class = PagoSerializer
     permission_classes = [permissions.IsAuthenticated, gerenciaOrRegion]
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return PagoListSerializer
+        return PagoSerializer
 
     def get_queryset(self):
         if self.request.user.is_gerencia():

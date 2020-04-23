@@ -105,3 +105,19 @@ class PagoSerializer(serializers.ModelSerializer):
             credito.estatus = ContratoCredito.PAGADO
             credito.save()
         return pago
+
+
+class PagoListSerializer(serializers.ModelSerializer):
+    nombres = serializers.SerializerMethodField(read_only=True)
+    region = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = Pago
+        fields = ['folio', 'credito', 'nombres', 'cantidad']
+
+    def get_nombres(self, object):
+        return object.credito.clave_socio.nombres + ' ' + object.credito.clave_socio.apellido_paterno \
+                + ' ' + object.credito.clave_socio.apellido_materno
+
+    def get_region(self, object):
+        return object.credito.clave_socio.comunidad.region.id
