@@ -8,7 +8,7 @@ from .models import ContratoCredito
 from .permissions import ContratoCreditoPermissions
 from .serializers import ContratoCreditoSerializer, ContratoCreditoListSerializer, ContratoXLSXSerializer
 from pagos.models import Pago
-from pagos.serializers import PagoSerializer
+from pagos.serializers import PagoListSerializer
 from users.permissions import gerenciaOnly
 
 
@@ -44,7 +44,7 @@ class ContratoCreditoViewSet(viewsets.ModelViewSet):
     def pagos(self, request, pk=None):
         credito = self.get_object()
         q = Pago.objects.filter(credito=credito).order_by('-fecha_pago')
-        serializer = PagoSerializer(q, many=True)
+        serializer = PagoListSerializer(q, many=True)
         return Response(serializer.data)
 
 
