@@ -52,48 +52,41 @@ class PagoSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"credito": "Este crédito no tiene deuda"})
 
         """
-        check ammount does not exceed debt
+        check ammounts do not exceed debt
         """
         cantidad = data.get('cantidad')
         # substitute for final debt calculator (same in interest check!!!)
         if cantidad > deuda['total']:
             raise serializers.ValidationError({"monto": "El pago es mayor que la deuda"})
+
+        interes_ord = data.get('interes_ord')
+        if interes_ord > deuda['interes_ordinario']:
+            raise serializers.ValidationError({"interes_ord": "El pago es mayor a lo que se debe de interés ordinario"})
+
+        interes_mor = data.get('interes_mor')
+        if interes_mor > deuda['interes_moratorio']:
+            raise serializers.ValidationError({"interes_mor": "El pago es mayor a lo que se debe de interés moratorio"})
+
+        abono_capital = data.get('abono_capital')
+        abono_pendiente = deuda['total'] - deuda['interes_ordinario'] - deuda['interes_moratorio']
+        if abono_capital > abono_pendiente:
+            raise serializers.ValidationError({"abono_pendiente": "El pago es mayor a lo que se debe de capital"})
+
+        """
+        Check quantities match
+        """
+        if cantidad != abono_capital + interes_mor + interes_ord:
+            raise serializers.ValidationError({"cantidad": "Las cantidades a abonar no son equivalentes a la cantidad total"})
         return data
 
     def create(self, validated_data):
-        current_user = self.context['request'].user
         credito = validated_data.pop('credito', None)
         fecha_pago = validated_data.pop('fecha_pago', None)
         deuda = deuda_calculator(credito, fecha_pago)
         cantidad = validated_data.pop('cantidad', None)
-        abono_capital = cantidad
-        interes_mor = 0
-        if deuda['interes_moratorio'] > 0:
-            if abono_capital > deuda['interes_moratorio']:
-                interes_mor = deuda['interes_moratorio']
-            else:
-                interes_mor = abono_capital
-            abono_capital -= interes_mor
-        interes_ord = 0
-        if deuda['interes_ordinario'] > 0:
-            if abono_capital > deuda['interes_ordinario']:
-                interes_ord = deuda['interes_ordinario']
-            else:
-                interes_ord = abono_capital
-            abono_capital -= interes_ord
-
-        # Unnecessary?
-        if cantidad != (abono_capital + interes_ord + interes_mor):
-            raise serializers.ValidationError({"cantidad": "Algo falló en el desglose de cantidad"})
 
         pago = Pago.objects.create(
                 credito=credito,
-                fecha_pago=fecha_pago,
-                cantidad=cantidad,
-                autor=current_user,
-                interes_ord=interes_ord,
-                interes_mor=interes_mor,
-                abono_capital=abono_capital,
                 estatus_actual=credito.get_validity(),
                 deuda_prev_total=deuda['total'],
                 deuda_prev_int_ord=deuda['interes_ordinario'],
@@ -101,7 +94,7 @@ class PagoSerializer(serializers.ModelSerializer):
                 **validated_data)
 
         # Check if payment is complete and change status
-        if deuda['total'] == cantidad:
+        if pago and deuda['total'] == cantidad:
             credito.estatus = ContratoCredito.PAGADO
             credito.save()
         return pago
