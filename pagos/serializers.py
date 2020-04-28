@@ -53,20 +53,19 @@ class PagoSerializer(serializers.ModelSerializer):
         """
         cantidad = data.get('cantidad')
         # substitute for final debt calculator (same in interest check!!!)
-        if cantidad > deuda['total']:
+        if cantidad > deuda['total_deuda']:
             raise serializers.ValidationError({"monto": "El pago es mayor que la deuda"})
 
         interes_ord = data.get('interes_ord')
-        if interes_ord > deuda['interes_ordinario']:
+        if interes_ord > deuda['interes_ordinario_deuda']:
             raise serializers.ValidationError({"interes_ord": "El pago es mayor a lo que se debe de interés ordinario"})
 
         interes_mor = data.get('interes_mor')
-        if interes_mor > deuda['interes_moratorio']:
+        if interes_mor > deuda['interes_moratorio_deuda']:
             raise serializers.ValidationError({"interes_mor": "El pago es mayor a lo que se debe de interés moratorio"})
 
         abono_capital = data.get('abono_capital')
-        abono_pendiente = deuda['total'] - deuda['interes_ordinario'] - deuda['interes_moratorio']
-        if abono_capital > abono_pendiente:
+        if abono_capital > deuda['capital_por_pagar']:
             raise serializers.ValidationError({"abono_pendiente": "El pago es mayor a lo que se debe de capital"})
 
         """
@@ -86,9 +85,9 @@ class PagoSerializer(serializers.ModelSerializer):
         pago = Pago.objects.create(
                 autor=current_user,
                 estatus_actual=credito.get_validity(),
-                deuda_prev_total=deuda['total'],
-                deuda_prev_int_ord=deuda['interes_ordinario'],
-                deuda_prev_int_mor=deuda['interes_moratorio'],
+                deuda_prev_total=deuda['total_deuda'],
+                deuda_prev_int_ord=deuda['interes_ordinario_deuda'],
+                deuda_prev_int_mor=deuda['interes_moratorio_deuda'],
                 **validated_data)
 
         # Check if payment is complete and change status

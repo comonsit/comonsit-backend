@@ -1,3 +1,4 @@
+from datetime import date
 from rest_framework import viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -7,6 +8,7 @@ from drf_renderer_xlsx.renderers import XLSXRenderer
 from .models import ContratoCredito
 from .permissions import ContratoCreditoPermissions
 from .serializers import ContratoCreditoSerializer, ContratoCreditoListSerializer, ContratoXLSXSerializer
+from .utility import deuda_calculator
 from pagos.models import Pago
 from pagos.serializers import PagoListSerializer
 from users.permissions import gerenciaOnly
@@ -46,6 +48,15 @@ class ContratoCreditoViewSet(viewsets.ModelViewSet):
         q = Pago.objects.filter(credito=credito).order_by('-fecha_pago')
         serializer = PagoListSerializer(q, many=True)
         return Response(serializer.data)
+
+    @action(methods=['get'], detail=True)
+    def deuda(self, request, pk=None):
+        credito = self.get_object()
+        date_string = request.query_params.get('fecha', None)
+        d = date.fromisoformat(date_string) if date_string else date.today()
+        deuda = deuda_calculator(credito, d)
+        deuda['estatus_detail'] = credito.get_validity(d)
+        return Response(deuda)
 
 
 class ContratoViewSetXLSX(XLSXFileMixin, viewsets.ReadOnlyModelViewSet):

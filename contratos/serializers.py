@@ -157,7 +157,7 @@ class ContratoXLSXSerializer(serializers.ModelSerializer):
     def get_deuda_al_dia(self, object):
         deuda = deuda_calculator(object)
         if deuda:
-            return deuda['total']
+            return deuda['total_deuda']
         return 0
 
     def get_estatus_detail(self, object):
