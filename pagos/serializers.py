@@ -10,9 +10,6 @@ class PagoSerializer(serializers.ModelSerializer):
         model = Pago
         fields = "__all__"
         extra_kwargs = {
-            'interes_ord': {'read_only': True},
-            'interes_mor': {'read_only': True},
-            'abono_capital': {'read_only': True},
             'estatus_actual': {'read_only': True},
             'autor': {'read_only': True},
             'deuda_prev_total': {'read_only': True},
@@ -80,13 +77,14 @@ class PagoSerializer(serializers.ModelSerializer):
         return data
 
     def create(self, validated_data):
-        credito = validated_data.pop('credito', None)
-        fecha_pago = validated_data.pop('fecha_pago', None)
+        current_user = self.context['request'].user
+        credito = validated_data.get('credito', None)
+        fecha_pago = validated_data.get('fecha_pago', None)
         deuda = deuda_calculator(credito, fecha_pago)
-        cantidad = validated_data.pop('cantidad', None)
+        cantidad = validated_data.get('cantidad', None)
 
         pago = Pago.objects.create(
-                credito=credito,
+                autor=current_user,
                 estatus_actual=credito.get_validity(),
                 deuda_prev_total=deuda['total'],
                 deuda_prev_int_ord=deuda['interes_ordinario'],
