@@ -91,7 +91,7 @@ class PagoSerializer(serializers.ModelSerializer):
                 **validated_data)
 
         # Check if payment is complete and change status
-        if pago and deuda['total'] == cantidad:
+        if pago and deuda['total_deuda'] == cantidad:
             credito.estatus = ContratoCredito.PAGADO
             credito.save()
         return pago

@@ -54,6 +54,8 @@ def deuda_calculator(credito, fecha=date.today()):
             fecha_ultimo_pago = ultimo_pago.fecha_pago
             interes_ord_acumulado = ultimo_pago.deuda_prev_int_ord
             interes_mor_acumulado = ultimo_pago.deuda_prev_int_mor
+            if fecha < fecha_ultimo_pago:
+                raise ValidationError(f"La fecha {fecha.ctime()} es previa al último pago #{ultimo_pago.folio}")
 
         dias_transcurridos = fecha - fecha_ultimo_pago
         tasa_diaria = credito.tasa*12/365
