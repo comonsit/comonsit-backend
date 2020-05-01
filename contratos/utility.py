@@ -11,7 +11,7 @@ def deuda_calculator(credito, fecha=date.today()):
     if (not credito.fecha_inicio or
             credito.estatus_ejecucion != ContratoCredito.COBRADO or
             credito.estatus != ContratoCredito.DEUDA_PENDIENTE):
-        return None
+        return {}
     if fecha < credito.fecha_inicio:
         raise ValidationError(f"La fecha {fecha.ctime()} es previa a {credito.fecha_inicio.ctime()} de {credito}")
 
