@@ -6,11 +6,13 @@ from contratos.utility import deuda_calculator
 
 
 class PagoSerializer(serializers.ModelSerializer):
+    estatus_nuevo = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = Pago
         fields = "__all__"
         extra_kwargs = {
-            'estatus_actual': {'read_only': True},
+            'estatus_previo': {'read_only': True},
             'autor': {'read_only': True},
             'deuda_prev_total': {'read_only': True},
             'deuda_prev_int_ord': {'read_only': True},
@@ -84,7 +86,7 @@ class PagoSerializer(serializers.ModelSerializer):
 
         pago = Pago.objects.create(
                 autor=current_user,
-                estatus_actual=credito.get_validity(),
+                estatus_previo=credito.get_validity(),
                 deuda_prev_total=deuda['total_deuda'],
                 deuda_prev_int_ord=deuda['interes_ordinario_deuda'],
                 deuda_prev_int_mor=deuda['interes_moratorio_deuda'],
@@ -96,6 +98,9 @@ class PagoSerializer(serializers.ModelSerializer):
             credito.save()
         return pago
 
+    def get_estatus_nuevo(self, object):
+        return object.credito.get_validity()
+
 
 class PagoListSerializer(serializers.ModelSerializer):
     nombres = serializers.SerializerMethodField(read_only=True)
@@ -103,7 +108,7 @@ class PagoListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Pago
-        fields = ['folio', 'credito', 'fecha_pago', 'nombres', 'region', 'cantidad']
+        fields = ['id', 'credito', 'fecha_pago', 'nombres', 'region', 'cantidad']
 
     def get_nombres(self, object):
         return object.credito.clave_socio.nombres + ' ' + object.credito.clave_socio.apellido_paterno \

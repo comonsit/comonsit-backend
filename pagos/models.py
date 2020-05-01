@@ -8,7 +8,6 @@ class Pago(models.Model):
         (ContratoCredito.VENCIDO, 'Vencido'),
     ]
 
-    folio = models.AutoField(primary_key=True)
     credito = models.ForeignKey('contratos.ContratoCredito', on_delete=models.CASCADE, blank=False, related_name='pago')
     fecha_pago = models.DateField(blank=False)
     cantidad = models.DecimalField(max_digits=8, decimal_places=2, blank=False)
@@ -18,7 +17,7 @@ class Pago(models.Model):
     interes_ord = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
     interes_mor = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
     abono_capital = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
-    estatus_actual = models.CharField(max_length=2, choices=ESTATUS_CHOICES, blank=False)
+    estatus_previo = models.CharField(max_length=2, choices=ESTATUS_CHOICES, blank=False)
     deuda_prev_total = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
     deuda_prev_int_ord = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
     deuda_prev_int_mor = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
