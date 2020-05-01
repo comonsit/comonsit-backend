@@ -108,7 +108,7 @@ class PagoListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Pago
-        fields = ['id', 'credito', 'fecha_pago', 'nombres', 'region', 'cantidad']
+        fields = ['id', 'credito', 'fecha_pago', 'nombres', 'region', 'cantidad', 'estatus_previo']
 
     def get_nombres(self, object):
         return object.credito.clave_socio.nombres + ' ' + object.credito.clave_socio.apellido_paterno \
