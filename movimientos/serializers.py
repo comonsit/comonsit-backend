@@ -1,3 +1,4 @@
+from datetime import date
 from rest_framework import serializers
 from .models import Movimiento
 
@@ -28,5 +29,13 @@ class MovimientoSerializer(serializers.ModelSerializer):
         current_user = self.context['request'].user
         if not aportacion and not current_user.is_gerencia():
             raise serializers.ValidationError("Solo gerencia puede registrar Retiros")
+
+        fecha_entrega = data.get('fecha_entrega')
+        tipo_de_movimiento = data.get('tipo_de_movimiento')
+        today = date.today()
+        if (tipo_de_movimiento == Movimiento.EFECTIVO and
+                (fecha_entrega.year != today.year or
+                 fecha_entrega.month != today.month)):
+            raise serializers.ValidationError("Las aportaciones en efectivo sólo pueden ser del mes en curso.")
 
         return data
