@@ -1,3 +1,4 @@
+from datetime import date
 from django.db.models import Sum
 from rest_framework import serializers
 from .models import ContratoCredito
@@ -15,8 +16,6 @@ class ContratoCreditoSerializer(serializers.ModelSerializer):
     comunidad = serializers.SerializerMethodField(read_only=True)
     proceso = serializers.SerializerMethodField(read_only=True)
     tipo_credito = serializers.SerializerMethodField(read_only=True)
-    intereses = serializers.SerializerMethodField(read_only=True)
-    total = serializers.SerializerMethodField(read_only=True)
     pagado = serializers.SerializerMethodField(read_only=True)
     extra_kwargs = {
         'estatus': {'read_only': True},
@@ -31,7 +30,7 @@ class ContratoCreditoSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def get_deuda_al_dia(self, object):
-        return deuda_calculator(object)
+        return deuda_calculator(object, date.today())
 
     def get_estatus_detail(self, object):
         return object.get_validity()
@@ -54,14 +53,6 @@ class ContratoCreditoSerializer(serializers.ModelSerializer):
 
     def get_tipo_credito(self, object):
         return object.solicitud.get_tipo_credito_display()
-
-    # TODO: Check if should use deuda_calculator instead!!
-    # with the next two
-    def get_intereses(self, object):
-        return object.monto*(object.tasa/100)*object.plazo
-
-    def get_total(self, object):
-        return object.monto + object.monto*(object.tasa/100)*object.plazo
 
     def get_pagado(self, object):
         return Pago.objects.filter(credito=object).aggregate(Sum('cantidad'))['cantidad__sum']
@@ -121,7 +112,7 @@ class ContratoCreditoListSerializer(serializers.ModelSerializer):
         return object.get_validity()
 
     def get_deuda_al_dia(self, object):
-        return deuda_calculator(object)
+        return deuda_calculator(object, date.today())
 
     def get_region(self, object):
         return object.clave_socio.comunidad.region.id
@@ -157,7 +148,7 @@ class ContratoXLSXSerializer(serializers.ModelSerializer):
                 + ' ' + object.clave_socio.apellido_materno
 
     def get_deuda_al_dia(self, object):
-        deuda = deuda_calculator(object)
+        deuda = deuda_calculator(object, date.today())
         if deuda:
             return deuda['total_deuda']
         return 0

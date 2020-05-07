@@ -1,4 +1,3 @@
-from datetime import date
 from decimal import Decimal
 from dateutil.relativedelta import relativedelta
 from django.db.models import Sum
@@ -7,7 +6,7 @@ from .models import ContratoCredito
 from pagos.models import Pago
 
 
-def deuda_calculator(credito, fecha=date.today()):
+def deuda_calculator(credito, fecha):
     if (not credito.fecha_inicio or
             credito.estatus_ejecucion != ContratoCredito.COBRADO or
             credito.estatus != ContratoCredito.DEUDA_PENDIENTE):
