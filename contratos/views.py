@@ -10,7 +10,7 @@ from .permissions import ContratoCreditoPermissions
 from .serializers import ContratoCreditoSerializer, ContratoCreditoListSerializer, ContratoXLSXSerializer
 from .utility import deuda_calculator
 from pagos.models import Pago
-from pagos.serializers import PagoListSerializer
+from pagos.serializers import PagoSerializer
 from users.permissions import gerenciaOnly
 
 
@@ -46,7 +46,7 @@ class ContratoCreditoViewSet(viewsets.ModelViewSet):
     def pagos(self, request, pk=None):
         credito = self.get_object()
         q = Pago.objects.filter(credito=credito).order_by('-fecha_pago')
-        serializer = PagoListSerializer(q, many=True)
+        serializer = PagoSerializer(q, many=True)
         return Response(serializer.data)
 
     @action(methods=['get'], detail=True)
