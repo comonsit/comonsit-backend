@@ -19,5 +19,6 @@ class Pago(models.Model):
     abono_capital = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
     estatus_previo = models.CharField(max_length=2, choices=ESTATUS_CHOICES, blank=False)
     deuda_prev_total = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
+    deuda_prev_capital = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
     deuda_prev_int_ord = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
     deuda_prev_int_mor = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)

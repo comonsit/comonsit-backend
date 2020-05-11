@@ -15,6 +15,7 @@ class PagoSerializer(serializers.ModelSerializer):
             'estatus_previo': {'read_only': True},
             'autor': {'read_only': True},
             'deuda_prev_total': {'read_only': True},
+            'deuda_prev_capital': {'read_only': True},
             'deuda_prev_int_ord': {'read_only': True},
             'deuda_prev_int_mor': {'read_only': True},
             }
@@ -88,6 +89,7 @@ class PagoSerializer(serializers.ModelSerializer):
                 autor=current_user,
                 estatus_previo=credito.get_validity(),
                 deuda_prev_total=deuda['total_deuda'],
+                deuda_prev_capital=deuda['capital_por_pagar'],
                 deuda_prev_int_ord=deuda['interes_ordinario_deuda'],
                 deuda_prev_int_mor=deuda['interes_moratorio_deuda'],
                 **validated_data)
