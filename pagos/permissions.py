@@ -25,4 +25,4 @@ class gerenciaOrRegion(BasePermission):
         if request.user.is_gerencia():
             return True
         # TODO: Raise meaningful error attempting to create or read from unauthorized region
-        return request.user.clave_socio.comunidad.region == obj.clave_socio.comunidad.region
+        return request.user.clave_socio.comunidad.region == obj.credito.clave_socio.comunidad.region

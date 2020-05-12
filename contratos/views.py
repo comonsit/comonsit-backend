@@ -34,7 +34,7 @@ class ContratoCreditoViewSet(viewsets.ModelViewSet):
 
         if self.request.user.is_gerencia():
             return q
-        return q.filter(solicitud__promotor=self.request.user)
+        return q.filter(clave_socio__comunidad__region=self.request.user.clave_socio.comunidad.region)
 
     @action(methods=['get'], detail=False)
     def all(self, request):

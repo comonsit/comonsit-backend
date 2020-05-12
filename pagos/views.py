@@ -20,7 +20,7 @@ class PagoViewSet(viewsets.ModelViewSet):
         if self.request.user.is_gerencia():
             queryset = Pago.objects.all().order_by('-fecha_pago')
         else:
-            queryset = Pago.objects.filter(clave_socio__comunidad__region=self.request.user.clave_socio.comunidad.region).order_by('-fecha_pago')
+            queryset = Pago.objects.filter(credito__clave_socio__comunidad__region=self.request.user.clave_socio.comunidad.region).order_by('-fecha_pago')
         # TODO: Give Response of unAuthorized socio Search.
         clave_socio = self.request.query_params.get('clave_socio', None)
         if clave_socio:
@@ -39,6 +39,6 @@ class PagoViewSetXLSX(XLSXFileMixin, viewsets.ReadOnlyModelViewSet):
         if self.request.user.is_gerencia():
             queryset = Pago.objects.all().order_by('-fecha_pago')
         else:
-            queryset = Pago.objects.filter(clave_socio__comunidad__region=self.request.user.clave_socio.comunidad.region).order_by('-fecha_pago')
+            queryset = Pago.objects.filter(credito__clave_socio__comunidad__region=self.request.user.clave_socio.comunidad.region).order_by('-fecha_pago')
         # TODO: Pagination limit?
         return queryset
