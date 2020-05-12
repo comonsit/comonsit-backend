@@ -23,7 +23,7 @@ from bancos.views import ConceptoBancoViewSet, SubCuentaViewSet, MovimientoBanco
 from contratos.views import ContratoCreditoViewSet, ContratoViewSetXLSX
 from solicitudes.views import SolicitudCreditoViewSet, ChatSolicitudViewSet
 from movimientos.views import MovimientoViewSet
-from pagos.views import PagoViewSet
+from pagos.views import PagoViewSet, PagoViewSetXLSX
 from socios.views import SocioViewSet, SocioViewSetXLSX
 from tsumbalil.views import CargoViewSet, CargoCoopViewSet, RegionViewSet, \
                             ComunidadViewSet, EmpresaViewSet, FuenteViewSet, \
@@ -42,6 +42,7 @@ routers.register(r"empresas", EmpresaViewSet)
 routers.register(r"fuentes", FuenteViewSet)
 routers.register(r"puestos", PuestoViewSet)
 routers.register(r"pagos", PagoViewSet, basename='pagos')
+routers.register(r"pagosXLSX", PagoViewSetXLSX, basename='pagosXLSX')
 routers.register(r"cargos-coop", CargoCoopViewSet, basename='cargos-coop')
 routers.register(r"comunidades", ComunidadViewSet)
 routers.register(r"movimientos", MovimientoViewSet, basename='movimientos')
