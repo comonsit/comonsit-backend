@@ -104,6 +104,12 @@ class PagoSerializer(serializers.ModelSerializer):
         return object.credito.get_validity()
 
 
+class PagoPartialUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Pago
+        fields = ['id', 'fecha_banco', 'referencia_banco']
+
+
 class PagoListSerializer(serializers.ModelSerializer):
     nombres = serializers.SerializerMethodField(read_only=True)
     region = serializers.SerializerMethodField(read_only=True)

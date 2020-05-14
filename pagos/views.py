@@ -3,7 +3,7 @@ from drf_renderer_xlsx.mixins import XLSXFileMixin
 from drf_renderer_xlsx.renderers import XLSXRenderer
 
 from .models import Pago
-from .serializers import PagoSerializer, PagoListSerializer
+from .serializers import PagoSerializer, PagoListSerializer, PagoPartialUpdateSerializer
 from .permissions import gerenciaOrRegion
 
 
@@ -12,7 +12,9 @@ class PagoViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated, gerenciaOrRegion]
 
     def get_serializer_class(self):
-        if self.action == 'list':
+        if self.action == 'partial_update':
+            return PagoPartialUpdateSerializer
+        elif self.action == 'list':
             return PagoListSerializer
         return PagoSerializer
 
