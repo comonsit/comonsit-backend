@@ -25,11 +25,10 @@ class ContratoCreditoViewSet(viewsets.ModelViewSet):
             return ContratoCreditoListSerializer
         return ContratoCreditoSerializer
 
-    # Is Gerencia or Owner
+    # Is Gerencia or Region
     def get_queryset(self):
-        if self.action == 'all':
-            q = ContratoCredito.objects.all().order_by('-fecha_inicio')
-        else:
+        q = ContratoCredito.objects.all().order_by('-fecha_inicio')
+        if self.action == 'list' and self.action != 'all':
             q = ContratoCredito.objects.filter(estatus=ContratoCredito.DEUDA_PENDIENTE).order_by('-fecha_inicio')
 
         if self.request.user.is_gerencia():
