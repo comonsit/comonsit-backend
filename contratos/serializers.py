@@ -157,7 +157,7 @@ class ContratoXLSXSerializer(serializers.ModelSerializer):
         return object.get_validity()
 
     def get_fecha_vencimiento(self, object):
-        return object.fecha_vencimiento()
+        return object.fecha_vencimiento().isoformat()
 
     def get_comunidad(self, object):
         return object.clave_socio.comunidad.nombre_de_comunidad
