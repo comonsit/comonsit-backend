@@ -50,7 +50,9 @@ INSTALLED_APPS = [
     'users',
     'solicitudes',
     'movimientos',
-    'pagos'
+    'pagos',
+
+    'ermitas'
 ]
 
 MIDDLEWARE = [
