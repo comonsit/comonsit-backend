@@ -16,6 +16,7 @@ class InterzonaAdmin(admin.ModelAdmin):
 
 class InegiLocalidadAdmin(admin.ModelAdmin):
     model = InegiLocalidad
+    list_display = ("nombre", "ubicacion")
 
 admin.site.register(Ermita, ErmitaAdmin)
 admin.site.register(Zona, ZonaAdmin)

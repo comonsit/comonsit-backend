@@ -1,5 +1,4 @@
-from django.db import models
-from comonSitDjango.constants import PROCESOS
+from django.contrib.gis.db import models
 
 class Interzona(models.Model):
     interzona_id = models.PositiveSmallIntegerField(primary_key=True)
@@ -27,3 +26,4 @@ class InegiLocalidad(models.Model):
     altitud = models.IntegerField()
     longitud = models.FloatField()
     latitud = models.FloatField()
+    ubicacion = models.PointField(srid=4326)
