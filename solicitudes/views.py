@@ -1,5 +1,7 @@
 from rest_framework import viewsets, permissions
+from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound
+from rest_framework.response import Response
 
 from .models import SolicitudCredito, ChatSolicitudCredito
 from .permissions import SolicitudPermissions, ChatPermissions
@@ -16,7 +18,7 @@ class SolicitudCreditoViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action == 'partial_update':
             return SolicitudPartialUpdateSerializer
-        if self.action == 'list':
+        if self.action == 'list' or self.action == 'all':
             return SolicitudListSerializer
         return SolicitudCreditoSerializer
 
@@ -28,9 +30,18 @@ class SolicitudCreditoViewSet(viewsets.ModelViewSet):
 
     # Is Gerencia or Owner
     def get_queryset(self):
+        q = SolicitudCredito.objects.all().order_by('-fecha_solicitud')
+        if self.action == 'list' and self.action != 'all':
+            q = q.filter(estatus_evaluacion=SolicitudCredito.REVISION)
         if self.request.user.is_gerencia():
-            return SolicitudCredito.objects.all().order_by('-fecha_solicitud')
-        return SolicitudCredito.objects.filter(promotor=self.request.user).order_by('-fecha_solicitud')
+            return q
+        return q.filter(promotor=self.request.user)
+
+    @action(methods=['get'], detail=False)
+    def all(self, request):
+        q = self.get_queryset()
+        serializer = self.get_serializer(q, many=True)
+        return Response(serializer.data)
 
 
 class ChatSolicitudViewSet(viewsets.ModelViewSet):
