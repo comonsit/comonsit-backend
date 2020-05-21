@@ -27,12 +27,18 @@ class AcopioViewSet(viewsets.ModelViewSet):
 
     @action(methods=['get'], detail=False, url_path='year_sum', url_name='year_sum')
     def year_sum(self, request):
+        query = Acopio.objects.all().order_by('-fecha__year')
         clave_socio = request.query_params.get('clave_socio', None)
+        comunidad = request.query_params.get('comunidad', None)
+        region = request.query_params.get('region', None)
+        # TODO: Validate if correct queries
         if clave_socio:
-            # TODO: check if socio exists
-            query = Acopio.objects.filter(clave_socio=clave_socio).order_by('-fecha__year')
-        else:
-            query = Acopio.objects.all().order_by('-fecha__year')
+            query = query.filter(clave_socio=clave_socio)
+        elif comunidad:
+            query = query.filter(clave_socio__comunidad=comunidad)
+        elif region:
+            query = query.filter(clave_socio__comunidad__region=region)
+
         q = query.values('fecha__year').annotate(
                 year_sum_cf=Sum('ingreso', filter=Q(tipo_de_producto='CF')),
                 year_sum_mi=Sum('ingreso', filter=Q(tipo_de_producto='MI')),
