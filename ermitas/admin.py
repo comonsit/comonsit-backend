@@ -1,25 +1,12 @@
-from django.contrib import admin
+from django.contrib.gis import admin
 from .models import Ermita, Zona, Municipio, Interzona, InegiLocalidad
 
+admin.site.register(Ermita)
+admin.site.register(Zona)
+admin.site.register(Interzona)
+admin.site.register(Municipio)
 
-class ErmitaAdmin(admin.ModelAdmin):
-    model = Ermita
-
-class ZonaAdmin(admin.ModelAdmin):
-    model = Zona
-
-class MunicipioAdmin(admin.ModelAdmin):
-    model = Municipio
-
-class InterzonaAdmin(admin.ModelAdmin):
-    model = Interzona
-
-class InegiLocalidadAdmin(admin.ModelAdmin):
+class InegiLocalidadAdmin(admin.GeoModelAdmin):
     model = InegiLocalidad
-    list_display = ("nombre", "ubicacion")
 
-admin.site.register(Ermita, ErmitaAdmin)
-admin.site.register(Zona, ZonaAdmin)
-admin.site.register(Interzona, InterzonaAdmin)
-admin.site.register(Municipio, MunicipioAdmin)
 admin.site.register(InegiLocalidad, InegiLocalidadAdmin)
