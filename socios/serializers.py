@@ -3,15 +3,29 @@ from .models import Socio
 
 
 class SocioSerializer(serializers.ModelSerializer):
+    nombre_productor = serializers.SerializerMethodField(read_only=True)
+    nombre_region = serializers.SerializerMethodField(read_only=True)
+    nombre_comunidad = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Socio
         fields = "__all__"
 
+    def get_nombre_productor(self, object):
+        return object.nombres + ' ' + object.apellido_paterno \
+                + ' ' + object.apellido_materno
+
+    def get_nombre_region(self, object):
+        return object.comunidad.region.nombre_de_region
+
+    def get_nombre_comunidad(self, object):
+        return object.comunidad.nombre_de_comunidad
+
 
 class SocioListSerializer(serializers.ModelSerializer):
     region = serializers.SerializerMethodField(read_only=True)
     nombre_comunidad = serializers.SerializerMethodField(read_only=True)
+
 
     class Meta:
         model = Socio
@@ -30,6 +44,8 @@ class SocioListSerializer(serializers.ModelSerializer):
         nombre_comunidad = object.comunidad.nombre_de_comunidad
         return nombre_comunidad
 
+    def get_tipo_credito_nombre(self, object):
+        return object.get_tipo_credito_display()
 
 class SocioSerializerXLS(serializers.ModelSerializer):
     cargo_coop = serializers.SerializerMethodField(read_only=True)
