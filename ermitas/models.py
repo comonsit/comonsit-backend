@@ -31,18 +31,6 @@ class Municipio(models.Model):
     def __str__(self):
         return "Municipio %d: %s" % (self.municipio_id, self.nombre)
 
-class Ermita(models.Model):
-    ermita_id = models.PositiveSmallIntegerField(primary_key=True)
-    nombre = models.CharField(max_length=100)
-    municipio = models.ForeignKey(Municipio, on_delete=models.CASCADE)
-    zona = models.ForeignKey(Zona, on_delete=models.CASCADE)
-
-    class Meta:
-        ordering = ["nombre"]
-
-    def __str__(self):
-        return "Ermita %d: %s" % (self.ermita_id, self.nombre)
-
 class InegiLocalidad(models.Model):
     localidad_id = models.IntegerField(primary_key=True)
 
@@ -60,6 +48,27 @@ class InegiLocalidad(models.Model):
     class Meta:
         # sort by municipio and then by nombre
         ordering = ["municipio", "nombre"]
+        verbose_name = "INEGI localidad"
+        verbose_name_plural = "INEGI localidades"
 
     def __str__(self):
         return "InegiLocalidad %s in %s" % (self.nombre, str(self.municipio))
+
+class Ermita(models.Model):
+    ermita_id = models.PositiveSmallIntegerField(primary_key=True)
+    nombre = models.CharField(max_length=100)
+    municipio = models.ForeignKey(Municipio, on_delete=models.CASCADE)
+    zona = models.ForeignKey(Zona, on_delete=models.CASCADE)
+
+    # a possible link to an INEGI Localidad. A match is not always possible
+    # and sometimes they are a little complicated, so we give an option
+    # for a human-readable comment about the quality of the match as well
+    localidad = models.ForeignKey(InegiLocalidad, on_delete=models.CASCADE,
+        null=True, blank=True)
+    localidad_nota = models.CharField(max_length=100, blank=True)
+
+    class Meta:
+        ordering = ["nombre"]
+
+    def __str__(self):
+        return "Ermita %d: %s" % (self.ermita_id, self.nombre)
