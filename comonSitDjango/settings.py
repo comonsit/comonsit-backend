@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.gis',
 
     'psycopg2',
     'rest_framework',
@@ -50,7 +51,9 @@ INSTALLED_APPS = [
     'users',
     'solicitudes',
     'movimientos',
-    'pagos'
+    'pagos',
+
+    'ermitas'
 ]
 
 MIDDLEWARE = [
