@@ -27,7 +27,7 @@ class AcopioViewSet(viewsets.ModelViewSet):
 
     @action(methods=['get'], detail=False, url_path='year_sum', url_name='year_sum')
     def year_sum(self, request):
-        query = Acopio.objects.all().order_by('-fecha__year')
+        query = Acopio.objects.all().order_by('fecha__year')
         clave_socio = request.query_params.get('clave_socio', None)
         comunidad = request.query_params.get('comunidad', None)
         region = request.query_params.get('region', None)
