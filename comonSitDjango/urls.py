@@ -19,7 +19,8 @@ from rest_framework import routers
 from rest_framework_simplejwt import views as jwt_views
 
 from acopios.views import AcopioViewSet, AcopioViewSetXLSX
-from bancos.views import ConceptoBancoViewSet, SubCuentaViewSet, MovimientoBancoViewSet
+from bancos.views import BancoViewSet, SubCuentaViewSet, \
+                         MovimientoBancoViewSet, RegistroContableViewSet
 from contratos.views import ContratoCreditoViewSet, ContratoViewSetXLSX
 from solicitudes.views import SolicitudCreditoViewSet, ChatSolicitudViewSet
 from movimientos.views import MovimientoViewSet
@@ -35,7 +36,7 @@ routers = routers.DefaultRouter()
 routers.register(r"acopios", AcopioViewSet)
 routers.register(r"acopiosXLSX", AcopioViewSetXLSX, basename='acopiosxlsx')
 routers.register(r"cargos", CargoViewSet)
-routers.register(r"conceptos-banco", ConceptoBancoViewSet, basename='conceptos-banco')
+routers.register(r"banco", BancoViewSet, basename='banco')
 routers.register(r"contratos", ContratoCreditoViewSet)
 routers.register(r"contratosXLSX", ContratoViewSetXLSX, basename='contratosXLSX')
 routers.register(r"empresas", EmpresaViewSet)
@@ -50,6 +51,7 @@ routers.register(r"mov-bancos", MovimientoBancoViewSet, basename='mov-bancos')
 routers.register(r"solic-creditos", SolicitudCreditoViewSet)
 routers.register(r"solic-creditos-comm", ChatSolicitudViewSet, basename='solic-creditos-comm')
 routers.register(r"regiones", RegionViewSet)
+routers.register(r"registros-contables", RegistroContableViewSet, basename='registros-contables')
 routers.register(r"socios", SocioViewSet)
 routers.register(r"sociosXLSX", SocioViewSetXLSX, basename='sociosxlsx')
 routers.register(r"subcuentas", SubCuentaViewSet)

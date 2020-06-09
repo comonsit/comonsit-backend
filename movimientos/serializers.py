@@ -9,6 +9,9 @@ class MovimientoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Movimiento
         fields = "__all__"
+        extra_kwargs = {
+            'referencia_banco_id': {'read_only': True}
+            }
 
     def validate(self, data):
         """

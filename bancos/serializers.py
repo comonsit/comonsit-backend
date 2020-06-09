@@ -1,5 +1,11 @@
 from rest_framework import serializers
-from .models import ConceptoBanco, SubCuenta, MovimientoBanco
+from .models import Banco, SubCuenta, MovimientoBanco, RegistroContable
+
+
+class BancoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Banco
+        fields = "__all__"
 
 
 class SubCuentaSerializer(serializers.ModelSerializer):
@@ -8,13 +14,13 @@ class SubCuentaSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class ConceptoBancoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ConceptoBanco
-        fields = "__all__"
-
-
 class MovimientoBancoSerializer(serializers.ModelSerializer):
     class Meta:
         model = MovimientoBanco
+        fields = "__all__"
+
+
+class RegistroContableSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RegistroContable
         fields = "__all__"
