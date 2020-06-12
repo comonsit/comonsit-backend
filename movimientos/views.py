@@ -4,8 +4,9 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from .models import Movimiento
-from .serializers import MovimientoSerializer
+from .serializers import MovimientoSerializer, MovimientoConcSerializer
 from .permissions import gerenciaOrRegion
+from users.permissions import gerenciaOnly
 
 
 class MovimientoViewSet(viewsets.ModelViewSet):
@@ -41,3 +42,9 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             total = aportaciones - retiros
             return Response({'saldo': total, 'aportaciones': aportaciones, 'retiros': retiros})
         return Response({'message': 'Agrega la clave de un socio a consultar'})
+
+
+class MovimientoConcViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Movimiento.objects.filter(referencia_banco_id__isnull=True).order_by('-fecha_entrega')
+    serializer_class = MovimientoConcSerializer
+    permission_classes = [permissions.IsAuthenticated, gerenciaOnly]

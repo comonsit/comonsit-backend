@@ -39,8 +39,8 @@ class MovimientoBanco(models.Model):
 class RegistroContable(models.Model):
     subcuenta = models.ForeignKey(SubCuenta, on_delete=models.CASCADE, blank=False)
     movimiento_banco = models.ForeignKey(MovimientoBanco, on_delete=models.CASCADE, blank=False)
-    aport_retiro = models.ForeignKey('movimientos.movimiento', on_delete=models.CASCADE, blank=True)
-    pago = models.ForeignKey('pagos.pago', on_delete=models.CASCADE, blank=True)
+    aport_retiro = models.ForeignKey('movimientos.movimiento', on_delete=models.CASCADE, blank=True, null=True)
+    pago = models.ForeignKey('pagos.pago', on_delete=models.CASCADE, blank=True, null=True)
     referencia = models.CharField(max_length=60, blank=False)
     cantidad = models.DecimalField(max_digits=8, decimal_places=2, blank=False)
     ingr_egr = models.BooleanField(blank=False, default=True)  # ingr = True // egr = False

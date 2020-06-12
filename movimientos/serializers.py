@@ -42,3 +42,18 @@ class MovimientoSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Las aportaciones en efectivo sólo pueden ser del mes en curso.")
 
         return data
+
+
+class MovimientoConcSerializer(serializers.ModelSerializer):
+    nombre_socio = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = Movimiento
+        fields = ['nombre_socio', 'fecha_entrega', 'monto', 'aportacion',
+                  'tipo_de_movimiento', 'fecha_banco', 'referencia_banco',
+                  'proceso'
+                  ]
+
+    def get_nombre_socio(self, object):
+        return object.clave_socio.nombres + ' ' + object.clave_socio.apellido_paterno \
+                + ' ' + object.clave_socio.apellido_materno
