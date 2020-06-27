@@ -21,7 +21,6 @@ class Movimiento(models.Model):
     responsable_entrega = models.CharField(max_length=50, blank=True)
     fecha_banco = models.DateField(blank=True, null=True)
     referencia_banco = models.CharField(max_length=20, blank=True, null=True)
-    referencia_banco_id = models.ForeignKey('bancos.MovimientoBanco', on_delete=models.CASCADE, blank=True, null=True, related_name='movimiento')
     autor = models.ForeignKey('users.User', on_delete=models.CASCADE, blank=False, related_name='movimiento_autor')
 
     def __str__(self):

@@ -41,7 +41,7 @@ class ContratoCredito(models.Model):
     prorroga = models.PositiveSmallIntegerField(blank=False, default=0)  # number of months
     estatus = models.CharField(max_length=2, choices=ESTATUS_CHOICES, blank=False)
     referencia_banco = models.CharField(max_length=20, blank=True, null=True)
-    fecha_salida_banco = models.DateField(blank=True, null=True)
+    fecha_banco = models.DateField(blank=True, null=True)
     estatus_ejecucion = models.CharField(max_length=2, choices=ESTATUS_EJE_CHOICES, blank=False)
     iva = models.BooleanField(default=True)
 

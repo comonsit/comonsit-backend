@@ -18,8 +18,7 @@ class PagoSerializer(serializers.ModelSerializer):
             'deuda_prev_total': {'read_only': True},
             'deuda_prev_capital': {'read_only': True},
             'deuda_prev_int_ord': {'read_only': True},
-            'deuda_prev_int_mor': {'read_only': True},
-            'referencia_banco_id': {'read_only': True},
+            'deuda_prev_int_mor': {'read_only': True}
             }
 
     def validate(self, data):

@@ -72,7 +72,7 @@ class ContratoCreditoSerializer(serializers.ModelSerializer):
         # Updating Payment
         estatus_ejecucion = validated_data.get('estatus_ejecucion', None)
         referencia_banco = validated_data.get('referencia_banco', None)
-        fecha_salida_banco = validated_data.get('fecha_salida_banco', None)
+        fecha_banco = validated_data.get('fecha_banco', None)
         iva = validated_data.get('iva', True)
         if estatus_ejecucion == ContratoCredito.POR_COBRAR and instance.estatus_ejecucion != ContratoCredito.POR_COBRAR:
             raise serializers.ValidationError({"estatus_ejecucion": "Un crédito no puede regresarse a estatus Por Cobrar"})
@@ -81,7 +81,7 @@ class ContratoCreditoSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"estatus_ejecucion": "Sólo un gerente puede CANCELAR"})
         instance.estatus_ejecucion = estatus_ejecucion
         instance.referencia_banco = referencia_banco
-        instance.fecha_salida_banco = fecha_salida_banco
+        instance.fecha_banco = fecha_banco
         instance.iva = iva
 
         instance.save()
