@@ -1,6 +1,7 @@
 from rest_framework import serializers
-from movimientos.serializers import MovimientoSerializer
-from pagos.serializers import PagoListSerializer
+from contratos.models import ContratoCredito
+from movimientos.models import Movimiento
+from pagos.models import Pago
 from .models import Banco, SubCuenta, MovimientoBanco, RegistroContable
 
 
@@ -23,72 +24,102 @@ class RegistroContableSerializer(serializers.ModelSerializer):
 
 
 class MovimientoBancoSerializer(serializers.ModelSerializer):
-    movs = MovimientoSerializer(many=True)
-    pags = PagoListSerializer(many=True)
-    # TODO: Check if we can use with non existing registries
-    # others = RegistroContableSerializer(many=True)
+    # TODO: change for banco ID or serializer?
+    banco = serializers.IntegerField(write_only=True)
+    selectedItems = serializers.ListField(child=serializers.IntegerField(), allow_empty=True, write_only=True)
+    dataType = serializers.CharField(max_length=20, min_length=4, allow_blank=False, write_only=True)
 
     class Meta:
         model = MovimientoBanco
         fields = "__all__"
-        extra_kwargs = {
-            'movs': {'write_only': True},
-            'pags': {'write_only': True},
-            # 'others': {'write_only': True},
-            }
 
     def validate(self, data):
+        """
+        Check General type of Movement
+        """
+        dataType = data.get('dataType')
+        # TODO: CHANGE FOR NON MAGIC WORDS!!
+        if dataType not in ["Movimientos", "Pagos", "EjCreditos", "Otros"]:
+            raise serializers.ValidationError({"dataType": f'Error inesperado, movimiento no válido.'})
         # TODO:
         """
-        Check that acopios have not been linked
+        Check that acopios exist and have not been linked
         """
         # TODO:
         """
-        Check that pagos have not been linked
+        Check that pagos exist and have not been linked
+        """
+        # TODO:
+        """
+        Check that ej_créditos exist and have not been linked
         """
         # TODO:
         """
         Check that ammounts add correctly
         """
+        """
+        Check for valid bank?
+        """
         return data
 
     def create(self, validated_data):
-        movs_data = validated_data.pop('movs')
-        pags_data = validated_data.pop('pags')
-        # others_data = validated_data.pop('others')
+        banco = validated_data.pop('banco')
+        data_type = validated_data.pop('dataType')
+        selected_items = validated_data.pop('selectedItems')
+        cantidad = validated_data.get('cantidad')
 
         instance = MovimientoBanco.objects.create(**validated_data)
 
-        for mv in movs_data:
-            print(mv)
-            # mv.referencia_banco_id = instance
-            # socio_nombre = mv.clave_socio.nombres + ' ' + mv.clave_socio.apellido_paterno + ' ' + mv.clave_socio.apellido_materno
-            # # TODO: update Movimientos SUBCUENTA
-            # # TODO: remove magic number subcuenta
-            # RegistroContable.objects.create(subcuenta=2, movimiento_banco=instance,
-            #                                 aport_retiro=mv, referencia=socio_nombre,
-            #                                 cantidad=mv.monto, ingr_egr=mv.aportacion)
+        if data_type == "Movimientos":
+            for movimiento in selected_items:
+                mov = Movimiento.objects.get(id=movimiento)
+                subcuenta_id = 1 if mov.aportacion else 2  # TODO: AVOID MAGIC NUMBERS!
+                subcuenta = SubCuenta.objects.get(id=subcuenta_id)
+                ref = f"{'Aportación' if mov.aportacion else 'Retiro'} de {mov.clave_socio.nombres}"
+                RegistroContable.objects.create(
+                    subcuenta=subcuenta,
+                    movimiento_banco=instance,
+                    aport_retiro=mov,
+                    referencia=ref,
+                    cantidad=cantidad,
+                    ingr_egr=mov.aportacion
+                )
 
-        for pago in pags_data:
-            print(pago)
-            # TODO: update Movimientos SUBCUENTA
-            # TODO: remove magic number subcuenta
-            # pago.referencia_banco_id = instance
-            # socio_nombre = pago.credito.clave_socio.nombres + ' ' + pago.credito.clave_socio.apellido_paterno + ' ' + pago.credito.clave_socio.apellido_materno
-            # if pago.abono_capital > 0:
-            #     RegistroContable.objects.create(subcuenta=3, movimiento_banco=instance,
-            #                                     pago=pago, referencia=socio_nombre,
-            #                                     cantidad=pago.abono_capital, ingr_egr=True)
-            # if pago.interes_ord > 0:
-            #     RegistroContable.objects.create(subcuenta=4, movimiento_banco=instance,
-            #                                     pago=pago, referencia=socio_nombre,
-            #                                     cantidad=pago.interes_ord, ingr_egr=True)
-            # if pago.interes_mor > 0:
-            #     RegistroContable.objects.create(subcuenta=5, movimiento_banco=instance,
-            #                                     pago=pago, referencia=socio_nombre,
-            #                                     cantidad=pago.interes_mor, ingr_egr=True)
-
-        # for o_data in others_data:
-        #     RegistroContable.objects.create(**o_data)
+        # elif data_type == "Pagos":
+        #     for pago_id in selected_items:
+        #         pago = Pago.objects.get(pk=pago_id)
+        #         ref = f"Pago de {pago.credito.clave_socio.nombres}"
+        #         RegistroContable.objects.create(
+        #             subcuenta=3,  # TODO: AVOID MAGIC NUMBERS!
+        #             movimiento_banco=instance,
+        #             pago=pago,
+        #             referencia=ref,
+        #             cantidad=cantidad,
+        #             ingr_egr=True
+        #         )
+        #
+        # elif data_type == "ej_credito":
+        #     for credito_id in selected_items:
+        #         credito = ContratoCredito.objects.get(pk=credito_id)
+        #         ref = f"Ejecución de Credito de {credito.clave_socio.nombres}"
+        #         RegistroContable.objects.create(
+        #             subcuenta=4,  # TODO: AVOID MAGIC NUMBERS!
+        #             movimiento_banco=instance,
+        #             ej_credito=credito,
+        #             referencia=ref,
+        #             cantidad=cantidad,
+        #             ingr_egr=False
+        #         )
+        # elif data_type == "Otros":
+        #     subc = SubCuenta.objects.get(id=selected_items[0])
+        #     ingreso = subc.tipo == SubCuenta.INGRESO  # TODO: consider INGRESO/EGRESO CASE!!!
+        #     RegistroContable.objects.create(
+        #         subcuenta=subc,  # TODO: AVOID MAGIC NUMBERS!
+        #         movimiento_banco=instance,
+        #         ej_credito=credito,
+        #         referencia=subc.nombre,
+        #         cantidad=cantidad,
+        #         ingr_egr=ingreso
+        #     )
 
         return instance
