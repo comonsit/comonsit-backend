@@ -45,7 +45,6 @@ class MovimientoViewSet(viewsets.ModelViewSet):
 
 
 class MovimientoConcViewSet(viewsets.ReadOnlyModelViewSet):
-    # Movimiento.objects.filter(referencia_banco_id__isnull=True).order_by('-fecha_entrega')
-    queryset = Movimiento.objects.all()
+    queryset = Movimiento.objects.filter(registrocontable__isnull=True).order_by('-fecha_entrega')
     serializer_class = MovimientoConcSerializer
     permission_classes = [permissions.IsAuthenticated, gerenciaOnly]
