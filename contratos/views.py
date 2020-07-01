@@ -28,8 +28,10 @@ class ContratoCreditoViewSet(viewsets.ModelViewSet):
     # Is Gerencia or Region
     def get_queryset(self):
         q = ContratoCredito.objects.all().order_by('-fecha_inicio')
-        if self.action == 'list' and self.action != 'all':
+        if self.action == 'list':
             q = ContratoCredito.objects.filter(estatus=ContratoCredito.DEUDA_PENDIENTE).order_by('-fecha_inicio')
+        elif self.action == 'no_link':
+            q = q.filter(registrocontable__isnull=True)
 
         if self.request.user.is_gerencia():
             return q
@@ -56,6 +58,12 @@ class ContratoCreditoViewSet(viewsets.ModelViewSet):
         deuda = deuda_calculator(credito, d)
         deuda['estatus_detail'] = credito.get_validity(d)
         return Response(deuda)
+
+    @action(methods=['get'], detail=False, url_path='no-link', url_name='no-link')
+    def no_link(self, request):
+        q = self.get_queryset()
+        serializer = self.get_serializer(q, many=True)
+        return Response(serializer.data)
 
 
 class ContratoViewSetXLSX(XLSXFileMixin, viewsets.ReadOnlyModelViewSet):
