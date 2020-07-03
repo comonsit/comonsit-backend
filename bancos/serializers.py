@@ -40,7 +40,7 @@ class MovimientoBancoSerializer(serializers.ModelSerializer):
         """
         dataType = data.get('dataType')
         # TODO: CHANGE FOR NON MAGIC WORDS!!
-        if dataType not in ["Movimientos", "Pagos", "EjCreditos", "Otros"]:
+        if dataType not in ["Movimientos", "Pagos", "EjCredito", "Otros"]:
             raise serializers.ValidationError({"dataType": f'Error inesperado, movimiento no válido.'})
         # TODO:
         """
@@ -97,16 +97,17 @@ class MovimientoBancoSerializer(serializers.ModelSerializer):
         #             ingr_egr=True
         #         )
         #
-        # elif data_type == "EjCredito":
-        #     for credito_id in selected_items:
-        #         credito = ContratoCredito.objects.get(pk=credito_id)
-        #         RegistroContable.objects.create(
-        #             subcuenta=subcuentas.EJ_CRED,
-        #             movimiento_banco=instance,
-        #             ej_credito=credito,
-        #             cantidad=cantidad,
-        #             ingr_egr=False
-        #         )
+        elif data_type == "EjCredito":
+            for credito_id in selected_items:
+                credito = ContratoCredito.objects.get(pk=credito_id)
+                subcuenta = SubCuenta.objects.get(id=subcuentas.EJ_CRED)
+                RegistroContable.objects.create(
+                    subcuenta=subcuenta,
+                    movimiento_banco=instance,
+                    ej_credito=credito,
+                    cantidad=cantidad,
+                    ingr_egr=False
+                )
         # elif data_type == "Otros":
         #     subc = SubCuenta.objects.get(id=selected_items[0])
         #     ingreso = subc.tipo == SubCuenta.INGRESO  # TODO: consider INGRESO/EGRESO CASE!!!
