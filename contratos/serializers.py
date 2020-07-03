@@ -173,3 +173,24 @@ class ContratoXLSXSerializer(serializers.ModelSerializer):
 
     def get_pagado(self, object):
         return Pago.objects.filter(credito=object).aggregate(Sum('cantidad'))['cantidad__sum']
+
+
+class ContratoUnLinkedSerializer(serializers.ModelSerializer):
+    nombres = serializers.SerializerMethodField(read_only=True)
+    region = serializers.SerializerMethodField(read_only=True)
+    estatus = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = ContratoCredito
+        fields = ['id', 'nombres', 'region', 'monto', 'fecha_inicio',  'fecha_banco', 'referencia_banco',
+                  'estatus', 'estatus_ejecucion']
+
+    def get_nombres(self, object):
+        return object.clave_socio.nombres + ' ' + object.clave_socio.apellido_paterno \
+                + ' ' + object.clave_socio.apellido_materno
+
+    def get_estatus(self, object):
+        return object.get_validity()
+
+    def get_region(self, object):
+        return object.clave_socio.comunidad.region.id

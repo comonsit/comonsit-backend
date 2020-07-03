@@ -7,7 +7,8 @@ from drf_renderer_xlsx.renderers import XLSXRenderer
 
 from .models import ContratoCredito
 from .permissions import ContratoCreditoPermissions
-from .serializers import ContratoCreditoSerializer, ContratoCreditoListSerializer, ContratoXLSXSerializer
+from .serializers import ContratoCreditoSerializer, ContratoCreditoListSerializer,  \
+                         ContratoXLSXSerializer, ContratoUnLinkedSerializer
 from .utility import deuda_calculator
 from pagos.models import Pago
 from pagos.serializers import PagoSerializer
@@ -23,6 +24,8 @@ class ContratoCreditoViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action == 'list' or self.action == 'all':
             return ContratoCreditoListSerializer
+        elif self.action == 'no_link':
+            return ContratoUnLinkedSerializer
         return ContratoCreditoSerializer
 
     # Is Gerencia or Region
