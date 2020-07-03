@@ -16,7 +16,7 @@ class PagoViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action == 'partial_update':
             return PagoPartialUpdateSerializer
-        elif self.action == 'list':
+        elif self.action == 'list' or self.action == 'no_link':
             return PagoListSerializer
         return PagoSerializer
 
