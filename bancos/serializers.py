@@ -3,6 +3,7 @@ from contratos.models import ContratoCredito
 from movimientos.models import Movimiento
 from pagos.models import Pago
 from .models import Banco, SubCuenta, MovimientoBanco, RegistroContable
+from . import subcuentas
 
 
 class BancoSerializer(serializers.ModelSerializer):
@@ -73,14 +74,12 @@ class MovimientoBancoSerializer(serializers.ModelSerializer):
         if data_type == "Movimientos":
             for movimiento in selected_items:
                 mov = Movimiento.objects.get(id=movimiento)
-                subcuenta_id = 1 if mov.aportacion else 2  # TODO: AVOID MAGIC NUMBERS!
+                subcuenta_id = subcuentas.APORT if mov.aportacion else subcuentas.RETIRO
                 subcuenta = SubCuenta.objects.get(id=subcuenta_id)
-                ref = f"{'Aportación' if mov.aportacion else 'Retiro'} de {mov.clave_socio.nombres}"
                 RegistroContable.objects.create(
                     subcuenta=subcuenta,
                     movimiento_banco=instance,
                     aport_retiro=mov,
-                    referencia=ref,
                     cantidad=cantidad,
                     ingr_egr=mov.aportacion
                 )
@@ -98,15 +97,13 @@ class MovimientoBancoSerializer(serializers.ModelSerializer):
         #             ingr_egr=True
         #         )
         #
-        # elif data_type == "ej_credito":
+        # elif data_type == "EjCredito":
         #     for credito_id in selected_items:
         #         credito = ContratoCredito.objects.get(pk=credito_id)
-        #         ref = f"Ejecución de Credito de {credito.clave_socio.nombres}"
         #         RegistroContable.objects.create(
-        #             subcuenta=4,  # TODO: AVOID MAGIC NUMBERS!
+        #             subcuenta=subcuentas.EJ_CRED,
         #             movimiento_banco=instance,
         #             ej_credito=credito,
-        #             referencia=ref,
         #             cantidad=cantidad,
         #             ingr_egr=False
         #         )

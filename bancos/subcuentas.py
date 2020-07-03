@@ -1,0 +1,3 @@
+EJ_CRED = 2
+APORT = 17
+RETIRO = 18
