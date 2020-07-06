@@ -64,7 +64,7 @@ class MovimientoBancoSerializer(serializers.ModelSerializer):
         return data
 
     def create(self, validated_data):
-        banco = validated_data.pop('banco')
+        banco = validated_data.pop('banco')  # TODO: DELETE
         data_type = validated_data.pop('dataType')
         selected_items = validated_data.pop('selectedItems')
         cantidad = validated_data.get('cantidad')
@@ -84,19 +84,44 @@ class MovimientoBancoSerializer(serializers.ModelSerializer):
                     ingr_egr=mov.aportacion
                 )
 
-        # elif data_type == "Pagos":
-        #     for pago_id in selected_items:
-        #         pago = Pago.objects.get(pk=pago_id)
-        #         ref = f"Pago de {pago.credito.clave_socio.nombres}"
-        #         RegistroContable.objects.create(
-        #             subcuenta=3,  # TODO: AVOID MAGIC NUMBERS!
-        #             movimiento_banco=instance,
-        #             pago=pago,
-        #             referencia=ref,
-        #             cantidad=cantidad,
-        #             ingr_egr=True
-        #         )
-        #
+        elif data_type == "Pagos":
+            for pago_id in selected_items:
+                pago = Pago.objects.get(pk=pago_id)
+                # CAPITAL
+                if pago.abono_capital and pago.abono_capital > 0:
+                    if pago.estatus_previo == ContratoCredito.VIGENTE:
+                        subcuenta_id = subcuentas.PAGO_CAPT_VIGENTE
+                    else:
+                        subcuenta_id = subcuentas.PAGO_CAPT_VENCIDO
+                    subcuenta = SubCuenta.objects.get(id=subcuenta_id)
+                    RegistroContable.objects.create(
+                        subcuenta=subcuenta,
+                        movimiento_banco=instance,
+                        pago=pago,
+                        cantidad=pago.abono_capital,
+                        ingr_egr=True
+                    )
+                # INTERÉSES ORDINARIOS
+                if pago.interes_ord and pago.interes_ord > 0:
+                    subcuenta = SubCuenta.objects.get(id=subcuentas.INGR_INT_ORD)
+                    RegistroContable.objects.create(
+                        subcuenta=subcuenta,
+                        movimiento_banco=instance,
+                        pago=pago,
+                        cantidad=pago.interes_ord,
+                        ingr_egr=True
+                    )
+                # INTERÉSES MORATORIOS
+                if pago.interes_mor and pago.interes_mor > 0:
+                    subcuenta = SubCuenta.objects.get(id=subcuentas.INGR_INT_MOR)
+                    RegistroContable.objects.create(
+                        subcuenta=subcuenta,
+                        movimiento_banco=instance,
+                        pago=pago,
+                        cantidad=pago.interes_mor,
+                        ingr_egr=True
+                    )
+
         elif data_type == "EjCredito":
             for credito_id in selected_items:
                 credito = ContratoCredito.objects.get(pk=credito_id)
