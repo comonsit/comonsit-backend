@@ -25,8 +25,6 @@ class RegistroContableSerializer(serializers.ModelSerializer):
 
 
 class MovimientoBancoSerializer(serializers.ModelSerializer):
-    # TODO: change for banco ID or serializer?
-    banco = serializers.IntegerField(write_only=True)
     selectedItems = serializers.ListField(child=serializers.IntegerField(), allow_empty=True, write_only=True)
     dataType = serializers.CharField(max_length=20, min_length=4, allow_blank=False, write_only=True)
 
@@ -64,7 +62,6 @@ class MovimientoBancoSerializer(serializers.ModelSerializer):
         return data
 
     def create(self, validated_data):
-        banco = validated_data.pop('banco')  # TODO: DELETE
         data_type = validated_data.pop('dataType')
         selected_items = validated_data.pop('selectedItems')
         cantidad = validated_data.get('cantidad')
