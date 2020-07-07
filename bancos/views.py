@@ -1,10 +1,11 @@
 from rest_framework import viewsets, permissions
+from rest_framework.response import Response
+from rest_framework.views import status
 
 from .models import Banco, SubCuenta, MovimientoBanco, RegistroContable
 from .serializers import BancoSerializer, SubCuentaSerializer, \
                          MovimientoBancoSerializer, RegistroContableSerializer
 from .permissions import gerenciaOnly
-from users.permissions import ReadOnly
 
 
 class BancoViewSet(viewsets.ReadOnlyModelViewSet):
@@ -23,6 +24,18 @@ class MovimientoBancoViewSet(viewsets.ModelViewSet):
     queryset = MovimientoBanco.objects.all()
     serializer_class = MovimientoBancoSerializer
     permission_classes = [permissions.IsAuthenticated, gerenciaOnly]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+
+        response_data = {
+            "registros_nvos": str(RegistroContable.objects.filter(movimiento_banco=serializer.instance).count()),
+            "movimientoBanco": serializer.data
+        }
+        return Response(response_data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class RegistroContableViewSet(viewsets.ReadOnlyModelViewSet):
