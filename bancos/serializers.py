@@ -73,6 +73,10 @@ class MovimientoBancoSerializer(serializers.ModelSerializer):
         """
         if "otros" than ingr_egr is REQUIRED, and must match subcuenta VALId options.
         """
+        # TODO:
+        """
+        La referencia bancaria SOLO en mayúsculas!
+        """
         return data
 
     def create(self, validated_data):
