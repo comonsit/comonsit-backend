@@ -27,6 +27,7 @@ class RegistroContableSerializer(serializers.ModelSerializer):
 class MovimientoBancoSerializer(serializers.ModelSerializer):
     selectedItems = serializers.ListField(child=serializers.IntegerField(), allow_empty=True, write_only=True)
     dataType = serializers.CharField(max_length=20, min_length=4, allow_blank=False, write_only=True)
+    ingrEgr = serializers.BooleanField(write_only=True, required=False)
 
     class Meta:
         model = MovimientoBanco
@@ -56,8 +57,21 @@ class MovimientoBancoSerializer(serializers.ModelSerializer):
         """
         Check that ammounts add correctly
         """
+        # TODO:
+        """
+        if "OTROS" check that subcuenta is not part of system subcuenta, inside subcuentas.py
+        """
+        # TODO:
         """
         Check for valid bank?
+        """
+        # TODO:
+        """
+        Check that selectedItems has at least length 1, and strictly length 1 for "Otros"
+        """
+        # TODO:
+        """
+        if "otros" than ingr_egr is REQUIRED, and must match subcuenta VALId options.
         """
         return data
 
@@ -65,6 +79,7 @@ class MovimientoBancoSerializer(serializers.ModelSerializer):
         data_type = validated_data.pop('dataType')
         selected_items = validated_data.pop('selectedItems')
         cantidad = validated_data.get('cantidad')
+        ingr_egr = validated_data.pop('ingrEgr', None)
 
         instance = MovimientoBanco.objects.create(**validated_data)
 
@@ -130,16 +145,14 @@ class MovimientoBancoSerializer(serializers.ModelSerializer):
                     cantidad=cantidad,
                     ingr_egr=False
                 )
-        # elif data_type == "Otros":
-        #     subc = SubCuenta.objects.get(id=selected_items[0])
-        #     ingreso = subc.tipo == SubCuenta.INGRESO  # TODO: consider INGRESO/EGRESO CASE!!!
-        #     RegistroContable.objects.create(
-        #         subcuenta=subc,  # TODO: AVOID MAGIC NUMBERS!
-        #         movimiento_banco=instance,
-        #         ej_credito=credito,
-        #         referencia=subc.nombre,
-        #         cantidad=cantidad,
-        #         ingr_egr=ingreso
-        #     )
+
+        elif data_type == "Otros":
+            subc = SubCuenta.objects.get(id=selected_items[0])
+            RegistroContable.objects.create(
+                subcuenta=subc,
+                movimiento_banco=instance,
+                cantidad=cantidad,
+                ingr_egr=ingr_egr
+            )
 
         return instance
