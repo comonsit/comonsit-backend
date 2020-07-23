@@ -152,7 +152,7 @@ class MovimientoBancoSerializer(serializers.ModelSerializer):
         if data_type == "Movimientos":
             for movimiento in selected_items:
                 mov = Movimiento.objects.get(id=movimiento)
-                subcuenta_id = subcuentas.APORT if mov.aportacion else subcuentas.RETIRO
+                subcuenta_id = subcuentas.get_type_aport(mov)
                 subcuenta = SubCuenta.objects.get(id=subcuenta_id)
                 RegistroContable.objects.create(
                     subcuenta=subcuenta,
