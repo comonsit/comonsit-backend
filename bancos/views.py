@@ -39,6 +39,6 @@ class MovimientoBancoViewSet(viewsets.ModelViewSet):
 
 
 class RegistroContableViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = RegistroContable.objects.all()
+    queryset = RegistroContable.objects.all().order_by('-movimiento_banco__fecha')
     serializer_class = RegistroContableSerializer
     permission_classes = [permissions.IsAuthenticated, gerenciaOnly]

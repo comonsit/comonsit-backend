@@ -1,3 +1,5 @@
+from django.db.models import Sum, Q
+from django.db.models.functions import Coalesce
 from rest_framework import serializers
 from contratos.models import ContratoCredito
 from movimientos.models import Movimiento
@@ -19,9 +21,69 @@ class SubCuentaSerializer(serializers.ModelSerializer):
 
 
 class RegistroContableSerializer(serializers.ModelSerializer):
+    fecha = serializers.SerializerMethodField(read_only=True)
+    subcuenta_id_cont = serializers.SerializerMethodField(read_only=True)
+    subcuenta_nombre = serializers.SerializerMethodField(read_only=True)
+    saldo = serializers.SerializerMethodField(read_only=True)
+    referencia = serializers.SerializerMethodField(read_only=True)
+    # ingresos = serializers.DecimalField(max_digits=9, decimal_places=2, read_only=True)
+    # egresos = serializers.DecimalField(max_digits=9, decimal_places=2, read_only=True)
+
     class Meta:
         model = RegistroContable
-        fields = "__all__"
+        fields = [
+            'id', 'fecha', 'subcuenta_id_cont', 'subcuenta_nombre',
+            'referencia', 'cantidad', 'ingr_egr', 'saldo'
+            ]
+
+    def get_fecha(self, object):
+        return object.movimiento_banco.fecha
+
+    def get_subcuenta_id_cont(self, object):
+        return object.subcuenta.id_contable
+
+    def get_subcuenta_nombre(self, object):
+        return object.subcuenta.nombre
+
+    def get_referencia(self, object):
+        nombre = None
+        if object.aport_retiro:
+            tipo = 'Aportación' if object.aport_retiro.aportacion else 'Retiro'
+            nombre = object.aport_retiro.clave_socio.nombres + ' ' + \
+                object.aport_retiro.clave_socio.apellido_paterno + ' ' + \
+                object.aport_retiro.clave_socio.apellido_materno
+
+        elif object.pago:
+            tipo = 'Pago'
+            nombre = object.pago.credito.clave_socio.nombres + ' ' + \
+                object.pago.credito.clave_socio.apellido_paterno + ' ' + \
+                object.pago.credito.clave_socio.apellido_materno
+        elif object.ej_credito:
+            tipo = 'Ejecución Crédito'
+            nombre = object.ej_credito.clave_socio.nombres + ' ' + \
+                object.ej_credito.clave_socio.apellido_paterno + ' ' + \
+                object.ej_credito.clave_socio.apellido_materno
+
+        if nombre:
+            return f'{tipo} - {nombre}'
+        else:
+            # TODO: incluir la nota
+            return '- - -'
+
+    def get_saldo(self, object):
+        q = RegistroContable.objects.filter(movimiento_banco__fecha__lte=object.movimiento_banco.fecha)
+        # ingresos = q.filter(ingr_egr=True).aggregate(tot=Sum('cantidad'))['tot']
+        # egresos = q.filter(ingr_egr=False).aggregate(tot=Coalesce(Sum('cantidad'), 0))['tot']
+        # ingresos = ingresos if ingresos else 0
+        # egresos = egresos if egresos else 0
+        saldos = q.aggregate(
+            ingresos=Coalesce(Sum('cantidad', filter=Q(ingr_egr=True)), 0),
+            egresos=Coalesce(Sum('cantidad', filter=Q(ingr_egr=False)), 0)
+            )
+        return {
+            **saldos,
+            'total': saldos['ingresos'] - saldos['egresos']
+        }
 
 
 class MovimientoBancoSerializer(serializers.ModelSerializer):
