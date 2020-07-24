@@ -103,6 +103,13 @@ class MovimientoBancoSerializer(serializers.ModelSerializer):
         # TODO: CHANGE FOR NON MAGIC WORDS!!
         if dataType not in ["Movimientos", "Pagos", "EjCredito", "Otros"]:
             raise serializers.ValidationError({"dataType": f'Error inesperado, movimiento no válido.'})
+
+        """
+        Validate referencia_banco
+        """
+        ref_banco = data.get('referencia_banco')
+        if not (ref_banco.isupper() and ref_banco.isalnum()):
+            raise serializers.ValidationError({"referencia_banco": f'Sólo usar letras mayúsulas y números'})
         # TODO:
         """
         Check that acopios exist and have not been linked
