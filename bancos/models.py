@@ -35,7 +35,7 @@ class MovimientoBanco(models.Model):
     referencia_banco = models.CharField(max_length=20, blank=False, unique=True)
     fecha = models.DateField(blank=False)
     cantidad = models.DecimalField(max_digits=8, decimal_places=2, blank=False)
-    nota = models.CharField(max_length=60, blank=True, null=True)
+    referencia_alf = models.CharField(max_length=60, blank=True, null=True)
 
 
 class RegistroContable(models.Model):
