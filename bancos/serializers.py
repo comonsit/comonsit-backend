@@ -54,21 +54,21 @@ class RegistroContableSerializer(serializers.ModelSerializer):
                 object.aport_retiro.clave_socio.apellido_materno
 
         elif object.pago:
-            tipo = 'Pago'
+            tipo = 'Credito #' + object.pago.credito.id
             nombre = object.pago.credito.clave_socio.nombres + ' ' + \
                 object.pago.credito.clave_socio.apellido_paterno + ' ' + \
                 object.pago.credito.clave_socio.apellido_materno
         elif object.ej_credito:
-            tipo = 'Ejecución Crédito'
+            tipo = 'Credito #' + object.pago.credito.id
             nombre = object.ej_credito.clave_socio.nombres + ' ' + \
                 object.ej_credito.clave_socio.apellido_paterno + ' ' + \
                 object.ej_credito.clave_socio.apellido_materno
 
         if nombre:
             return f'{tipo} - {nombre}'
-        else:
-            # TODO: incluir la nota
-            return '- - -'
+
+        # TODO: incluir nota?
+        return ''
 
     def get_saldo(self, object):
         q = RegistroContable.objects.filter(movimiento_banco__fecha__lte=object.movimiento_banco.fecha)
