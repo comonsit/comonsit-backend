@@ -1,17 +1,39 @@
+from django.db.models import Sum, Q
+from django.db.models.functions import Coalesce
 from rest_framework import viewsets, permissions
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import status
 
 from .models import Banco, SubCuenta, MovimientoBanco, RegistroContable
 from .serializers import BancoSerializer, SubCuentaSerializer, \
-                         MovimientoBancoSerializer, RegistroContableSerializer
+                         MovimientoBancoSerializer, RegistroContableSerializer, \
+                         SaldosSerializer
 from .permissions import gerenciaOnly
 
 
 class BancoViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Banco.objects.all()
-    serializer_class = BancoSerializer
     permission_classes = [permissions.IsAuthenticated, gerenciaOnly]
+
+    def get_serializer_class(self):
+        if self.action == 'saldos':
+            return SaldosSerializer
+        return BancoSerializer
+
+    @action(methods=['get'], detail=False)
+    def saldos(self, request):
+        q = self.get_queryset()
+        q = q.annotate(
+                tot_ingresos=Coalesce(Sum(
+                    'subcuenta__registrocontable__cantidad',
+                    filter=Q(subcuenta__registrocontable__ingr_egr=True)), 0),
+                tot_egresos=Coalesce(Sum(
+                    'subcuenta__registrocontable__cantidad',
+                    filter=Q(subcuenta__registrocontable__ingr_egr=False)), 0)
+                )
+        serializer = self.get_serializer(q, many=True)
+        return Response(serializer.data)
 
 
 class SubCuentaViewSet(viewsets.ReadOnlyModelViewSet):
