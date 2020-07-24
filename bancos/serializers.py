@@ -54,12 +54,12 @@ class RegistroContableSerializer(serializers.ModelSerializer):
                 object.aport_retiro.clave_socio.apellido_materno
 
         elif object.pago:
-            tipo = 'Credito #' + object.pago.credito.id
+            tipo = 'Credito #' + str(object.pago.credito.id)
             nombre = object.pago.credito.clave_socio.nombres + ' ' + \
                 object.pago.credito.clave_socio.apellido_paterno + ' ' + \
                 object.pago.credito.clave_socio.apellido_materno
         elif object.ej_credito:
-            tipo = 'Credito #' + object.pago.credito.id
+            tipo = 'Credito #' + str(object.id)
             nombre = object.ej_credito.clave_socio.nombres + ' ' + \
                 object.ej_credito.clave_socio.apellido_paterno + ' ' + \
                 object.ej_credito.clave_socio.apellido_materno
