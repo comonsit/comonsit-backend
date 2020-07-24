@@ -15,7 +15,7 @@ class BancoViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class SubCuentaViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = SubCuenta.objects.all()
+    queryset = SubCuenta.objects.filter(sistema=False)
     serializer_class = SubCuentaSerializer
     permission_classes = [permissions.IsAuthenticated, gerenciaOnly]
 

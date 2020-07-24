@@ -25,6 +25,7 @@ class SubCuenta(models.Model):
     banco = models.ForeignKey(Banco, on_delete=models.CASCADE, blank=False, related_name='subcuenta')
     id_contable = models.CharField(max_length=40, blank=False)
     tipo = models.CharField(max_length=2, choices=TIPO_MOV_CHOICES, blank=False)
+    sistema = models.BooleanField(blank=True, default=True)  # False are those not linked to the system
 
     def __str__(self):
         return "{id_cont} {nombre}".format(id_cont=self.id_contable, nombre=self.nombre)
