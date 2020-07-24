@@ -167,10 +167,7 @@ class MovimientoBancoSerializer(serializers.ModelSerializer):
                 pago = Pago.objects.get(pk=pago_id)
                 # CAPITAL
                 if pago.abono_capital and pago.abono_capital > 0:
-                    if pago.estatus_previo == ContratoCredito.VIGENTE:
-                        subcuenta_id = subcuentas.PAGO_CAPT_VIGENTE
-                    else:
-                        subcuenta_id = subcuentas.PAGO_CAPT_VENCIDO
+                    subcuenta_id = subcuentas.get_type_pago(pago)
                     subcuenta = SubCuenta.objects.get(id=subcuenta_id)
                     RegistroContable.objects.create(
                         subcuenta=subcuenta,
@@ -203,7 +200,8 @@ class MovimientoBancoSerializer(serializers.ModelSerializer):
         elif data_type == "EjCredito":
             for credito_id in selected_items:
                 credito = ContratoCredito.objects.get(pk=credito_id)
-                subcuenta = SubCuenta.objects.get(id=subcuentas.EJ_CRED)
+                subcuenta_id = subcuentas.get_type_credito(credito)
+                subcuenta = SubCuenta.objects.get(id=subcuenta_id)
                 RegistroContable.objects.create(
                     subcuenta=subcuenta,
                     movimiento_banco=instance,
