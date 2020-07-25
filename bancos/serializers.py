@@ -227,3 +227,12 @@ class MovimientoBancoSerializer(serializers.ModelSerializer):
             )
 
         return instance
+
+
+class SaldosSerializer(serializers.ModelSerializer):
+        tot_ingresos = serializers.CharField()
+        tot_egresos = serializers.CharField()
+
+        class Meta:
+            model = Banco
+            fields = ['id', 'nombre_cuenta', 'tot_ingresos', 'tot_egresos']
