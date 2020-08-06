@@ -24,7 +24,7 @@ class RegistroContableSerializer(serializers.ModelSerializer):
     fecha = serializers.SerializerMethodField(read_only=True)
     subcuenta_id_cont = serializers.SerializerMethodField(read_only=True)
     subcuenta_nombre = serializers.SerializerMethodField(read_only=True)
-    saldo = serializers.SerializerMethodField(read_only=True)
+    # saldo = serializers.SerializerMethodField(read_only=True)
     referencia = serializers.SerializerMethodField(read_only=True)
     # ingresos = serializers.DecimalField(max_digits=9, decimal_places=2, read_only=True)
     # egresos = serializers.DecimalField(max_digits=9, decimal_places=2, read_only=True)
@@ -33,7 +33,7 @@ class RegistroContableSerializer(serializers.ModelSerializer):
         model = RegistroContable
         fields = [
             'id', 'fecha', 'subcuenta_id_cont', 'subcuenta_nombre',
-            'referencia', 'cantidad', 'ingr_egr', 'saldo'
+            'referencia', 'cantidad', 'ingr_egr'
             ]
 
     def get_fecha(self, object):
@@ -70,20 +70,20 @@ class RegistroContableSerializer(serializers.ModelSerializer):
         # TODO: incluir nota?
         return ''
 
-    def get_saldo(self, object):
-        q = RegistroContable.objects.filter(movimiento_banco__fecha__lte=object.movimiento_banco.fecha)
-        # ingresos = q.filter(ingr_egr=True).aggregate(tot=Sum('cantidad'))['tot']
-        # egresos = q.filter(ingr_egr=False).aggregate(tot=Coalesce(Sum('cantidad'), 0))['tot']
-        # ingresos = ingresos if ingresos else 0
-        # egresos = egresos if egresos else 0
-        saldos = q.aggregate(
-            ingresos=Coalesce(Sum('cantidad', filter=Q(ingr_egr=True)), 0),
-            egresos=Coalesce(Sum('cantidad', filter=Q(ingr_egr=False)), 0)
-            )
-        return {
-            **saldos,
-            'total': saldos['ingresos'] - saldos['egresos']
-        }
+    # def get_saldo(self, object):
+    #     q = RegistroContable.objects.filter(movimiento_banco__fecha__lte=object.movimiento_banco.fecha)
+    #     # ingresos = q.filter(ingr_egr=True).aggregate(tot=Sum('cantidad'))['tot']
+    #     # egresos = q.filter(ingr_egr=False).aggregate(tot=Coalesce(Sum('cantidad'), 0))['tot']
+    #     # ingresos = ingresos if ingresos else 0
+    #     # egresos = egresos if egresos else 0
+    #     saldos = q.aggregate(
+    #         ingresos=Coalesce(Sum('cantidad', filter=Q(ingr_egr=True)), 0),
+    #         egresos=Coalesce(Sum('cantidad', filter=Q(ingr_egr=False)), 0)
+    #         )
+    #     return {
+    #         **saldos,
+    #         'total': saldos['ingresos'] - saldos['egresos']
+    #     }
 
 
 class MovimientoBancoSerializer(serializers.ModelSerializer):
