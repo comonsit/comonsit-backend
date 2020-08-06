@@ -24,13 +24,21 @@ class BancoViewSet(viewsets.ReadOnlyModelViewSet):
     @action(methods=['get'], detail=False)
     def saldos(self, request):
         q = self.get_queryset()
+        initial_date = request.query_params.get('initialDate', None)
+        final_date = request.query_params.get('finalDate', None)
+        date_range = Q()
+        if initial_date:
+            date_range &= Q(subcuenta__registrocontable__movimiento_banco__fecha__gte=initial_date)
+        if final_date:
+            date_range &= Q(subcuenta__registrocontable__movimiento_banco__fecha__lte=final_date)
+
         q = q.annotate(
                 tot_ingresos=Coalesce(Sum(
                     'subcuenta__registrocontable__cantidad',
-                    filter=Q(subcuenta__registrocontable__ingr_egr=True)), 0),
+                    filter=Q(subcuenta__registrocontable__ingr_egr=True) & date_range), 0),
                 tot_egresos=Coalesce(Sum(
                     'subcuenta__registrocontable__cantidad',
-                    filter=Q(subcuenta__registrocontable__ingr_egr=False)), 0)
+                    filter=Q(subcuenta__registrocontable__ingr_egr=False) & date_range), 0)
                 )
         serializer = self.get_serializer(q, many=True)
         return Response(serializer.data)
@@ -61,6 +69,18 @@ class MovimientoBancoViewSet(viewsets.ModelViewSet):
 
 
 class RegistroContableViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = RegistroContable.objects.all().order_by('-movimiento_banco__fecha')
+
     serializer_class = RegistroContableSerializer
     permission_classes = [permissions.IsAuthenticated, gerenciaOnly]
+
+    def get_queryset(self):
+        q = RegistroContable.objects.all()
+
+        initial_date = self.request.query_params.get('initialDate', None)
+        if initial_date:
+            q = q.filter(movimiento_banco__fecha__gte=initial_date)
+
+        final_date = self.request.query_params.get('finalDate', None)
+        if final_date:
+            q = q.filter(movimiento_banco__fecha__lte=final_date)
+        return q.order_by('-movimiento_banco__fecha')
