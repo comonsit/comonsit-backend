@@ -1,4 +1,4 @@
-from django.db.models import Sum, Q
+from django.db.models import Sum, Q, Value, DecimalField
 from django.db.models.functions import Coalesce
 from rest_framework import viewsets, permissions
 from rest_framework.decorators import action
@@ -27,8 +27,24 @@ class BancoViewSet(viewsets.ReadOnlyModelViewSet):
         initial_date = request.query_params.get('initialDate', None)
         final_date = request.query_params.get('finalDate', None)
         date_range = Q()
+        prev_date = Q(False)
         if initial_date:
             date_range &= Q(subcuenta__registrocontable__movimiento_banco__fecha__gte=initial_date)
+            prev_date = Q(subcuenta__registrocontable__movimiento_banco__fecha__lt=initial_date)
+            q = q.annotate(
+                    tot_ingresos_prev=Coalesce(Sum(
+                        'subcuenta__registrocontable__cantidad',
+                        filter=Q(subcuenta__registrocontable__ingr_egr=True) & prev_date), 0),
+                    tot_egresos_prev=Coalesce(Sum(
+                        'subcuenta__registrocontable__cantidad',
+                        filter=Q(subcuenta__registrocontable__ingr_egr=False) & prev_date), 0)
+                    )
+        else:
+            q = q.annotate(
+                tot_ingresos_prev=Value(0, DecimalField()),
+                tot_egresos_prev=Value(0, DecimalField()),
+            )
+
         if final_date:
             date_range &= Q(subcuenta__registrocontable__movimiento_banco__fecha__lte=final_date)
 
