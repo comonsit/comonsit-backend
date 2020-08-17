@@ -65,8 +65,9 @@ class ContratoCreditoViewSet(viewsets.ModelViewSet):
     @action(methods=['get'], detail=False, url_path='no-link', url_name='no-link')
     def no_link(self, request):
         q = self.get_queryset()
+        count = q.count()
         serializer = self.get_serializer(q, many=True)
-        return Response(serializer.data)
+        return Response({'count': count, 'results': serializer.data})
 
 
 class ContratoViewSetXLSX(XLSXFileMixin, viewsets.ReadOnlyModelViewSet):

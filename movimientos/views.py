@@ -48,3 +48,9 @@ class MovimientoConcViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Movimiento.objects.filter(registrocontable__isnull=True).order_by('-fecha_entrega')
     serializer_class = MovimientoConcSerializer
     permission_classes = [permissions.IsAuthenticated, gerenciaOnly]
+
+    def list(self, request):
+        q = self.get_queryset()
+        count = q.count()
+        serializer = self.get_serializer(q, many=True)
+        return Response({'count': count, 'results': serializer.data})
