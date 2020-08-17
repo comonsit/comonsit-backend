@@ -90,6 +90,7 @@ class MovimientoBancoSerializer(serializers.ModelSerializer):
     selectedItems = serializers.ListField(child=serializers.IntegerField(), allow_empty=True, write_only=True)
     dataType = serializers.CharField(max_length=20, min_length=4, allow_blank=False, write_only=True)
     ingrEgr = serializers.BooleanField(write_only=True, required=False)
+    usuario = serializers.StringRelatedField(read_only=True)
 
     class Meta:
         model = MovimientoBanco
@@ -154,7 +155,7 @@ class MovimientoBancoSerializer(serializers.ModelSerializer):
         cantidad = validated_data.get('cantidad')
         ingr_egr = validated_data.pop('ingrEgr', None)
 
-        instance = MovimientoBanco.objects.create(**validated_data)
+        instance = MovimientoBanco.objects.create(usuario=self.context['request'].user, **validated_data)
 
         if data_type == "Movimientos":
             for movimiento in selected_items:

@@ -36,6 +36,8 @@ class MovimientoBanco(models.Model):
     fecha = models.DateField(blank=False)
     cantidad = models.DecimalField(max_digits=8, decimal_places=2, blank=False)
     referencia_alf = models.CharField(max_length=60, blank=True, null=True)
+    fecha_auto = models.DateTimeField(auto_now_add=True)
+    usuario = models.ForeignKey('users.User', on_delete=models.CASCADE, blank=False, related_name='movimiento_banco')
 
 
 class RegistroContable(models.Model):
