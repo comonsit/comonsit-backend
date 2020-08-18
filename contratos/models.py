@@ -33,6 +33,7 @@ class ContratoCredito(models.Model):
     solicitud = models.OneToOneField('solicitudes.SolicitudCredito', on_delete=models.CASCADE, blank=False, related_name='contrato')
     clave_socio = models.ForeignKey('socios.Socio', on_delete=models.CASCADE, blank=False, related_name='contrato')
     fecha_inicio = models.DateField(blank=True, null=True)
+    fecha_final = models.DateField(blank=True, null=True)
     monto = models.DecimalField(max_digits=9, decimal_places=2, blank=False)
     plazo = models.PositiveSmallIntegerField(blank=False)  # number of months
     tasa = models.DecimalField(max_digits=7, decimal_places=4, blank=False)

@@ -98,6 +98,7 @@ class PagoSerializer(serializers.ModelSerializer):
         # Check if payment is complete and change status
         if pago and deuda['total_deuda'] == cantidad:
             credito.estatus = ContratoCredito.PAGADO
+            credito.fecha_final = fecha_pago
             credito.save()
         return pago
 

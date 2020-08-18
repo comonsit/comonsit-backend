@@ -22,7 +22,8 @@ class ContratoCreditoSerializer(serializers.ModelSerializer):
         'solicitud': {'read_only': True},
         'monto': {'read_only': True},
         'tasa': {'read_only': True},
-        'tasa_moratoria': {'read_only': True}
+        'tasa_moratoria': {'read_only': True},
+        'fecha_final': {'read_only': True}
         }
 
     class Meta:
