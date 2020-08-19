@@ -9,8 +9,7 @@ from drf_renderer_xlsx.renderers import XLSXRenderer
 from .models import ContratoCredito
 from .permissions import ContratoCreditoPermissions
 from .serializers import ContratoCreditoSerializer, ContratoCreditoListSerializer,  \
-                         ContratoXLSXSerializer, ContratoUnLinkedSerializer, \
-                         ContratoCarterasSerializer
+                         ContratoXLSXSerializer, ContratoUnLinkedSerializer
 from .utility import deuda_calculator
 from pagos.models import Pago
 from pagos.serializers import PagoSerializer
@@ -26,10 +25,8 @@ class ContratoCreditoViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action == 'list' or self.action == 'all':
             return ContratoCreditoListSerializer
-        elif self.action == 'no_link':
+        elif self.action == 'no_link' or self.action == 'carteras':
             return ContratoUnLinkedSerializer
-        elif self.action == 'carteras':
-            return ContratoCarterasSerializer
         return ContratoCreditoSerializer
 
     # Is Gerencia or Region
@@ -81,7 +78,7 @@ class ContratoCreditoViewSet(viewsets.ModelViewSet):
     @action(methods=['get'], detail=False, url_path='carteras', url_name='carteras')
     def carteras(self, request):
         q = self.get_queryset()
-        cartera_date = request.query_params.get('date', date.today())
+        cartera_date = request.query_params.get('date', None)
         detail = request.query_params.get('detail', None)
         d = date.fromisoformat(cartera_date) if cartera_date else date.today()
         vigentes_list = []
