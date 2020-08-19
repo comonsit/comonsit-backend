@@ -6,15 +6,15 @@ from .models import ContratoCredito
 from pagos.models import Pago
 
 
-def deuda_calculator(credito, fecha):
+def deuda_calculator(credito, fecha, old_status=False):
     if (not credito.fecha_inicio or
             credito.estatus_ejecucion != ContratoCredito.COBRADO or
-            credito.estatus != ContratoCredito.DEUDA_PENDIENTE):
+            (credito.estatus != ContratoCredito.DEUDA_PENDIENTE and not old_status)):
         return {}
     if fecha < credito.fecha_inicio:
         raise ValidationError(f"La fecha {fecha.ctime()} es previa a {credito.fecha_inicio.ctime()} de {credito}")
 
-    pagos = Pago.objects.filter(credito=credito).order_by('-fecha_pago')
+    pagos = Pago.objects.filter(credito=credito, fecha_pago__lte=fecha).order_by('-fecha_pago')
 
     capital_pagado = pagos.aggregate(Sum('abono_capital'))['abono_capital__sum']
     capital_pagado = capital_pagado if capital_pagado else 0

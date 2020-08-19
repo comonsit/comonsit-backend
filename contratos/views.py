@@ -1,4 +1,5 @@
 from datetime import date
+from django.db.models import Q
 from rest_framework import viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -40,7 +41,10 @@ class ContratoCreditoViewSet(viewsets.ModelViewSet):
             q = q.filter(registrocontable__isnull=True)
         elif self.action == 'carteras':
             cartera_date = self.request.query_params.get('date', date.today())
-            q = q.filter(fecha_inicio__lte=cartera_date, fecha_final__gt=cartera_date)
+            q = q.filter(fecha_inicio__lte=cartera_date).filter(
+                Q(fecha_final__gt=cartera_date) |
+                Q(fecha_final=None)
+            )
         if self.request.user.is_gerencia():
             return q
         return q.filter(clave_socio__comunidad__region=self.request.user.clave_socio.comunidad.region)
@@ -77,9 +81,41 @@ class ContratoCreditoViewSet(viewsets.ModelViewSet):
     @action(methods=['get'], detail=False, url_path='carteras', url_name='carteras')
     def carteras(self, request):
         q = self.get_queryset()
-        # TODO: add vigentes and vencidos debts
-        serializer = self.get_serializer(q, many=True)
-        return Response(serializer.data)
+        cartera_date = request.query_params.get('date', date.today())
+        detail = request.query_params.get('detail', None)
+        d = date.fromisoformat(cartera_date) if cartera_date else date.today()
+        vigentes_list = []
+        vencidos_list = []
+        vigentes_total = 0
+        vencidos_total = 0
+        for credito in q:
+            # Calculate debt or set to zero
+            deuda = deuda_calculator(credito, d, True)
+            if 'total_deuda' in deuda:
+                deuda_cantidad = deuda['total_deuda']
+            else:
+                deuda_cantidad = 0
+
+            # Assign to corresponding portfolio
+            if credito.get_status(d, True) == ContratoCredito.VIGENTE:
+                vigentes_list.append(credito)
+                vigentes_total += deuda_cantidad
+            else:
+                vencidos_list.append(credito)
+                vencidos_total += deuda_cantidad
+
+        result = {
+                'vigentes_total': vigentes_total,
+                'vencidos_total': vencidos_total,
+                'vigentes_count': len(vigentes_list),
+                'vencidos_count': len(vencidos_list)
+            }
+
+        if detail:
+            serialized_vigentes = self.get_serializer(vigentes_list, many=True)
+            serialized_vencidos = self.get_serializer(vencidos_list, many=True)
+            result.update({'vigentes': serialized_vigentes.data, 'vencidos': serialized_vencidos.data})
+        return Response(result)
 
 
 class ContratoViewSetXLSX(XLSXFileMixin, viewsets.ReadOnlyModelViewSet):
