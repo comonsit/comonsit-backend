@@ -49,8 +49,8 @@ class ContratoCredito(models.Model):
     def __str__(self):
         return '{0}- ({1}) ${2}'.format(self.pk, self.clave_socio, self.estatus)
 
-    def get_validity(self, fecha=date.today()):
-        if self.estatus == ContratoCredito.DEUDA_PENDIENTE and self.fecha_inicio:
+    def get_status(self, fecha=date.today(), old_status=False):
+        if self.fecha_inicio and (old_status or self.estatus == ContratoCredito.DEUDA_PENDIENTE):
             if fecha <= self.fecha_vencimiento():
                 return ContratoCredito.VIGENTE
             return ContratoCredito.VENCIDO

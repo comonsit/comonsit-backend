@@ -88,7 +88,7 @@ class PagoSerializer(serializers.ModelSerializer):
 
         pago = Pago.objects.create(
                 autor=current_user,
-                estatus_previo=credito.get_validity(),
+                estatus_previo=credito.get_status(fecha_pago),
                 deuda_prev_total=deuda['total_deuda'],
                 deuda_prev_capital=deuda['capital_por_pagar'],
                 deuda_prev_int_ord=deuda['interes_ordinario_deuda'],
@@ -103,7 +103,7 @@ class PagoSerializer(serializers.ModelSerializer):
         return pago
 
     def get_estatus_nuevo(self, object):
-        return object.credito.get_validity()
+        return object.credito.get_status()
 
     def get_iva(self, object):
         if object.credito.iva:

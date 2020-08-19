@@ -64,7 +64,7 @@ class ContratoCreditoViewSet(viewsets.ModelViewSet):
         date_string = request.query_params.get('fecha', None)
         d = date.fromisoformat(date_string) if date_string else date.today()
         deuda = deuda_calculator(credito, d)
-        deuda['estatus_detail'] = credito.get_validity(d)
+        deuda['estatus_detail'] = credito.get_status(d)
         return Response(deuda)
 
     @action(methods=['get'], detail=False, url_path='no-link', url_name='no-link')

@@ -34,7 +34,7 @@ class ContratoCreditoSerializer(serializers.ModelSerializer):
         return deuda_calculator(object, date.today())
 
     def get_estatus_detail(self, object):
-        return object.get_validity()
+        return object.get_status()
 
     def get_fecha_vencimiento(self, object):
         return object.fecha_vencimiento()
@@ -110,7 +110,7 @@ class ContratoCreditoListSerializer(serializers.ModelSerializer):
                 + ' ' + object.clave_socio.apellido_materno
 
     def get_estatus(self, object):
-        return object.get_validity()
+        return object.get_status()
 
     def get_deuda_al_dia(self, object):
         return deuda_calculator(object, date.today())
@@ -155,7 +155,7 @@ class ContratoXLSXSerializer(serializers.ModelSerializer):
         return 0
 
     def get_estatus_detail(self, object):
-        return object.get_validity()
+        return object.get_status()
 
     def get_fecha_vencimiento(self, object):
         return object.fecha_vencimiento().isoformat()
@@ -191,7 +191,7 @@ class ContratoUnLinkedSerializer(serializers.ModelSerializer):
                 + ' ' + object.clave_socio.apellido_materno
 
     def get_estatus(self, object):
-        return object.get_validity()
+        return object.get_status()
 
     def get_region(self, object):
         return object.clave_socio.comunidad.region.id
