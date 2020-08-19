@@ -8,7 +8,8 @@ from drf_renderer_xlsx.renderers import XLSXRenderer
 from .models import ContratoCredito
 from .permissions import ContratoCreditoPermissions
 from .serializers import ContratoCreditoSerializer, ContratoCreditoListSerializer,  \
-                         ContratoXLSXSerializer, ContratoUnLinkedSerializer
+                         ContratoXLSXSerializer, ContratoUnLinkedSerializer, \
+                         ContratoCarterasSerializer
 from .utility import deuda_calculator
 from pagos.models import Pago
 from pagos.serializers import PagoSerializer
@@ -26,6 +27,8 @@ class ContratoCreditoViewSet(viewsets.ModelViewSet):
             return ContratoCreditoListSerializer
         elif self.action == 'no_link':
             return ContratoUnLinkedSerializer
+        elif self.action == 'carteras':
+            return ContratoCarterasSerializer
         return ContratoCreditoSerializer
 
     # Is Gerencia or Region
@@ -35,7 +38,9 @@ class ContratoCreditoViewSet(viewsets.ModelViewSet):
             q = ContratoCredito.objects.filter(estatus=ContratoCredito.DEUDA_PENDIENTE).order_by('-fecha_inicio')
         elif self.action == 'no_link':
             q = q.filter(registrocontable__isnull=True)
-
+        elif self.action == 'carteras':
+            cartera_date = self.request.query_params.get('date', date.today())
+            q = q.filter(fecha_inicio__lte=cartera_date, fecha_final__gt=cartera_date)
         if self.request.user.is_gerencia():
             return q
         return q.filter(clave_socio__comunidad__region=self.request.user.clave_socio.comunidad.region)
@@ -68,6 +73,13 @@ class ContratoCreditoViewSet(viewsets.ModelViewSet):
         count = q.count()
         serializer = self.get_serializer(q, many=True)
         return Response({'count': count, 'results': serializer.data})
+
+    @action(methods=['get'], detail=False, url_path='carteras', url_name='carteras')
+    def carteras(self, request):
+        q = self.get_queryset()
+        # TODO: add vigentes and vencidos debts
+        serializer = self.get_serializer(q, many=True)
+        return Response(serializer.data)
 
 
 class ContratoViewSetXLSX(XLSXFileMixin, viewsets.ReadOnlyModelViewSet):

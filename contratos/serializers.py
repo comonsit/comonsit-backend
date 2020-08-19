@@ -195,3 +195,9 @@ class ContratoUnLinkedSerializer(serializers.ModelSerializer):
 
     def get_region(self, object):
         return object.clave_socio.comunidad.region.id
+
+
+class ContratoCarterasSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContratoCredito
+        fields = '__all__'
