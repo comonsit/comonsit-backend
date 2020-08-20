@@ -1,4 +1,5 @@
 from datetime import date
+from backports.datetime_fromisoformat import MonkeyPatch
 from django.db.models import Q
 from rest_framework import viewsets, permissions
 from rest_framework.decorators import action
@@ -14,6 +15,9 @@ from .utility import deuda_calculator
 from pagos.models import Pago
 from pagos.serializers import PagoSerializer
 from users.permissions import gerenciaOnly
+
+# used to enablke fromisoformat in previous python versions
+MonkeyPatch.patch_fromisoformat()
 
 
 class ContratoCreditoViewSet(viewsets.ModelViewSet):
