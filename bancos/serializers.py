@@ -20,6 +20,32 @@ class SubCuentaSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+def referencia_selector(self, object):
+    nombre = None
+    if object.aport_retiro:
+        tipo = 'Aportación' if object.aport_retiro.aportacion else 'Retiro'
+        nombre = object.aport_retiro.clave_socio.nombres + ' ' + \
+            object.aport_retiro.clave_socio.apellido_paterno + ' ' + \
+            object.aport_retiro.clave_socio.apellido_materno
+
+    elif object.pago:
+        tipo = 'Credito #' + str(object.pago.credito.id)
+        nombre = object.pago.credito.clave_socio.nombres + ' ' + \
+            object.pago.credito.clave_socio.apellido_paterno + ' ' + \
+            object.pago.credito.clave_socio.apellido_materno
+    elif object.ej_credito:
+        tipo = 'Credito #' + str(object.id)
+        nombre = object.ej_credito.clave_socio.nombres + ' ' + \
+            object.ej_credito.clave_socio.apellido_paterno + ' ' + \
+            object.ej_credito.clave_socio.apellido_materno
+
+    if nombre:
+        return f'{tipo} - {nombre}'
+
+    # TODO: incluir nota?
+    return ''
+
+
 class RegistroContableSerializer(serializers.ModelSerializer):
     fecha = serializers.SerializerMethodField(read_only=True)
     subcuenta_id_cont = serializers.SerializerMethodField(read_only=True)
@@ -46,29 +72,7 @@ class RegistroContableSerializer(serializers.ModelSerializer):
         return object.subcuenta.nombre
 
     def get_referencia(self, object):
-        nombre = None
-        if object.aport_retiro:
-            tipo = 'Aportación' if object.aport_retiro.aportacion else 'Retiro'
-            nombre = object.aport_retiro.clave_socio.nombres + ' ' + \
-                object.aport_retiro.clave_socio.apellido_paterno + ' ' + \
-                object.aport_retiro.clave_socio.apellido_materno
-
-        elif object.pago:
-            tipo = 'Credito #' + str(object.pago.credito.id)
-            nombre = object.pago.credito.clave_socio.nombres + ' ' + \
-                object.pago.credito.clave_socio.apellido_paterno + ' ' + \
-                object.pago.credito.clave_socio.apellido_materno
-        elif object.ej_credito:
-            tipo = 'Credito #' + str(object.id)
-            nombre = object.ej_credito.clave_socio.nombres + ' ' + \
-                object.ej_credito.clave_socio.apellido_paterno + ' ' + \
-                object.ej_credito.clave_socio.apellido_materno
-
-        if nombre:
-            return f'{tipo} - {nombre}'
-
-        # TODO: incluir nota?
-        return ''
+        return referencia_selector(self, object)
 
     # def get_saldo(self, object):
     #     q = RegistroContable.objects.filter(movimiento_banco__fecha__lte=object.movimiento_banco.fecha)
@@ -242,3 +246,50 @@ class SaldosSerializer(serializers.ModelSerializer):
                 'id', 'nombre_cuenta', 'tot_ingresos', 'tot_egresos',
                 'tot_ingresos_prev', 'tot_egresos_prev',
                 ]
+
+
+class RegistroXLSXSerializer(serializers.ModelSerializer):
+    fecha = serializers.SerializerMethodField(read_only=True)
+    referencia_banco = serializers.SerializerMethodField(read_only=True)
+    referencia_alf = serializers.SerializerMethodField(read_only=True)
+    fecha_captura = serializers.SerializerMethodField(read_only=True)
+    usuario = serializers.SerializerMethodField(read_only=True)
+    subcuenta_nombre = serializers.SerializerMethodField(read_only=True)
+    subcuenta_id = serializers.SerializerMethodField(read_only=True)
+    banco_cuenta = serializers.SerializerMethodField(read_only=True)
+    banco_nombre = serializers.SerializerMethodField(read_only=True)
+    relacion_sistema = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = RegistroContable
+        fields = "__all__"
+
+    def get_fecha(self, object):
+        return object.movimiento_banco.fecha.strftime("%d-%b-%Y")
+
+    def get_referencia_banco(self, object):
+        return object.movimiento_banco.referencia_banco
+
+    def get_referencia_alf(self, object):
+        return object.movimiento_banco.referencia_alf
+
+    def get_fecha_captura(self, object):
+        return object.movimiento_banco.fecha_auto.strftime("%d-%b-%Y (%H:%M:%S.%f)")
+
+    def get_usuario(self, object):
+        return object.movimiento_banco.usuario.username
+
+    def get_subcuenta_nombre(self, object):
+        return object.subcuenta.nombre
+
+    def get_subcuenta_id(self, object):
+        return object.subcuenta.id_contable
+
+    def get_banco_cuenta(self, object):
+        return object.subcuenta.banco.nombre_cuenta
+
+    def get_banco_nombre(self, object):
+        return object.subcuenta.banco.nombre_banco
+
+    def get_relacion_sistema(self, object):
+        return referencia_selector(self, object)

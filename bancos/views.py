@@ -4,11 +4,13 @@ from rest_framework import viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import status
+from drf_renderer_xlsx.mixins import XLSXFileMixin
+from drf_renderer_xlsx.renderers import XLSXRenderer
 
 from .models import Banco, SubCuenta, MovimientoBanco, RegistroContable
 from .serializers import BancoSerializer, SubCuentaSerializer, \
                          MovimientoBancoSerializer, RegistroContableSerializer, \
-                         SaldosSerializer
+                         SaldosSerializer, RegistroXLSXSerializer
 from .permissions import gerenciaOnly
 
 
@@ -84,19 +86,33 @@ class MovimientoBancoViewSet(viewsets.ModelViewSet):
         return Response(response_data, status=status.HTTP_201_CREATED, headers=headers)
 
 
+def registros_queryset(self):
+    q = RegistroContable.objects.all()
+
+    initial_date = self.request.query_params.get('initialDate', None)
+    if initial_date:
+        q = q.filter(movimiento_banco__fecha__gte=initial_date)
+
+    final_date = self.request.query_params.get('finalDate', None)
+    if final_date:
+        q = q.filter(movimiento_banco__fecha__lte=final_date)
+    return q.order_by('-movimiento_banco__fecha')
+
+
 class RegistroContableViewSet(viewsets.ReadOnlyModelViewSet):
 
     serializer_class = RegistroContableSerializer
     permission_classes = [permissions.IsAuthenticated, gerenciaOnly]
 
     def get_queryset(self):
-        q = RegistroContable.objects.all()
+        return registros_queryset(self)
 
-        initial_date = self.request.query_params.get('initialDate', None)
-        if initial_date:
-            q = q.filter(movimiento_banco__fecha__gte=initial_date)
 
-        final_date = self.request.query_params.get('finalDate', None)
-        if final_date:
-            q = q.filter(movimiento_banco__fecha__lte=final_date)
-        return q.order_by('-movimiento_banco__fecha')
+class RegistroContableViewSetXLSX(XLSXFileMixin, viewsets.ReadOnlyModelViewSet):
+    serializer_class = RegistroXLSXSerializer
+    renderer_classes = [XLSXRenderer]
+    permission_classes = [permissions.IsAuthenticated, gerenciaOnly]
+    filename = 'registrosBanco.xlsx'
+
+    def get_queryset(self):
+        return registros_queryset(self)
