@@ -18,7 +18,7 @@ class Movimiento(models.Model):
     proceso = models.CharField(max_length=2, choices=PROCESOS, default='CF')
     aportacion = models.BooleanField(blank=False, default=True)  # false = retiro
     ordinario = models.BooleanField(blank=False, default=True)  # false = extraordinario
-    tipo_de_movimiento = models.CharField(max_length=2, choices=MOVIMIENTO_CHOICES, blank=True)
+    tipo_de_movimiento = models.CharField(max_length=2, choices=MOVIMIENTO_CHOICES, blank=False)
     responsable_entrega = models.CharField(max_length=50, blank=True)
     fecha_banco = models.DateField(blank=True, null=True)
     referencia_banco = models.CharField(max_length=20, blank=True, null=True)

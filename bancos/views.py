@@ -100,12 +100,15 @@ def registros_queryset(self):
 
 
 class RegistroContableViewSet(viewsets.ReadOnlyModelViewSet):
-
-    serializer_class = RegistroContableSerializer
     permission_classes = [permissions.IsAuthenticated, gerenciaOnly]
 
     def get_queryset(self):
         return registros_queryset(self)
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return RegistroContableSerializer
+        return RegistroXLSXSerializer
 
 
 class RegistroContableViewSetXLSX(XLSXFileMixin, viewsets.ReadOnlyModelViewSet):
