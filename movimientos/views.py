@@ -27,6 +27,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             # TODO: Give REsponse of unAuthorized socio Search.
             queryset = Movimiento.objects.filter(clave_socio__comunidad__region=self.request.user.clave_socio.comunidad.region).order_by('-fecha_entrega')
 
+        # TODO: CHECK IF CLEANER WAY?
         clave_socio = self.request.query_params.get('clave_socio', None)
         if clave_socio:
             queryset = queryset.filter(clave_socio=clave_socio)
@@ -49,11 +50,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
 
         proceso = self.request.query_params.get('proceso', None)
         if proceso:
-            # UGLY CODE that filters all movements of selected process
-            process_filter = {}
-            process_filter[f'clave_socio__{PROCESOS_FIELDS[proceso]}'] = ACTIVO
-            queryset = queryset.filter(**process_filter)
-
+            queryset = queryset.filter(proceso=proceso)
         # TODO: limit view if no query to ???
         return queryset
 
