@@ -262,7 +262,8 @@ class RegistroXLSXSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = RegistroContable
-        fields = "__all__"
+        # fields = "__all__"
+        exclude = ('subcuenta', 'movimiento_banco')
 
     def get_fecha(self, object):
         return object.movimiento_banco.fecha.strftime("%d-%b-%Y")
