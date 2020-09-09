@@ -1,16 +1,10 @@
 from django.db import models
 from tsumbalil.models import CargoCoop
+from comonSitDjango.constants import ESTATUS_CHOICES
 
 
 class Socio(models.Model):
-    ACTIVO = 'AC'
-    NO_PARTICIPA = 'NP'
-    BAJA = 'BA'
-    ESTATUS_CHOICES = [
-        (ACTIVO, 'Activo'),
-        (NO_PARTICIPA, 'No Participa'),
-        (BAJA, 'Baja'),
-    ]
+
     MASCULINO = 'MA'
     FEMENINO = 'FE'
     OTRO = 'OT'

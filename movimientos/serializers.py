@@ -1,6 +1,7 @@
 from datetime import date
 from rest_framework import serializers
 from .models import Movimiento
+from comonSitDjango.constants import PROCESOS_FIELDS, ACTIVO
 
 
 class MovimientoSerializer(serializers.ModelSerializer):
@@ -14,15 +15,8 @@ class MovimientoSerializer(serializers.ModelSerializer):
         """
         Check that user is active in requested process
         """
-        # TODO: Move to a general access
-        procesos = {
-            'CF': 'estatus_cafe',
-            'MI': 'estatus_miel',
-            'JA': 'estatus_yip',
-            'SL': 'estatus_trabajador'
-        }
-        process_status = getattr(data['clave_socio'], procesos[data['proceso']])
-        if process_status != 'AC':
+        process_status = getattr(data['clave_socio'], PROCESOS_FIELDS[data['proceso']])
+        if process_status != ACTIVO:
             raise serializers.ValidationError("El Socio no está activo en este proceso")
 
         aportacion = data.get('aportacion')

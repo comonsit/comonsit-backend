@@ -7,11 +7,18 @@ from .models import Movimiento
 from .serializers import MovimientoSerializer, MovimientoConcSerializer
 from .permissions import gerenciaOrRegion
 from users.permissions import gerenciaOnly
+from comonSitDjango.constants import PROCESOS_FIELDS, ACTIVO
 
 
 class MovimientoViewSet(viewsets.ModelViewSet):
     serializer_class = MovimientoSerializer
     permission_classes = [permissions.IsAuthenticated, gerenciaOrRegion]
+
+    def get_serializer_class(self):
+
+        if self.request.query_params and 'clave_socio' not in self.request.query_params:
+            return MovimientoConcSerializer
+        return MovimientoSerializer
 
     def get_queryset(self):
         if self.request.user.is_gerencia():
@@ -19,9 +26,34 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         else:
             # TODO: Give REsponse of unAuthorized socio Search.
             queryset = Movimiento.objects.filter(clave_socio__comunidad__region=self.request.user.clave_socio.comunidad.region).order_by('-fecha_entrega')
+
         clave_socio = self.request.query_params.get('clave_socio', None)
         if clave_socio:
             queryset = queryset.filter(clave_socio=clave_socio)
+
+        region = self.request.query_params.get('region', None)
+        if region:
+            queryset = queryset.filter(clave_socio__comunidad__region=region)
+
+        comunidad = self.request.query_params.get('comunidad', None)
+        if comunidad:
+            queryset = queryset.filter(clave_socio__comunidad=comunidad)
+
+        fuente = self.request.query_params.get('fuente', None)
+        if fuente:
+            queryset = queryset.filter(clave_socio__fuente=fuente)
+
+        empresa = self.request.query_params.get('empresa', None)
+        if empresa:
+            queryset = queryset.filter(clave_socio__empresa=empresa)
+
+        proceso = self.request.query_params.get('proceso', None)
+        if proceso:
+            # UGLY CODE that filters all movements of selected process
+            process_filter = {}
+            process_filter[f'clave_socio__{PROCESOS_FIELDS[proceso]}'] = ACTIVO
+            queryset = queryset.filter(**process_filter)
+
         # TODO: limit view if no query to ???
         return queryset
 
