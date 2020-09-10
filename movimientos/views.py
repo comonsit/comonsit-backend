@@ -2,12 +2,48 @@ from django.db.models import Sum
 from rest_framework import viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from drf_renderer_xlsx.mixins import XLSXFileMixin
+from drf_renderer_xlsx.renderers import XLSXRenderer
 
 from .models import Movimiento
 from .serializers import MovimientoSerializer, MovimientoConcSerializer
 from .permissions import gerenciaOrRegion
 from users.permissions import gerenciaOnly
-from comonSitDjango.constants import PROCESOS_FIELDS, ACTIVO
+
+
+def movimientos_queryset(self):
+    if self.request.user.is_gerencia():
+        queryset = Movimiento.objects.all().order_by('-fecha_entrega')
+    else:
+        # TODO: Give REsponse of unAuthorized socio Search.
+        queryset = Movimiento.objects.filter(clave_socio__comunidad__region=self.request.user.clave_socio.comunidad.region).order_by('-fecha_entrega')
+
+    # TODO: More automatic process??
+    clave_socio = self.request.query_params.get('clave_socio', None)
+    if clave_socio:
+        queryset = queryset.filter(clave_socio=clave_socio)
+
+    region = self.request.query_params.get('region', None)
+    if region:
+        queryset = queryset.filter(clave_socio__comunidad__region=region)
+
+    comunidad = self.request.query_params.get('comunidad', None)
+    if comunidad:
+        queryset = queryset.filter(clave_socio__comunidad=comunidad)
+
+    fuente = self.request.query_params.get('fuente', None)
+    if fuente:
+        queryset = queryset.filter(clave_socio__fuente=fuente)
+
+    empresa = self.request.query_params.get('empresa', None)
+    if empresa:
+        queryset = queryset.filter(clave_socio__empresa=empresa)
+
+    proceso = self.request.query_params.get('proceso', None)
+    if proceso:
+        queryset = queryset.filter(proceso=proceso)
+    # TODO: limit view if no query to ???
+    return queryset
 
 
 class MovimientoViewSet(viewsets.ModelViewSet):
@@ -16,43 +52,12 @@ class MovimientoViewSet(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
 
-        if self.request.query_params and 'clave_socio' not in self.request.query_params:
-            return MovimientoConcSerializer
-        return MovimientoSerializer
+        if 'clave_socio' in self.request.query_params or self.action == 'create':
+            return MovimientoSerializer
+        return MovimientoConcSerializer
 
     def get_queryset(self):
-        if self.request.user.is_gerencia():
-            queryset = Movimiento.objects.all().order_by('-fecha_entrega')
-        else:
-            # TODO: Give REsponse of unAuthorized socio Search.
-            queryset = Movimiento.objects.filter(clave_socio__comunidad__region=self.request.user.clave_socio.comunidad.region).order_by('-fecha_entrega')
-
-        # TODO: CHECK IF CLEANER WAY?
-        clave_socio = self.request.query_params.get('clave_socio', None)
-        if clave_socio:
-            queryset = queryset.filter(clave_socio=clave_socio)
-
-        region = self.request.query_params.get('region', None)
-        if region:
-            queryset = queryset.filter(clave_socio__comunidad__region=region)
-
-        comunidad = self.request.query_params.get('comunidad', None)
-        if comunidad:
-            queryset = queryset.filter(clave_socio__comunidad=comunidad)
-
-        fuente = self.request.query_params.get('fuente', None)
-        if fuente:
-            queryset = queryset.filter(clave_socio__fuente=fuente)
-
-        empresa = self.request.query_params.get('empresa', None)
-        if empresa:
-            queryset = queryset.filter(clave_socio__empresa=empresa)
-
-        proceso = self.request.query_params.get('proceso', None)
-        if proceso:
-            queryset = queryset.filter(proceso=proceso)
-        # TODO: limit view if no query to ???
-        return queryset
+        return movimientos_queryset(self)
 
     def perform_create(self, serializer):
         serializer.save(autor=self.request.user)
@@ -83,3 +88,13 @@ class MovimientoConcViewSet(viewsets.ReadOnlyModelViewSet):
         count = q.count()
         serializer = self.get_serializer(q, many=True)
         return Response({'count': count, 'results': serializer.data})
+
+
+class MovimientoViewSetXLSX(XLSXFileMixin, viewsets.ReadOnlyModelViewSet):
+    serializer_class = MovimientoConcSerializer
+    renderer_classes = [XLSXRenderer]
+    permission_classes = [permissions.IsAuthenticated, gerenciaOnly]
+    filename = 'aportaciones_retiros.xlsx'
+
+    def get_queryset(self):
+        return movimientos_queryset(self)
