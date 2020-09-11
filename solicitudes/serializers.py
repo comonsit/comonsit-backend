@@ -39,7 +39,7 @@ class SolicitudCreditoSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def get_nombre_productor(self, object):
-        return object.nombres_apellidos()
+        return object.clave_socio.nombres_apellidos()
 
     def get_region(self, object):
         return object.clave_socio.comunidad.region.id
