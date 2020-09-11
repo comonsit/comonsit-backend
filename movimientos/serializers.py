@@ -48,3 +48,9 @@ class MovimientoConcSerializer(serializers.ModelSerializer):
     def get_nombre_socio(self, object):
         return object.clave_socio.nombres + ' ' + object.clave_socio.apellido_paterno \
                 + ' ' + object.clave_socio.apellido_materno
+
+
+class MovimientoPartialUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Movimiento
+        fields = ['id', 'tipo_de_movimiento', 'fecha_banco', 'referencia_banco']

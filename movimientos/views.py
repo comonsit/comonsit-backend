@@ -6,7 +6,8 @@ from drf_renderer_xlsx.mixins import XLSXFileMixin
 from drf_renderer_xlsx.renderers import XLSXRenderer
 
 from .models import Movimiento
-from .serializers import MovimientoSerializer, MovimientoConcSerializer
+from .serializers import MovimientoSerializer, MovimientoConcSerializer, \
+                         MovimientoPartialUpdateSerializer
 from .permissions import gerenciaOrRegion
 from users.permissions import gerenciaOnly
 
@@ -52,7 +53,9 @@ class MovimientoViewSet(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
 
-        if 'clave_socio' in self.request.query_params or self.action == 'create':
+        if self.action == 'partial_update':
+            return MovimientoPartialUpdateSerializer
+        elif 'clave_socio' in self.request.query_params or self.action == 'create':
             return MovimientoSerializer
         return MovimientoConcSerializer
 
