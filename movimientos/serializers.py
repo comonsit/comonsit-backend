@@ -46,11 +46,30 @@ class MovimientoConcSerializer(serializers.ModelSerializer):
                   ]
 
     def get_nombre_socio(self, object):
-        return object.clave_socio.nombres + ' ' + object.clave_socio.apellido_paterno \
-                + ' ' + object.clave_socio.apellido_materno
+        return object.clave_socio.nombres_apellidos()
 
 
 class MovimientoPartialUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Movimiento
         fields = ['id', 'tipo_de_movimiento', 'fecha_banco', 'referencia_banco']
+
+
+class MovimientoSingleSerializer(serializers.ModelSerializer):
+    nombre_socio = serializers.SerializerMethodField(read_only=True)
+    autor = serializers.StringRelatedField(read_only=True)
+    proceso = serializers.SerializerMethodField(read_only=True)
+    tipo_de_movimiento = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = Movimiento
+        fields = '__all__'
+
+    def get_proceso(self, object):
+        return object.get_proceso_display()
+
+    def get_tipo_de_movimiento(self, object):
+        return object.get_tipo_de_movimiento_display()
+
+    def get_nombre_socio(self, object):
+        return object.clave_socio.nombres_apellidos()
