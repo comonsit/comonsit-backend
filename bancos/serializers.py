@@ -24,20 +24,14 @@ def referencia_selector(self, object):
     nombre = None
     if object.aport_retiro:
         tipo = 'Aportación' if object.aport_retiro.aportacion else 'Retiro'
-        nombre = object.aport_retiro.clave_socio.nombres + ' ' + \
-            object.aport_retiro.clave_socio.apellido_paterno + ' ' + \
-            object.aport_retiro.clave_socio.apellido_materno
+        nombre = object.aport_retiro.clave_socio.nombres_apellidos()
 
     elif object.pago:
         tipo = 'Credito #' + str(object.pago.credito.id)
-        nombre = object.pago.credito.clave_socio.nombres + ' ' + \
-            object.pago.credito.clave_socio.apellido_paterno + ' ' + \
-            object.pago.credito.clave_socio.apellido_materno
+        nombre = object.pago.credito.clave_socio.nombres_apellidos()
     elif object.ej_credito:
         tipo = 'Credito #' + str(object.id)
-        nombre = object.ej_credito.clave_socio.nombres + ' ' + \
-            object.ej_credito.clave_socio.apellido_paterno + ' ' + \
-            object.ej_credito.clave_socio.apellido_materno
+        nombre = object.ej_credito.clave_socio.nombres_apellidos()
 
     if nombre:
         return f'{tipo} - {nombre}'

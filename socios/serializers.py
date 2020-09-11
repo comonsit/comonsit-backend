@@ -12,8 +12,7 @@ class SocioSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def get_nombre_productor(self, object):
-        return object.nombres + ' ' + object.apellido_paterno \
-                + ' ' + object.apellido_materno
+        return object.nombres_apellidos()
 
     def get_nombre_region(self, object):
         return object.comunidad.region.nombre_de_region

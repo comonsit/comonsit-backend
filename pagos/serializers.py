@@ -127,8 +127,7 @@ class PagoListSerializer(serializers.ModelSerializer):
                   'estatus_previo', 'fecha_banco', 'referencia_banco']
 
     def get_nombres(self, object):
-        return object.credito.clave_socio.nombres + ' ' + object.credito.clave_socio.apellido_paterno \
-                + ' ' + object.credito.clave_socio.apellido_materno
+        return object.credito.clave_socio.nombres_apellidos()
 
     def get_region(self, object):
         return object.credito.clave_socio.comunidad.region.id

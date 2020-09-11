@@ -40,8 +40,7 @@ class ContratoCreditoSerializer(serializers.ModelSerializer):
         return object.fecha_vencimiento()
 
     def get_nombres(self, object):
-        return object.clave_socio.nombres + ' ' + object.clave_socio.apellido_paterno \
-                + ' ' + object.clave_socio.apellido_materno
+        return object.clave_socio.nombres_apellidos()
 
     def get_comunidad(self, object):
         return object.clave_socio.comunidad.nombre_de_comunidad
@@ -106,8 +105,7 @@ class ContratoCreditoListSerializer(serializers.ModelSerializer):
                   'tasa_moratoria']
 
     def get_nombres(self, object):
-        return object.clave_socio.nombres + ' ' + object.clave_socio.apellido_paterno \
-                + ' ' + object.clave_socio.apellido_materno
+        return object.clave_socio.nombres_apellidos()
 
     def get_estatus(self, object):
         return object.get_status()
@@ -145,8 +143,7 @@ class ContratoXLSXSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def get_nombres(self, object):
-        return object.clave_socio.nombres + ' ' + object.clave_socio.apellido_paterno \
-                + ' ' + object.clave_socio.apellido_materno
+        return object.clave_socio.nombres_apellidos()
 
     def get_deuda_al_dia(self, object):
         deuda = deuda_calculator(object, date.today())
@@ -187,8 +184,7 @@ class ContratoUnLinkedSerializer(serializers.ModelSerializer):
                   'estatus', 'estatus_ejecucion']
 
     def get_nombres(self, object):
-        return object.clave_socio.nombres + ' ' + object.clave_socio.apellido_paterno \
-                + ' ' + object.clave_socio.apellido_materno
+        return object.clave_socio.nombres_apellidos()
 
     def get_estatus(self, object):
         return object.get_status()

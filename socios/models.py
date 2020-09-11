@@ -46,3 +46,6 @@ class Socio(models.Model):
 
     def __str__(self):
         return '{0}: {1} {2} {3}'.format(self.clave_socio, self.nombres, self.apellido_paterno, self.apellido_materno)
+
+    def nombres_apellidos(self):
+        return self.nombres + ' ' + self.apellido_paterno + ' ' + self.apellido_materno
