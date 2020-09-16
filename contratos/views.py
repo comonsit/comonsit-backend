@@ -13,6 +13,7 @@ from .serializers import ContratoCreditoSerializer, ContratoCreditoListSerialize
                          ContratoXLSXSerializer, ContratoUnLinkedSerializer
 from .utility import deuda_calculator
 from pagos.models import Pago
+from tsumbalil.models import Region
 from pagos.serializers import PagoSerializer
 from users.permissions import gerenciaOnly
 
@@ -40,7 +41,7 @@ class ContratoCreditoViewSet(viewsets.ModelViewSet):
             q = ContratoCredito.objects.filter(estatus=ContratoCredito.DEUDA_PENDIENTE).order_by('-fecha_inicio')
         elif self.action == 'no_link':
             q = q.filter(registrocontable__isnull=True)
-        elif self.action == 'carteras':
+        elif self.action == 'carteras' or self.action == 'carteras_per_region':
             cartera_date = self.request.query_params.get('date', date.today())
             q = q.filter(fecha_inicio__lte=cartera_date).filter(
                 Q(fecha_final__gt=cartera_date) |
@@ -79,12 +80,7 @@ class ContratoCreditoViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(q, many=True)
         return Response({'count': count, 'results': serializer.data})
 
-    @action(methods=['get'], detail=False, url_path='carteras', url_name='carteras')
-    def carteras(self, request):
-        q = self.get_queryset()
-        cartera_date = request.query_params.get('date', None)
-        detail = request.query_params.get('detail', None)
-        d = date.fromisoformat(cartera_date) if cartera_date else date.today()
+    def vigentes_vencidos(self, q, d):
         vigentes_list = []
         vencidos_list = []
         vigentes_total = 0
@@ -111,6 +107,15 @@ class ContratoCreditoViewSet(viewsets.ModelViewSet):
                 'vigentes_count': len(vigentes_list),
                 'vencidos_count': len(vencidos_list)
             }
+        return result, vigentes_list, vencidos_list
+
+    @action(methods=['get'], detail=False, url_path='carteras', url_name='carteras')
+    def carteras(self, request):
+        q = self.get_queryset()
+        cartera_date = request.query_params.get('date', None)
+        detail = request.query_params.get('detail', None)
+        d = date.fromisoformat(cartera_date) if cartera_date else date.today()
+        result, vigentes_list, vencidos_list = self.vigentes_vencidos(q, d)
 
         if detail:
             serialized_vigentes = self.get_serializer(vigentes_list, many=True)
@@ -118,6 +123,17 @@ class ContratoCreditoViewSet(viewsets.ModelViewSet):
             result.update({'vigentes': serialized_vigentes.data, 'vencidos': serialized_vencidos.data})
         return Response(result)
 
+    @action(methods=['get'], detail=False, url_path='carteras-per-region', url_name='carteras_per_region')
+    def carteras_per_region(self, request):
+        regiones = Region.objects.all()
+        q = self.get_queryset()
+        results = []
+        for region in regiones:
+            filtered_q = q.filter(clave_socio__comunidad__region=region)
+            result, _, __ = self.vigentes_vencidos(filtered_q, date.today())
+            result['region'] = region.id
+            results.append(result)
+        return Response(results)
 
 class ContratoViewSetXLSX(XLSXFileMixin, viewsets.ReadOnlyModelViewSet):
     serializer_class = ContratoXLSXSerializer
