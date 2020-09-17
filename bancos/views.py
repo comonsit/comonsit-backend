@@ -73,7 +73,7 @@ class SubCuentaViewSet(viewsets.ReadOnlyModelViewSet):
         return SubCuentaSerializer
 
     def get_queryset(self):
-        q = SubCuenta.objects.all()
+        q = SubCuenta.objects.all().order_by('id_contable')
         if self.action == 'list':
             return q.filter(sistema=False)
         return q

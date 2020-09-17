@@ -247,13 +247,18 @@ class SaldosSubcuentaSerializer(serializers.ModelSerializer):
         tot_egresos = serializers.CharField()
         tot_ingresos_prev = serializers.CharField()
         tot_egresos_prev = serializers.CharField()
+        nombre_cuenta = serializers.SerializerMethodField(read_only=True)
 
         class Meta:
             model = SubCuenta
             fields = [
-                'id', 'nombre', 'id_contable', 'tot_ingresos',
+                'id', 'nombre_cuenta', 'tot_ingresos',
                 'tot_egresos', 'tot_ingresos_prev', 'tot_egresos_prev',
                 ]
+
+        def get_nombre_cuenta(self, object):
+            return object.id_contable + ' -- ' + object.nombre
+
 
 
 class RegistroXLSXSerializer(serializers.ModelSerializer):
