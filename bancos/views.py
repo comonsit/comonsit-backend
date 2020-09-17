@@ -10,7 +10,8 @@ from drf_renderer_xlsx.renderers import XLSXRenderer
 from .models import Banco, SubCuenta, MovimientoBanco, RegistroContable
 from .serializers import BancoSerializer, SubCuentaSerializer, \
                          MovimientoBancoSerializer, RegistroContableSerializer, \
-                         SaldosSerializer, RegistroXLSXSerializer
+                         SaldosBancoSerializer, RegistroXLSXSerializer, \
+                         SaldosSubcuentaSerializer
 from .permissions import gerenciaOnly
 
 
@@ -20,7 +21,7 @@ class BancoViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_serializer_class(self):
         if self.action == 'saldos':
-            return SaldosSerializer
+            return SaldosBancoSerializer
         return BancoSerializer
 
     @action(methods=['get'], detail=False)
@@ -64,8 +65,57 @@ class BancoViewSet(viewsets.ReadOnlyModelViewSet):
 
 class SubCuentaViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = SubCuenta.objects.filter(sistema=False)
-    serializer_class = SubCuentaSerializer
     permission_classes = [permissions.IsAuthenticated, gerenciaOnly]
+
+    def get_serializer_class(self):
+        if self.action == 'saldos':
+            return SaldosSubcuentaSerializer
+        return SubCuentaSerializer
+
+    def get_queryset(self):
+        q = SubCuenta.objects.all()
+        if self.action == 'list':
+            return q.filter(sistema=False)
+        return q
+
+    # TODO: code duplicated with Bancos Saldos Action & serializer
+    @action(methods=['get'], detail=False)
+    def saldos(self, request):
+        q = self.get_queryset()
+        initial_date = request.query_params.get('initialDate', None)
+        final_date = request.query_params.get('finalDate', None)
+        date_range = Q()
+        prev_date = Q(False)
+        if initial_date:
+            date_range &= Q(registrocontable__movimiento_banco__fecha__gte=initial_date)
+            prev_date = Q(registrocontable__movimiento_banco__fecha__lt=initial_date)
+            q = q.annotate(
+                    tot_ingresos_prev=Coalesce(Sum(
+                        'registrocontable__cantidad',
+                        filter=Q(registrocontable__ingr_egr=True) & prev_date), 0),
+                    tot_egresos_prev=Coalesce(Sum(
+                        'registrocontable__cantidad',
+                        filter=Q(registrocontable__ingr_egr=False) & prev_date), 0)
+                    )
+        else:
+            q = q.annotate(
+                tot_ingresos_prev=Value(0, DecimalField()),
+                tot_egresos_prev=Value(0, DecimalField()),
+            )
+
+        if final_date:
+            date_range &= Q(registrocontable__movimiento_banco__fecha__lte=final_date)
+
+        q = q.annotate(
+                tot_ingresos=Coalesce(Sum(
+                    'registrocontable__cantidad',
+                    filter=Q(registrocontable__ingr_egr=True) & date_range), 0),
+                tot_egresos=Coalesce(Sum(
+                    'registrocontable__cantidad',
+                    filter=Q(registrocontable__ingr_egr=False) & date_range), 0)
+                )
+        serializer = self.get_serializer(q, many=True)
+        return Response(serializer.data)
 
 
 class MovimientoBancoViewSet(viewsets.ModelViewSet):
