@@ -1,3 +1,9 @@
-from django.shortcuts import render
+from rest_framework import viewsets
 
-# Create your views here.
+from .models import InegiLocalidad
+from .serializers import InegiLocalidadSerializer
+
+
+class InegiLocalidadViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = InegiLocalidad.objects.all()
+    serializer_class = InegiLocalidadSerializer

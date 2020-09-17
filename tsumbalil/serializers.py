@@ -23,10 +23,16 @@ class RegionSerializer(serializers.ModelSerializer):
 
 class ComunidadSerializer(serializers.ModelSerializer):
     nombre_region = serializers.CharField(source='region.nombre_de_region', read_only=True)
+    ubicacion = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Comunidad
         fields = "__all__"
+
+    def get_ubicacion(self, object):
+        if object.ermita:
+            return object.ermita.localidad
+        return None
 
 
 class EmpresaSerializer(serializers.ModelSerializer):

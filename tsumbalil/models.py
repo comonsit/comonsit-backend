@@ -28,6 +28,7 @@ class Region(models.Model):
 class Comunidad(models.Model):
     nombre_de_comunidad = models.CharField(max_length=40, blank=False)
     region = models.ForeignKey(Region, on_delete=models.SET_NULL, null=True, blank=True)
+    ermita = models.ForeignKey('ermitas.Ermita', on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return "{nombre}".format(nombre=self.nombre_de_comunidad)
