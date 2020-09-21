@@ -24,15 +24,25 @@ class RegionSerializer(serializers.ModelSerializer):
 class ComunidadSerializer(serializers.ModelSerializer):
     nombre_region = serializers.CharField(source='region.nombre_de_region', read_only=True)
     ubicacion = serializers.SerializerMethodField(read_only=True)
+    ermita = serializers.SerializerMethodField(read_only=True)
+    inegiLocalidad = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Comunidad
         fields = "__all__"
 
     def get_ubicacion(self, object):
-        if object.ermita:
-            return object.ermita.localidad
+        if object.ermita and object.ermita.localidad:
+            # return f'lat: {object.ermita.localidad.ubicacion.x} lon: {object.ermita.localidad.ubicacion.y}'
+            return [object.ermita.localidad.ubicacion.y, object.ermita.localidad.ubicacion.x]
         return None
+
+    def get_ermita(self, object):
+        return object.ermita.nombre
+
+    def get_inegiLocalidad(self, object):
+        if object.ermita and object.ermita.localidad:
+            return object.ermita.localidad.localidad_id
 
 
 class EmpresaSerializer(serializers.ModelSerializer):
