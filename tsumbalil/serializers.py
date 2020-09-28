@@ -38,7 +38,9 @@ class ComunidadSerializer(serializers.ModelSerializer):
         return None
 
     def get_ermita(self, object):
-        return object.ermita.nombre
+        if object.ermita:
+            return str(object.ermita.ermita_id) + ': ' + object.ermita.nombre
+        return None
 
     def get_inegiLocalidad(self, object):
         if object.ermita and object.ermita.localidad:
