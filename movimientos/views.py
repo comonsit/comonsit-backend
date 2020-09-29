@@ -57,7 +57,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             return MovimientoPartialUpdateSerializer
         elif self.action == 'retrieve':
             return MovimientoSingleSerializer
-        elif 'clave_socio' in self.request.query_params or self.action == 'create':
+        elif self.action == 'create':
             return MovimientoSerializer
         return MovimientoConcSerializer
 

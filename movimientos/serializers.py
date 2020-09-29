@@ -53,6 +53,7 @@ class MovimientoSerializer(serializers.ModelSerializer):
 
 class MovimientoConcSerializer(serializers.ModelSerializer):
     nombre_socio = serializers.SerializerMethodField(read_only=True)
+    tipo_de_movimiento = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Movimiento
@@ -63,6 +64,9 @@ class MovimientoConcSerializer(serializers.ModelSerializer):
 
     def get_nombre_socio(self, object):
         return object.clave_socio.nombres_apellidos()
+
+    def get_tipo_de_movimiento(self, object):
+        return object.get_tipo_de_movimiento_display()
 
 
 class MovimientoPartialUpdateSerializer(serializers.ModelSerializer):
