@@ -58,7 +58,7 @@ class MovimientoConcSerializer(serializers.ModelSerializer):
     class Meta:
         model = Movimiento
         fields = ['id', 'nombre_socio', 'fecha_entrega', 'monto', 'aportacion',
-                  'tipo_de_movimiento', 'fecha_banco', 'referencia_banco',
+                  'tipo_de_movimiento', 'fecha_banco', 'ordinario',
                   'proceso'
                   ]
 
