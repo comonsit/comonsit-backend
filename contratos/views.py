@@ -80,32 +80,61 @@ class ContratoCreditoViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(q, many=True)
         return Response({'count': count, 'results': serializer.data})
 
-    def vigentes_vencidos(self, q, d):
+    def vigentes_vencidos(self, q, refDate):
         vigentes_list = []
-        vencidos_list = []
         vigentes_total = 0
+        vencidos_list = []
         vencidos_total = 0
+        vencidos_list = []
+        vencidosLT30_total = 0
+        vencidosLT30_count = 0
+        vencidos30to6M_total = 0
+        vencidos30to6M_count = 0
+        vencidosGT6M_total = 0
+        vencidosGT6M_count = 0
         for credito in q:
             # Calculate debt or set to zero
-            deuda = deuda_calculator(credito, d, True)
+            deuda = deuda_calculator(credito, refDate, True)
             if 'total_deuda' in deuda:
                 deuda_cantidad = deuda['total_deuda']
             else:
                 deuda_cantidad = 0
 
             # Assign to corresponding portfolio
-            if credito.get_status(d, True) == ContratoCredito.VIGENTE:
+            if credito.get_status(refDate, True) == ContratoCredito.VIGENTE:
                 vigentes_list.append(credito)
                 vigentes_total += deuda_cantidad
             else:
                 vencidos_list.append(credito)
                 vencidos_total += deuda_cantidad
 
+                # due Credits less than 30 days
+                delta = (refDate - credito.fecha_vencimiento())
+                print(f'venció el {credito.fecha_vencimiento()} hoy es {refDate}')
+                print(f'El delta es {delta.days}')
+                if delta.days <= 30:
+                    vencidosLT30_total += deuda_cantidad
+                    vencidosLT30_count += 1
+                # due Credits between 30 days and 6 months
+                elif delta.days <= 180:
+                    vencidos30to6M_total += deuda_cantidad
+                    vencidos30to6M_count += 1
+                # due Credits for more than 6 months
+                else:
+                    vencidosGT6M_total += deuda_cantidad
+                    vencidosGT6M_count += 1
+
         result = {
                 'vigentes_total': vigentes_total,
-                'vencidos_total': vencidos_total,
                 'vigentes_count': len(vigentes_list),
-                'vencidos_count': len(vencidos_list)
+                'vencidos_total': vencidos_total,
+                'vencidos_count': len(vencidos_list),
+                'vencidosLT30_total': vencidosLT30_total,
+                'vencidosLT30_count': vencidosLT30_count,
+                'vencidos30to6M_total': vencidos30to6M_total,
+                'vencidos30to6M_count': vencidos30to6M_count,
+                'vencidosGT6M_total': vencidosGT6M_total,
+                'vencidosGT6M_count': vencidosGT6M_count,
             }
         return result, vigentes_list, vencidos_list
 
@@ -134,6 +163,7 @@ class ContratoCreditoViewSet(viewsets.ModelViewSet):
             result['region'] = region.id
             results.append(result)
         return Response(results)
+
 
 class ContratoViewSetXLSX(XLSXFileMixin, viewsets.ReadOnlyModelViewSet):
     serializer_class = ContratoXLSXSerializer
