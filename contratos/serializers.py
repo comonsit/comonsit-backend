@@ -17,6 +17,7 @@ class ContratoCreditoSerializer(serializers.ModelSerializer):
     proceso = serializers.SerializerMethodField(read_only=True)
     tipo_credito = serializers.SerializerMethodField(read_only=True)
     pagado = serializers.SerializerMethodField(read_only=True)
+    plazo_disp = serializers.SerializerMethodField(read_only=True)
     extra_kwargs = {
         'estatus': {'read_only': True},
         'solicitud': {'read_only': True},
@@ -56,6 +57,10 @@ class ContratoCreditoSerializer(serializers.ModelSerializer):
 
     def get_pagado(self, object):
         return Pago.objects.filter(credito=object).aggregate(Sum('cantidad'))['cantidad__sum']
+
+    def get_plazo_disp(self, object):
+        prorroga = f'+{object.prorroga}' if object.prorroga > 0 else ''
+        return str(object.plazo) + prorroga
 
     def update(self, instance, validated_data):
         current_user = self.context['request'].user

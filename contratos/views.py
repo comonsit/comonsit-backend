@@ -30,7 +30,7 @@ class ContratoCreditoViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action == 'list' or self.action == 'all':
             return ContratoCreditoListSerializer
-        elif self.action == 'no_link' or self.action == 'carteras':
+        elif self.action == 'no_link':
             return ContratoUnLinkedSerializer
         return ContratoCreditoSerializer
 
