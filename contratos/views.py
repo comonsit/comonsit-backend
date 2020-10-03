@@ -44,9 +44,9 @@ class ContratoCreditoViewSet(viewsets.ModelViewSet):
         elif self.action == 'carteras' or self.action == 'carteras_per_region':
             cartera_date = self.request.query_params.get('date', date.today())
             q = q.filter(fecha_inicio__lte=cartera_date).filter(
-                Q(fecha_final__gt=cartera_date) |
-                Q(fecha_final=None)
-            )
+                    Q(fecha_final__gt=cartera_date) |
+                    Q(fecha_final=None)
+                ).filter(estatus_ejecucion=ContratoCredito.COBRADO)
         if self.request.user.is_gerencia():
             return q
         return q.filter(clave_socio__comunidad__region=self.request.user.clave_socio.comunidad.region)
@@ -110,8 +110,6 @@ class ContratoCreditoViewSet(viewsets.ModelViewSet):
 
                 # due Credits less than 30 days
                 delta = (refDate - credito.fecha_vencimiento())
-                print(f'venció el {credito.fecha_vencimiento()} hoy es {refDate}')
-                print(f'El delta es {delta.days}')
                 if delta.days <= 30:
                     vencidosLT30_total += deuda_cantidad
                     vencidosLT30_count += 1

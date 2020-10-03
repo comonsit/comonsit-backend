@@ -174,7 +174,6 @@ class SolicitudPartialUpdateSerializer(serializers.ModelSerializer):
             elif(eval_status == SolicitudCredito.REVISION and
                     instance.estatus_evaluacion == SolicitudCredito.NEGOCIACION and
                     instance.estatus_solicitud == SolicitudCredito.APROBADO):
-                print('ACTUALIZANDO el estatus eval...')
                 instance.estatus_evaluacion = eval_status
         else:
             raise serializers.ValidationError("Patch inesperado")
