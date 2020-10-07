@@ -35,6 +35,8 @@ class ComunidadSerializer(serializers.ModelSerializer):
         if object.ermita and object.ermita.localidad:
             # return f'lat: {object.ermita.localidad.ubicacion.x} lon: {object.ermita.localidad.ubicacion.y}'
             return [object.ermita.localidad.ubicacion.y, object.ermita.localidad.ubicacion.x]
+        elif object.inegi_extra:
+            return [object.inegi_extra.ubicacion.y, object.inegi_extra.ubicacion.x]
         return None
 
     def get_ermita(self, object):
