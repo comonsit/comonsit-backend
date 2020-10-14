@@ -38,15 +38,21 @@ class MovimientoSerializer(serializers.ModelSerializer):
             retiros = q.filter(aportacion=False).aggregate(total=Coalesce(Sum('monto'), 0))['total']
             balance = aports - retiros
             if monto > balance:
-                raise serializers.ValidationError({'monto': f'No se puede hacer un retiro mayor al saldo actual: ${balance}'})
+                raise serializers.ValidationError(
+                    {
+                        'non_field_errors': f'No se puede hacer un retiro mayor al saldo actual: ${balance}',
+                        'monto': f'El monto excede el saldo',
+                    })
 
         fecha_entrega = data.get('fecha_entrega')
         tipo_de_movimiento = data.get('tipo_de_movimiento')
         today = date.today()
-        if (tipo_de_movimiento == Movimiento.EFECTIVO and
-                (fecha_entrega.year != today.year or
-                 fecha_entrega.month != today.month)):
-            raise serializers.ValidationError({"fecha_entrega": "Las aportaciones en efectivo sólo pueden ser del mes en curso."})
+        if (tipo_de_movimiento == Movimiento.EFECTIVO
+                and (fecha_entrega.year != today.year or fecha_entrega.month != today.month)
+                and aportacion):
+            raise serializers.ValidationError({
+                "fecha_entrega": "Las aportaciones en efectivo sólo pueden ser del mes en curso."
+            })
 
         return data
 
