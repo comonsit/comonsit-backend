@@ -59,7 +59,7 @@ class MovimientoConcSerializer(serializers.ModelSerializer):
         model = Movimiento
         fields = ['id', 'nombre_socio', 'fecha_entrega', 'monto', 'aportacion',
                   'tipo_de_movimiento', 'fecha_banco', 'ordinario',
-                  'proceso'
+                  'proceso', 'referencia_banco'
                   ]
 
     def get_nombre_socio(self, object):
