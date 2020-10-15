@@ -70,7 +70,7 @@ class PagoSerializer(serializers.ModelSerializer):
 
         abono_capital = data.get('abono_capital')
         if abono_capital > deuda['capital_por_pagar']:
-            raise serializers.ValidationError({"abono_pendiente": "El pago es mayor a lo que se debe de capital"})
+            raise serializers.ValidationError({"abono_capital": "El pago es mayor a lo que se debe de capital"})
 
         """
         Check quantities match
