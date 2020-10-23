@@ -26,7 +26,7 @@ class Region(models.Model):
 
 
 class Comunidad(models.Model):
-    nombre_de_comunidad = models.CharField(max_length=40, blank=False)
+    nombre_de_comunidad = models.CharField(max_length=50, blank=False)
     region = models.ForeignKey(Region, on_delete=models.SET_NULL, null=True, blank=True)
     ermita = models.ForeignKey('ermitas.Ermita', on_delete=models.SET_NULL, null=True, blank=True)
     inegi_extra = models.ForeignKey('ermitas.InegiLocalidad', on_delete=models.SET_NULL, null=True, blank=True)

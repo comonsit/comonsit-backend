@@ -21,9 +21,9 @@ class Socio(models.Model):
     comunidad = models.ForeignKey('tsumbalil.Comunidad', on_delete=models.SET_NULL, null=True, blank=True)
     curp = models.CharField(max_length=18, verbose_name='CURP', blank=True)  # TODO: Revisar Restricciones, homoclave?
     telefono = models.CharField(max_length=20)
-    fecha_nacimiento = models.DateField()
-    fecha_ingr_yomol_atel = models.DateField()
-    fecha_ingr_programa = models.DateField()
+    fecha_nacimiento = models.DateField(blank=True, null=True)
+    fecha_ingr_yomol_atel = models.DateField(blank=True, null=True)
+    fecha_ingr_programa = models.DateField(blank=True, null=True)
     cargo = models.ForeignKey('tsumbalil.Cargo', on_delete=models.SET_NULL, null=True, blank=True)
     cargo_coop = models.ManyToManyField(CargoCoop, related_name='Socio_cargo_coop', blank=True, default=1)  # 1 = Ninguno
     empresa = models.ForeignKey('tsumbalil.Empresa', on_delete=models.CASCADE, null=True, default=None)
@@ -40,6 +40,7 @@ class Socio(models.Model):
     doc_act_nac = models.BooleanField(blank=False, default=False)
     doc_ine = models.BooleanField(blank=False, default=False)
     doc_domicilio = models.BooleanField(blank=False, default=False)
+    doc_rfc = models.BooleanField(blank=False, default=False)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     # foto = models.imageField()
