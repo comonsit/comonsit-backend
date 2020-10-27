@@ -24,7 +24,7 @@ class SocioSerializer(serializers.ModelSerializer):
 class SocioListSerializer(serializers.ModelSerializer):
     region = serializers.SerializerMethodField(read_only=True)
     nombre_comunidad = serializers.SerializerMethodField(read_only=True)
-
+    full_name = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Socio
@@ -32,7 +32,7 @@ class SocioListSerializer(serializers.ModelSerializer):
             "clave_socio", "nombres", "apellido_paterno", "apellido_materno",
             "region", "nombre_comunidad", "clave_anterior", "estatus_cafe",
             "estatus_miel", "estatus_yip", "estatus_trabajador", "estatus_comonSit",
-            "created", "updated"
+            "created", "updated", "full_name"
         ]
 
     def get_region(self, object):
@@ -45,6 +45,10 @@ class SocioListSerializer(serializers.ModelSerializer):
 
     def get_tipo_credito_nombre(self, object):
         return object.get_tipo_credito_display()
+
+    def get_full_name(self, object):
+        return object.nombres_apellidos()
+
 
 class SocioSerializerXLS(serializers.ModelSerializer):
     cargo_coop = serializers.SerializerMethodField(read_only=True)
