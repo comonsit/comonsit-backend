@@ -58,7 +58,7 @@ class PagoSerializer(serializers.ModelSerializer):
         cantidad = data.get('cantidad')
         # substitute for final debt calculator (same in interest check!!!)
         if cantidad > deuda['total_deuda']:
-            raise serializers.ValidationError({"monto": "El pago es mayor que la deuda"})
+            raise serializers.ValidationError({"cantidad": "La cantidad del pago no puede ser mayor que la deuda"})
 
         interes_ord = data.get('interes_ord')
         if interes_ord > deuda['interes_ordinario_deuda']:
