@@ -42,8 +42,26 @@ class PagoSerializer(serializers.ModelSerializer):
         fecha_pago = data.get('fecha_pago')
         if fecha_pago > date.today():
             raise serializers.ValidationError({"fecha_pago": "La fecha de pago no puede ser mayor a hoy"})
+
+        """
+        Check the payment date is after start of credit
+        """
         if fecha_pago < credito.fecha_inicio:
             raise serializers.ValidationError({"fecha_pago": "La fecha de pago no puede ser menor a la fecha de inicio del crédito."})
+
+        """
+        Check the payment date is after all previously registered payments
+        """
+        previous_payments = Pago.objects.filter(credito=credito).order_by('-fecha_pago')
+        if previous_payments:
+            latest_payment_date = previous_payments[0].fecha_pago
+            if fecha_pago < latest_payment_date:
+                formatted_date = latest_payment_date.strftime('%d %b %Y')
+                raise serializers.ValidationError(
+                    {
+                        "fecha_pago": f'La fecha de pago no puede ser menor al último pago generado ({formatted_date})',
+                        "non_field_errors": ""
+                    })
 
         """
         Check credit is payable
@@ -78,6 +96,8 @@ class PagoSerializer(serializers.ModelSerializer):
         if cantidad != abono_capital + interes_mor + interes_ord:
             raise serializers.ValidationError({"cantidad": "Las cantidades a abonar no son equivalentes a la cantidad total"})
         return data
+
+
 
     def create(self, validated_data):
         current_user = self.context['request'].user
