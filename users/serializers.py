@@ -7,7 +7,7 @@ from rest_framework import serializers
 from .models import User
 
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     confirm_password = serializers.CharField(write_only=True)
     clave_socio = serializers.SerializerMethodField(read_only=True)
@@ -15,10 +15,11 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
         fields = (
-            'url', 'username', 'first_name', 'last_name', 'clave_socio',
+            'username', 'first_name', 'last_name', 'clave_socio',
             'password', 'confirm_password', 'email', 'role', 'phone')
 
     def get_clave_socio(self, object):
+        print(object.clave_socio)
         if object.clave_socio:
             return object.clave_socio.clave_socio
         return ''
@@ -51,7 +52,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 #         return data
 
 
-class UserChangePasswordSerializer(serializers.HyperlinkedModelSerializer):
+class UserChangePasswordSerializer(serializers.ModelSerializer):
     old_password = serializers.CharField(write_only=True)
     password = serializers.CharField(write_only=True)
     confirm_password = serializers.CharField(write_only=True)

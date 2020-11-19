@@ -18,7 +18,7 @@ class Socio(models.Model):
     nombres = models.CharField(max_length=30)
     apellido_paterno = models.CharField(max_length=50)
     apellido_materno = models.CharField(max_length=50, null=True, blank=True)
-    comunidad = models.ForeignKey('tsumbalil.Comunidad', on_delete=models.SET_NULL, null=True, blank=True)
+    comunidad = models.ForeignKey('tsumbalil.Comunidad', on_delete=models.CASCADE)
     curp = models.CharField(max_length=18, verbose_name='CURP', blank=True)  # TODO: Revisar Restricciones, homoclave?
     telefono = models.CharField(max_length=20, null=True, blank=True)
     fecha_nacimiento = models.DateField(blank=True, null=True)
@@ -49,4 +49,6 @@ class Socio(models.Model):
         return '{0}: {1} {2} {3}'.format(self.clave_socio, self.nombres, self.apellido_paterno, self.apellido_materno)
 
     def nombres_apellidos(self):
-        return self.nombres + ' ' + self.apellido_paterno + ' ' + self.apellido_materno
+        if self.apellido_materno:
+            return self.nombres + ' ' + self.apellido_paterno + ' ' + self.apellido_materno
+        return self.nombres + ' ' + self.apellido_paterno

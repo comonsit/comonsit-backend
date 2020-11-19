@@ -59,7 +59,7 @@ routers.register(r"solic-creditos-comm", ChatSolicitudViewSet, basename='solic-c
 routers.register(r"regiones", RegionViewSet)
 routers.register(r"registros-contables", RegistroContableViewSet, basename='registros-contables')
 routers.register(r"registros-contables-xlsx", RegistroContableViewSetXLSX, basename='registros-contables-xlsx')
-routers.register(r"socios", SocioViewSet)
+routers.register(r"socios", SocioViewSet, basename='socios')
 routers.register(r"sociosXLSX", SocioViewSetXLSX, basename='sociosxlsx')
 routers.register(r"subcuentas", SubCuentaViewSet)
 routers.register(r"users", UserViewSet)
@@ -67,7 +67,7 @@ routers.register(r"users", UserViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("api/", include(routers.urls)),
+    path("api/", include((routers.urls, 'api'))),
     path('api/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
     # path('api/token/verify/', jwt_views.TokenVerifyView.as_view(), name='token_verify'),
