@@ -83,7 +83,7 @@ class SolicitudCreditoSerializer(serializers.ModelSerializer):
         Check that requestor and authorizor are not the same
         """
         if data['clave_socio'] == data['aval']:
-            raise serializers.ValidationError({"aval": "Aval y Solicitante deben ser diferentes"})
+            raise serializers.ValidationError({"aval": "Aval y Solicitante deben ser diferentes", "non_field_errors": ""})
         """
         Check for recent duplicates
         """
