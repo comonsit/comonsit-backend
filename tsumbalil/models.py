@@ -36,6 +36,7 @@ class Comunidad(models.Model):
 
     class Meta:
         verbose_name_plural = "Comunidades"
+        unique_together = ('nombre_de_comunidad', 'region',)
 
 
 class Empresa(models.Model):
