@@ -7,7 +7,6 @@ from contratos.utility import deuda_calculator
 
 class PagoSerializer(serializers.ModelSerializer):
     estatus_nuevo = serializers.SerializerMethodField(read_only=True)
-    iva = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Pago
@@ -129,11 +128,6 @@ class PagoSerializer(serializers.ModelSerializer):
 
     def get_estatus_nuevo(self, object):
         return object.credito.get_status()
-
-    def get_iva(self, object):
-        if object.credito.iva:
-            return str(round(float(object.interes_ord + object.interes_mor)*0.16, 2))
-        return None
 
 
 class PagoPartialUpdateSerializer(serializers.ModelSerializer):
