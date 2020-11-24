@@ -18,7 +18,9 @@ class gerenciaOrReadOnly(BasePermission):
      R  pemission for all
     """
     def has_permission(self, request, view):
-        return request.method != "DELETE" and request.user.is_gerencia() or request.method in SAFE_METHODS
+        return (request.method != "DELETE" and
+                request.user.is_gerencia() or
+                request.method in SAFE_METHODS)
 
 
 class ReadOnly(BasePermission):

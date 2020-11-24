@@ -37,8 +37,14 @@ class Comunidad(models.Model):
                                null=True,
                                blank=True,
                                default=get_region_sin_asignar)
-    ermita = models.ForeignKey('ermitas.Ermita', on_delete=models.SET_NULL, null=True, blank=True)
-    inegi_extra = models.ForeignKey('ermitas.InegiLocalidad', on_delete=models.SET_NULL, null=True, blank=True)
+    ermita = models.ForeignKey('ermitas.Ermita',
+                               on_delete=models.SET_NULL,
+                               null=True,
+                               blank=True)
+    inegi_extra = models.ForeignKey('ermitas.InegiLocalidad',
+                                    on_delete=models.SET_NULL,
+                                    null=True,
+                                    blank=True)
 
     def __str__(self):
         return "{nombre}".format(nombre=self.nombre_de_comunidad)

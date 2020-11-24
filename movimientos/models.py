@@ -12,7 +12,10 @@ class Movimiento(models.Model):
         (TRANSFERENCIA, 'Transferencia')
     ]
     id = models.AutoField(primary_key=True)
-    clave_socio = models.ForeignKey('socios.Socio', on_delete=models.CASCADE, blank=False, related_name='movimiento')
+    clave_socio = models.ForeignKey('socios.Socio',
+                                    on_delete=models.CASCADE,
+                                    blank=False,
+                                    related_name='movimiento')
     fecha_entrega = models.DateField()
     monto = models.DecimalField(max_digits=9, decimal_places=2, blank=False)
     proceso = models.CharField(max_length=2, choices=PROCESOS, default='CF')
@@ -22,7 +25,10 @@ class Movimiento(models.Model):
     responsable_entrega = models.CharField(max_length=50, blank=True)
     fecha_banco = models.DateField(blank=True, null=True)
     referencia_banco = models.CharField(max_length=20, blank=True, null=True)
-    autor = models.ForeignKey('users.User', on_delete=models.CASCADE, blank=False, related_name='movimiento_autor')
+    autor = models.ForeignKey('users.User',
+                              on_delete=models.CASCADE,
+                              blank=False,
+                              related_name='movimiento_autor')
 
     def __str__(self):
         if self.aportacion:

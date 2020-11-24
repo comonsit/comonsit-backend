@@ -34,31 +34,25 @@ class BancoViewSet(viewsets.ReadOnlyModelViewSet):
         if initial_date:
             date_range &= Q(subcuenta__registrocontable__movimiento_banco__fecha__gte=initial_date)
             prev_date = Q(subcuenta__registrocontable__movimiento_banco__fecha__lt=initial_date)
-            q = q.annotate(
-                    tot_ingresos_prev=Coalesce(Sum(
-                        'subcuenta__registrocontable__cantidad',
-                        filter=Q(subcuenta__registrocontable__ingr_egr=True) & prev_date), 0),
-                    tot_egresos_prev=Coalesce(Sum(
-                        'subcuenta__registrocontable__cantidad',
-                        filter=Q(subcuenta__registrocontable__ingr_egr=False) & prev_date), 0)
-                    )
+            q = q.annotate(tot_ingresos_prev=Coalesce(Sum('subcuenta__registrocontable__cantidad',
+                                                          filter=Q(subcuenta__registrocontable__ingr_egr=True) & prev_date),
+                                                      0),
+                           tot_egresos_prev=Coalesce(Sum('subcuenta__registrocontable__cantidad',
+                                                         filter=Q(subcuenta__registrocontable__ingr_egr=False) & prev_date),
+                                                     0))
         else:
-            q = q.annotate(
-                tot_ingresos_prev=Value(0, DecimalField()),
-                tot_egresos_prev=Value(0, DecimalField()),
-            )
+            q = q.annotate(tot_ingresos_prev=Value(0, DecimalField()),
+                           tot_egresos_prev=Value(0, DecimalField()),)
 
         if final_date:
             date_range &= Q(subcuenta__registrocontable__movimiento_banco__fecha__lte=final_date)
 
-        q = q.annotate(
-                tot_ingresos=Coalesce(Sum(
-                    'subcuenta__registrocontable__cantidad',
-                    filter=Q(subcuenta__registrocontable__ingr_egr=True) & date_range), 0),
-                tot_egresos=Coalesce(Sum(
-                    'subcuenta__registrocontable__cantidad',
-                    filter=Q(subcuenta__registrocontable__ingr_egr=False) & date_range), 0)
-                )
+        q = q.annotate(tot_ingresos=Coalesce(Sum('subcuenta__registrocontable__cantidad',
+                                                 filter=Q(subcuenta__registrocontable__ingr_egr=True) & date_range),
+                                             0),
+                       tot_egresos=Coalesce(Sum('subcuenta__registrocontable__cantidad',
+                                                filter=Q(subcuenta__registrocontable__ingr_egr=False) & date_range),
+                                            0))
         serializer = self.get_serializer(q, many=True)
         return Response(serializer.data)
 
@@ -89,14 +83,12 @@ class SubCuentaViewSet(viewsets.ReadOnlyModelViewSet):
         if initial_date:
             date_range &= Q(registrocontable__movimiento_banco__fecha__gte=initial_date)
             prev_date = Q(registrocontable__movimiento_banco__fecha__lt=initial_date)
-            q = q.annotate(
-                    tot_ingresos_prev=Coalesce(Sum(
-                        'registrocontable__cantidad',
-                        filter=Q(registrocontable__ingr_egr=True) & prev_date), 0),
-                    tot_egresos_prev=Coalesce(Sum(
-                        'registrocontable__cantidad',
-                        filter=Q(registrocontable__ingr_egr=False) & prev_date), 0)
-                    )
+            q = q.annotate(tot_ingresos_prev=Coalesce(Sum('registrocontable__cantidad',
+                                                          filter=Q(registrocontable__ingr_egr=True) & prev_date),
+                                                      0),
+                           tot_egresos_prev=Coalesce(Sum('registrocontable__cantidad',
+                                                         filter=Q(registrocontable__ingr_egr=False) & prev_date),
+                                                     0))
         else:
             q = q.annotate(
                 tot_ingresos_prev=Value(0, DecimalField()),

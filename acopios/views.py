@@ -18,7 +18,8 @@ class AcopioViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         if self.request.user.is_gerencia():
             return Acopio.objects.all().order_by('-fecha')
-        return Acopio.objects.filter(clave_socio__comunidad__region=self.request.user.clave_socio.comunidad.region).order_by('-fecha')
+        user_region = self.request.user.clave_socio.comunidad.region
+        return Acopio.objects.filter(clave_socio__comunidad__region=user_region).order_by('-fecha')
 
     def get_serializer_class(self):
         if self.action == 'year_sum':

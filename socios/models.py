@@ -25,10 +25,19 @@ class Socio(models.Model):
     fecha_ingr_yomol_atel = models.DateField(blank=True, null=True)
     fecha_ingr_programa = models.DateField(blank=True, null=True)
     cargo = models.ForeignKey('tsumbalil.Cargo', on_delete=models.SET_NULL, null=True, blank=True)
-    cargo_coop = models.ManyToManyField(CargoCoop, related_name='Socio_cargo_coop', blank=True, default=1)  # 1 = Ninguno
+    cargo_coop = models.ManyToManyField(CargoCoop,
+                                        related_name='Socio_cargo_coop',
+                                        blank=True,
+                                        default=1)  # 1 = Ninguno
     empresa = models.ForeignKey('tsumbalil.Empresa', on_delete=models.CASCADE, null=True, default=None)
-    puesto = models.ForeignKey('tsumbalil.Puesto_Trabajo', on_delete=models.CASCADE, related_name='Socio_puesto', null=True)
-    fuente = models.ForeignKey('tsumbalil.Fuente', on_delete=models.CASCADE, related_name='Socio_fuente', null=True)
+    puesto = models.ForeignKey('tsumbalil.Puesto_Trabajo',
+                               on_delete=models.CASCADE,
+                               related_name='Socio_puesto',
+                               null=True)
+    fuente = models.ForeignKey('tsumbalil.Fuente',
+                               on_delete=models.CASCADE,
+                               related_name='Socio_fuente',
+                               null=True)
     clave_anterior = models.CharField(max_length=10, blank=True, null=True)
     genero = models.CharField(max_length=2, choices=GENERO_CHOICES, blank=False)
     estatus_cafe = models.CharField(max_length=2, choices=ESTATUS_CHOICES, blank=False)

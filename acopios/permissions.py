@@ -13,7 +13,9 @@ class gerenciaOrRegion(BasePermission):
         elif request.method == "POST":
             # only create acopios from same region
             # TODO: Verify in Serializer instead??? or verify that clave_socio exists???
-            return Socio.objects.get(clave_socio=request.data['clave_socio']).comunidad.region == request.user.clave_socio.comunidad.region
+            socio_to_validate = Socio.objects.get(clave_socio=request.data['clave_socio'])
+            current_user_socio = request.user.clave_socio
+            return socio_to_validate.comunidad.region == current_user_socio.comunidad.region
         return False
 
     def has_object_permission(self, request, view, obj):

@@ -18,18 +18,18 @@ class ContratoCreditoSerializer(serializers.ModelSerializer):
     tipo_credito = serializers.SerializerMethodField(read_only=True)
     pagado = serializers.SerializerMethodField(read_only=True)
     plazo_disp = serializers.SerializerMethodField(read_only=True)
-    extra_kwargs = {
-        'estatus': {'read_only': True},
-        'solicitud': {'read_only': True},
-        'monto': {'read_only': True},
-        'tasa': {'read_only': True},
-        'tasa_moratoria': {'read_only': True},
-        'fecha_final': {'read_only': True}
-        }
 
     class Meta:
         model = ContratoCredito
         fields = '__all__'
+        extra_kwargs = {
+            'estatus': {'read_only': True},
+            'solicitud': {'read_only': True},
+            'monto': {'read_only': True},
+            'tasa': {'read_only': True},
+            'tasa_moratoria': {'read_only': True},
+            'fecha_final': {'read_only': True}
+            }
 
     def get_deuda_al_dia(self, object):
         return deuda_calculator(object, date.today())
@@ -79,10 +79,13 @@ class ContratoCreditoSerializer(serializers.ModelSerializer):
         referencia_banco = validated_data.get('referencia_banco', None)
         fecha_banco = validated_data.get('fecha_banco', None)
         iva = validated_data.get('iva', True)
-        if estatus_ejecucion == ContratoCredito.POR_COBRAR and instance.estatus_ejecucion != ContratoCredito.POR_COBRAR:
-            raise serializers.ValidationError({"estatus_ejecucion": "Un crédito no puede regresarse a estatus Por Cobrar"})
+        if (estatus_ejecucion == ContratoCredito.POR_COBRAR and
+                instance.estatus_ejecucion != ContratoCredito.POR_COBRAR):
+            raise serializers.ValidationError({
+                "estatus_ejecucion": "Un crédito no puede regresarse a estatus Por Cobrar"})
         # TODO: Check special cancellation case!
-        elif estatus_ejecucion == ContratoCredito.CANCELADO and current_user.role != User.ROL_GERENTE:
+        elif (estatus_ejecucion == ContratoCredito.CANCELADO and
+                current_user.role != User.ROL_GERENTE):
             raise serializers.ValidationError({"estatus_ejecucion": "Sólo un gerente puede CANCELAR"})
         instance.estatus_ejecucion = estatus_ejecucion
         instance.referencia_banco = referencia_banco
@@ -104,10 +107,12 @@ class ContratoCreditoListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ContratoCredito
-        fields = ['id', 'fecha_inicio', 'clave_socio', 'nombres',
-                  'monto', 'plazo_disp', 'tasa', 'estatus', 'estatus_ejecucion',
-                  'deuda_al_dia', 'region', 'fecha_vencimiento', 'pagado',
-                  'tasa_moratoria']
+        fields = [
+            'id', 'fecha_inicio', 'clave_socio', 'nombres',
+            'monto', 'plazo_disp', 'tasa', 'estatus', 'estatus_ejecucion',
+            'deuda_al_dia', 'region', 'fecha_vencimiento', 'pagado',
+            'tasa_moratoria'
+        ]
 
     def get_nombres(self, object):
         return object.clave_socio.nombres_apellidos()
@@ -185,8 +190,10 @@ class ContratoUnLinkedSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ContratoCredito
-        fields = ['id', 'nombres', 'region', 'monto', 'fecha_inicio',  'fecha_banco', 'referencia_banco',
-                  'estatus', 'estatus_ejecucion']
+        fields = [
+            'id', 'nombres', 'region', 'monto', 'fecha_inicio', 'fecha_banco',
+            'referencia_banco', 'estatus', 'estatus_ejecucion'
+        ]
 
     def get_nombres(self, object):
         return object.clave_socio.nombres_apellidos()

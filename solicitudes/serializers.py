@@ -48,7 +48,7 @@ class SolicitudCreditoSerializer(serializers.ModelSerializer):
         return object.clave_socio.comunidad.nombre_de_comunidad
 
     def get_aval_nombre(self, object):
-        return object.aval.nombres + ' ' + object.aval.apellido_paterno + ' ' + object.aval.apellido_materno
+        return object.aval.nombres_apellidos()
 
     def get_cargo(self, object):
         if object.clave_socio.cargo:
@@ -83,14 +83,15 @@ class SolicitudCreditoSerializer(serializers.ModelSerializer):
         Check that requestor and authorizor are not the same
         """
         if data['clave_socio'] == data['aval']:
-            raise serializers.ValidationError({"aval": "Aval y Solicitante deben ser diferentes", "non_field_errors": ""})
+            raise serializers.ValidationError({
+                "aval": "Aval y Solicitante deben ser diferentes",
+                "non_field_errors": ""})
         """
         Check for recent duplicates
         """
-        if SolicitudCredito.objects.filter(
-           clave_socio=data['clave_socio']).filter(
-           fecha_solicitud=data['fecha_solicitud']).filter(
-           monto_solicitado=data['monto_solicitado']):
+        if SolicitudCredito.objects.filter(clave_socio=data['clave_socio']) \
+                                   .filter(fecha_solicitud=data['fecha_solicitud']) \
+                                   .filter(monto_solicitado=data['monto_solicitado']):
             raise serializers.ValidationError("Ya existe un crédito con esa fecha y monto")
 
         return data
@@ -99,15 +100,20 @@ class SolicitudCreditoSerializer(serializers.ModelSerializer):
         comentario_data = validated_data.pop('chat')
         instance = SolicitudCredito.objects.create(**validated_data)
         # Only one comment will be saved upon create
-        ChatSolicitudCredito.objects.create(solicitud=instance, user=self.context['request'].user, **comentario_data[0])
+        ChatSolicitudCredito.objects.create(solicitud=instance,
+                                            user=self.context['request'].user,
+                                            **comentario_data[0])
         return instance
 
 
 class SolicitudListSerializer(serializers.ModelSerializer):
     class Meta:
         model = SolicitudCredito
-        fields = ['folio_solicitud', 'fecha_solicitud', 'clave_socio', 'tipo_credito', 'monto_solicitado',
-                  'plazo_de_pago_solicitado', 'estatus_solicitud', 'estatus_evaluacion']
+        fields = [
+            'folio_solicitud', 'fecha_solicitud', 'clave_socio', 'tipo_credito',
+            'monto_solicitado', 'plazo_de_pago_solicitado', 'estatus_solicitud',
+            'estatus_evaluacion'
+        ]
 
 
 class SolicitudPartialUpdateSerializer(serializers.ModelSerializer):
@@ -159,16 +165,14 @@ class SolicitudPartialUpdateSerializer(serializers.ModelSerializer):
                     plazo_aprobado = validated_data.get('plazo_aprobado', None)
                     tasa_aprobada = validated_data.get('tasa_aprobada', None)
                     tasa_mor_aprobada = validated_data.get('tasa_mor_aprobada', None)
-                    ContratoCredito.objects.create(
-                        solicitud=instance,
-                        clave_socio=instance.clave_socio,
-                        monto=monto_aprobado,
-                        plazo=plazo_aprobado,
-                        tasa=tasa_aprobada,
-                        tasa_moratoria=tasa_mor_aprobada,
-                        estatus=ContratoCredito.DEUDA_PENDIENTE,
-                        estatus_ejecucion=ContratoCredito.POR_COBRAR
-                    )
+                    ContratoCredito.objects.create(solicitud=instance,
+                                                   clave_socio=instance.clave_socio,
+                                                   monto=monto_aprobado,
+                                                   plazo=plazo_aprobado,
+                                                   tasa=tasa_aprobada,
+                                                   tasa_moratoria=tasa_mor_aprobada,
+                                                   estatus=ContratoCredito.DEUDA_PENDIENTE,
+                                                   estatus_ejecucion=ContratoCredito.POR_COBRAR)
 
             # Promotor/Coord requesting reNegotiation
             elif(eval_status == SolicitudCredito.REVISION and
@@ -197,8 +201,7 @@ class ChatSolicitudSerializer(serializers.ModelSerializer):
         # Only Gerencia or Creators of Solicitud can comment.
         if solicitud.promotor != current_user and not current_user.is_gerencia():
             raise serializers.ValidationError({
-                'message': 'No tienes permiso para comentar en esta Solicitud'
-            })
+                'message': 'No tienes permiso para comentar en esta Solicitud'})
 
         chat = ChatSolicitudCredito.objects.create(solicitud=solicitud, **validated_data)
         return chat

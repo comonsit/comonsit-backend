@@ -30,7 +30,10 @@ class ContratoCredito(models.Model):
         (VARIABLE, 'Variable')
     ]
 
-    solicitud = models.OneToOneField('solicitudes.SolicitudCredito', on_delete=models.CASCADE, blank=False, related_name='contrato')
+    solicitud = models.OneToOneField('solicitudes.SolicitudCredito',
+                                     on_delete=models.CASCADE,
+                                     blank=False,
+                                     related_name='contrato')
     clave_socio = models.ForeignKey('socios.Socio', on_delete=models.CASCADE, blank=False, related_name='contrato')
     fecha_inicio = models.DateField(blank=True, null=True)
     fecha_final = models.DateField(blank=True, null=True)

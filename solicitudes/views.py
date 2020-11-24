@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from .models import SolicitudCredito, ChatSolicitudCredito
 from .permissions import SolicitudPermissions, ChatPermissions
 from .serializers import SolicitudCreditoSerializer, SolicitudListSerializer, \
-    SolicitudPartialUpdateSerializer, ChatSolicitudSerializer
+                         SolicitudPartialUpdateSerializer, ChatSolicitudSerializer
 
 
 class SolicitudCreditoViewSet(viewsets.ModelViewSet):
@@ -32,7 +32,8 @@ class SolicitudCreditoViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         q = SolicitudCredito.objects.all().order_by('-fecha_solicitud')
         if self.action == 'list' and self.action != 'all':
-            q = q.filter(estatus_evaluacion=SolicitudCredito.REVISION).exclude(estatus_solicitud=SolicitudCredito.RECHAZADO)
+            q = q.filter(estatus_evaluacion=SolicitudCredito.REVISION) \
+                 .exclude(estatus_solicitud=SolicitudCredito.RECHAZADO)
         if self.request.user.is_gerencia():
             return q
         return q.filter(promotor=self.request.user)

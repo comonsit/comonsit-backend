@@ -28,26 +28,30 @@ class PagoSerializer(serializers.ModelSerializer):
         check credito is not already paid.
         """
         if credito.estatus != ContratoCredito.DEUDA_PENDIENTE:
-            raise serializers.ValidationError({"credito": f'Este crédito está {credito.get_estatus_display()}'})
+            raise serializers.ValidationError({
+                "credito": f'Este crédito está {credito.get_estatus_display()}'})
 
         """
         Check if credit has been executed
         """
         if credito.estatus_ejecucion != ContratoCredito.COBRADO:
-            raise serializers.ValidationError({"credito": f'Este crédito está {credito.get_estatus_ejecucion_display()}'})
+            raise serializers.ValidationError({
+                "credito": f'Este crédito está {credito.get_estatus_ejecucion_display()}'})
 
         """
         Check Fecha pago within range
         """
         fecha_pago = data.get('fecha_pago')
         if fecha_pago > date.today():
-            raise serializers.ValidationError({"fecha_pago": "La fecha de pago no puede ser mayor a hoy"})
+            raise serializers.ValidationError({
+                "fecha_pago": "La fecha de pago no puede ser mayor a hoy"})
 
         """
         Check the payment date is after start of credit
         """
         if fecha_pago < credito.fecha_inicio:
-            raise serializers.ValidationError({"fecha_pago": "La fecha de pago no puede ser menor a la fecha de inicio del crédito."})
+            raise serializers.ValidationError({
+                "fecha_pago": "La fecha de pago no puede ser menor a la fecha de inicio del crédito."})
 
         """
         Check the payment date is after all previously registered payments
@@ -57,11 +61,9 @@ class PagoSerializer(serializers.ModelSerializer):
             latest_payment_date = previous_payments[0].fecha_pago
             if fecha_pago < latest_payment_date:
                 formatted_date = latest_payment_date.strftime('%d %b %Y')
-                raise serializers.ValidationError(
-                    {
-                        "fecha_pago": f'La fecha de pago no puede ser menor al último pago generado ({formatted_date})',
-                        "non_field_errors": ""
-                    })
+                raise serializers.ValidationError({
+                    "fecha_pago": f'La fecha de pago no puede ser menor al último pago generado ({formatted_date})',
+                    "non_field_errors": ""})
 
         """
         Check credit is payable
@@ -76,28 +78,32 @@ class PagoSerializer(serializers.ModelSerializer):
         cantidad = data.get('cantidad')
         # substitute for final debt calculator (same in interest check!!!)
         if cantidad > deuda['total_deuda']:
-            raise serializers.ValidationError({"cantidad": "La cantidad del pago no puede ser mayor que la deuda"})
+            raise serializers.ValidationError({
+                "cantidad": "La cantidad del pago no puede ser mayor que la deuda"})
 
         interes_ord = data.get('interes_ord')
         if interes_ord > deuda['interes_ordinario_deuda']:
-            raise serializers.ValidationError({"interes_ord": "El pago es mayor a lo que se debe de interés ordinario"})
+            raise serializers.ValidationError({
+                "interes_ord": "El pago es mayor a lo que se debe de interés ordinario"})
 
         interes_mor = data.get('interes_mor')
         if interes_mor > deuda['interes_moratorio_deuda']:
-            raise serializers.ValidationError({"interes_mor": f"El pago {deuda['interes_moratorio_deuda']} es mayor a lo que se debe de interés moratorio {interes_mor}"})
+            raise serializers.ValidationError({
+                "interes_mor": f"El pago {deuda['interes_moratorio_deuda']} es mayor a" \
+                               " lo que se debe de interés moratorio {interes_mor}"})
 
         abono_capital = data.get('abono_capital')
         if abono_capital > deuda['capital_por_pagar']:
-            raise serializers.ValidationError({"abono_capital": "El pago es mayor a lo que se debe de capital"})
+            raise serializers.ValidationError({
+                "abono_capital": "El pago es mayor a lo que se debe de capital"})
 
         """
         Check quantities match
         """
         if cantidad != abono_capital + interes_mor + interes_ord:
-            raise serializers.ValidationError({"cantidad": "Las cantidades a abonar no son equivalentes a la cantidad total"})
+            raise serializers.ValidationError({
+                "cantidad": "Las cantidades a abonar no son equivalentes a la cantidad total"})
         return data
-
-
 
     def create(self, validated_data):
         current_user = self.context['request'].user
@@ -106,14 +112,13 @@ class PagoSerializer(serializers.ModelSerializer):
         deuda = deuda_calculator(credito, fecha_pago)
         cantidad = validated_data.get('cantidad', None)
 
-        pago = Pago.objects.create(
-                autor=current_user,
-                estatus_previo=credito.get_status(fecha_pago),
-                deuda_prev_total=deuda['total_deuda'],
-                deuda_prev_capital=deuda['capital_por_pagar'],
-                deuda_prev_int_ord=deuda['interes_ordinario_deuda'],
-                deuda_prev_int_mor=deuda['interes_moratorio_deuda'],
-                **validated_data)
+        pago = Pago.objects.create(autor=current_user,
+                                   estatus_previo=credito.get_status(fecha_pago),
+                                   deuda_prev_total=deuda['total_deuda'],
+                                   deuda_prev_capital=deuda['capital_por_pagar'],
+                                   deuda_prev_int_ord=deuda['interes_ordinario_deuda'],
+                                   deuda_prev_int_mor=deuda['interes_moratorio_deuda'],
+                                   **validated_data)
 
         # Check if payment is complete and change status
         if pago and deuda['total_deuda'] == cantidad:

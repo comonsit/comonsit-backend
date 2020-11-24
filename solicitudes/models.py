@@ -38,7 +38,6 @@ class SolicitudCredito(models.Model):
         (ELAB_ARTESANIA, 'Elaboración de Artesanía'),
         (HERRAMIENTA, 'Herramientas y Equipo de Trabajo'),
         (OTRO, 'Otro')
-
     ]
 
     SALUD = 'SA'
@@ -75,7 +74,10 @@ class SolicitudCredito(models.Model):
     ]
 
     folio_solicitud = models.AutoField(primary_key=True)
-    clave_socio = models.ForeignKey('socios.Socio', on_delete=models.CASCADE, blank=False, related_name='solicitud')
+    clave_socio = models.ForeignKey('socios.Socio',
+                                    on_delete=models.CASCADE,
+                                    blank=False,
+                                    related_name='solicitud')
     fecha_solicitud = models.DateField(blank=False)
     proceso = models.CharField(max_length=2, choices=PROCESOS, blank=False)
     tipo_credito = models.CharField(max_length=2, choices=TIPO_CREDITO_CHOICES, blank=False)
@@ -90,7 +92,10 @@ class SolicitudCredito(models.Model):
     estatus_solicitud = models.CharField(max_length=2, choices=ESTATUS_S_CHOICES, blank=False)
     estatus_evaluacion = models.CharField(max_length=2, choices=ESTATUS_E_CHOICES, blank=False)
     justificacion_credito = models.CharField(max_length=100)
-    promotor = models.ForeignKey('users.User', on_delete=models.CASCADE, blank=False, related_name='solic_promotor')
+    promotor = models.ForeignKey('users.User',
+                                 on_delete=models.CASCADE,
+                                 blank=False,
+                                 related_name='solic_promotor')
     pregunta_1 = models.BooleanField(null=True, default=None)
     pregunta_2 = models.BooleanField(null=True, default=None)
     pregunta_3 = models.BooleanField(null=True, default=None)
@@ -104,8 +109,14 @@ class SolicitudCredito(models.Model):
 
 
 class ChatSolicitudCredito(models.Model):
-    solicitud = models.ForeignKey(SolicitudCredito, on_delete=models.CASCADE, blank=False, related_name='chat')
+    solicitud = models.ForeignKey(SolicitudCredito,
+                                  on_delete=models.CASCADE,
+                                  blank=False,
+                                  related_name='chat')
     comentario = models.CharField(max_length=100, blank=True)
     fecha = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey('users.User', on_delete=models.CASCADE, blank=False, related_name='chat_solic')
+    user = models.ForeignKey('users.User',
+                             on_delete=models.CASCADE,
+                             blank=False,
+                             related_name='chat_solic')
     # current_status = models.CharField(max_length=2, choices=SolicitudCredito.ESTATUS_S_CHOICES, blank=False)

@@ -15,7 +15,9 @@ class gerenciaOrRegion(BasePermission):
                 return True
             # TODO: Consider moving to create in Serializer
             elif request.data['clave_socio']:
-                return Socio.objects.get(clave_socio=request.data['clave_socio']).comunidad.region == request.user.clave_socio.comunidad.region
+                socio_to_validate = Socio.objects.get(clave_socio=request.data['clave_socio'])
+                current_user_socio = request.user.clave_socio
+                return socio_to_validate.comunidad.region == current_user_socio.comunidad.region
             return False
         elif request.method == "PUT" or request.method == "PATCH":
             return request.user.is_gerencia()

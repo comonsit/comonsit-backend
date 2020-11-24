@@ -1,5 +1,5 @@
-from django.db.models import Sum, Q
-from django.db.models.functions import Coalesce
+# from django.db.models import Sum, Q
+# from django.db.models.functions import Coalesce
 from rest_framework import serializers
 from contratos.models import ContratoCredito
 from movimientos.models import Movimiento
@@ -54,7 +54,7 @@ class RegistroContableSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'fecha', 'subcuenta_id_cont', 'subcuenta_nombre',
             'referencia', 'cantidad', 'ingr_egr'
-            ]
+        ]
 
     def get_fecha(self, object):
         return object.movimiento_banco.fecha
@@ -85,8 +85,13 @@ class RegistroContableSerializer(serializers.ModelSerializer):
 
 
 class MovimientoBancoSerializer(serializers.ModelSerializer):
-    selectedItems = serializers.ListField(child=serializers.IntegerField(), allow_empty=True, write_only=True)
-    dataType = serializers.CharField(max_length=20, min_length=4, allow_blank=False, write_only=True)
+    selectedItems = serializers.ListField(child=serializers.IntegerField(),
+                                          allow_empty=True,
+                                          write_only=True)
+    dataType = serializers.CharField(max_length=20,
+                                     min_length=4,
+                                     allow_blank=False,
+                                     write_only=True)
     ingrEgr = serializers.BooleanField(write_only=True, required=False)
     usuario = serializers.StringRelatedField(read_only=True)
 
@@ -101,14 +106,16 @@ class MovimientoBancoSerializer(serializers.ModelSerializer):
         dataType = data.get('dataType')
         # TODO: CHANGE FOR NON MAGIC WORDS!!
         if dataType not in ["Movimientos", "Pagos", "EjCredito", "Otros"]:
-            raise serializers.ValidationError({"dataType": f'Error inesperado, movimiento no válido.'})
+            raise serializers.ValidationError({
+                "dataType": f'Error inesperado, movimiento no válido.'})
 
         """
         Validate referencia_banco
         """
         ref_banco = data.get('referencia_banco')
         if not (ref_banco.isupper() and ref_banco.isalnum()):
-            raise serializers.ValidationError({"referencia_banco": f'Sólo usar letras mayúsulas y números'})
+            raise serializers.ValidationError({
+                "referencia_banco": f'Sólo usar letras mayúsulas y números'})
         # TODO:
         """
         Check that acopios exist and have not been linked
@@ -160,13 +167,11 @@ class MovimientoBancoSerializer(serializers.ModelSerializer):
                 mov = Movimiento.objects.get(id=movimiento)
                 subcuenta_id = subcuentas.get_type_aport(mov)
                 subcuenta = SubCuenta.objects.get(id=subcuenta_id)
-                RegistroContable.objects.create(
-                    subcuenta=subcuenta,
-                    movimiento_banco=instance,
-                    aport_retiro=mov,
-                    cantidad=cantidad,
-                    ingr_egr=mov.aportacion
-                )
+                RegistroContable.objects.create(subcuenta=subcuenta,
+                                                movimiento_banco=instance,
+                                                aport_retiro=mov,
+                                                cantidad=cantidad,
+                                                ingr_egr=mov.aportacion)
 
         elif data_type == "Pagos":
             for pago_id in selected_items:
@@ -175,55 +180,45 @@ class MovimientoBancoSerializer(serializers.ModelSerializer):
                 if pago.abono_capital and pago.abono_capital > 0:
                     subcuenta_id = subcuentas.get_type_pago(pago)
                     subcuenta = SubCuenta.objects.get(id=subcuenta_id)
-                    RegistroContable.objects.create(
-                        subcuenta=subcuenta,
-                        movimiento_banco=instance,
-                        pago=pago,
-                        cantidad=pago.abono_capital,
-                        ingr_egr=True
-                    )
+                    RegistroContable.objects.create(subcuenta=subcuenta,
+                                                    movimiento_banco=instance,
+                                                    pago=pago,
+                                                    cantidad=pago.abono_capital,
+                                                    ingr_egr=True)
                 # INTERÉSES ORDINARIOS
                 if pago.interes_ord and pago.interes_ord > 0:
                     subcuenta = SubCuenta.objects.get(id=subcuentas.INGR_INT_ORD)
-                    RegistroContable.objects.create(
-                        subcuenta=subcuenta,
-                        movimiento_banco=instance,
-                        pago=pago,
-                        cantidad=pago.interes_ord,
-                        ingr_egr=True
-                    )
+                    RegistroContable.objects.create(subcuenta=subcuenta,
+                                                    movimiento_banco=instance,
+                                                    pago=pago,
+                                                    cantidad=pago.interes_ord,
+                                                    ingr_egr=True)
                 # INTERÉSES MORATORIOS
                 if pago.interes_mor and pago.interes_mor > 0:
                     subcuenta = SubCuenta.objects.get(id=subcuentas.INGR_INT_MOR)
-                    RegistroContable.objects.create(
-                        subcuenta=subcuenta,
-                        movimiento_banco=instance,
-                        pago=pago,
-                        cantidad=pago.interes_mor,
-                        ingr_egr=True
-                    )
+                    RegistroContable.objects.create(subcuenta=subcuenta,
+                                                    movimiento_banco=instance,
+                                                    pago=pago,
+                                                    cantidad=pago.interes_mor,
+                                                    ingr_egr=True)
 
         elif data_type == "EjCredito":
             for credito_id in selected_items:
                 credito = ContratoCredito.objects.get(pk=credito_id)
                 subcuenta_id = subcuentas.get_type_credito(credito)
                 subcuenta = SubCuenta.objects.get(id=subcuenta_id)
-                RegistroContable.objects.create(
-                    subcuenta=subcuenta,
-                    movimiento_banco=instance,
-                    ej_credito=credito,
-                    cantidad=cantidad,
-                    ingr_egr=False
-                )
+                RegistroContable.objects.create(subcuenta=subcuenta,
+                                                movimiento_banco=instance,
+                                                ej_credito=credito,
+                                                cantidad=cantidad,
+                                                ingr_egr=False)
 
         elif data_type == "Otros":
             subc = SubCuenta.objects.get(id=selected_items[0])
-            RegistroContable.objects.create(
-                subcuenta=subc,
-                movimiento_banco=instance,
-                cantidad=cantidad,
-                ingr_egr=ingr_egr
-            )
+            RegistroContable.objects.create(subcuenta=subc,
+                                            movimiento_banco=instance,
+                                            cantidad=cantidad,
+                                            ingr_egr=ingr_egr)
 
         return instance
 
@@ -239,7 +234,7 @@ class SaldosBancoSerializer(serializers.ModelSerializer):
             fields = [
                 'id', 'nombre_cuenta', 'tot_ingresos', 'tot_egresos',
                 'tot_ingresos_prev', 'tot_egresos_prev',
-                ]
+            ]
 
 
 class SaldosSubcuentaSerializer(serializers.ModelSerializer):
@@ -252,13 +247,12 @@ class SaldosSubcuentaSerializer(serializers.ModelSerializer):
         class Meta:
             model = SubCuenta
             fields = [
-                'id', 'nombre_cuenta', 'tot_ingresos',
-                'tot_egresos', 'tot_ingresos_prev', 'tot_egresos_prev',
-                ]
+                'id', 'nombre_cuenta', 'tot_ingresos', 'tot_egresos',
+                'tot_ingresos_prev', 'tot_egresos_prev',
+            ]
 
         def get_nombre_cuenta(self, object):
             return object.id_contable + ' -- ' + object.nombre
-
 
 
 class RegistroXLSXSerializer(serializers.ModelSerializer):

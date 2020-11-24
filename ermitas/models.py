@@ -1,5 +1,6 @@
 from django.contrib.gis.db import models
 
+
 class Interzona(models.Model):
     interzona_id = models.PositiveSmallIntegerField(primary_key=True)
     nombre = models.CharField(max_length=100)
@@ -9,6 +10,7 @@ class Interzona(models.Model):
 
     def __str__(self):
         return "Interzona %d: %s" % (self.interzona_id, self.nombre)
+
 
 class Zona(models.Model):
     zona_id = models.PositiveSmallIntegerField(primary_key=True)
@@ -21,6 +23,7 @@ class Zona(models.Model):
     def __str__(self):
         return "Zona %d: %s" % (self.zona_id, self.nombre)
 
+
 class Municipio(models.Model):
     municipio_id = models.PositiveSmallIntegerField(primary_key=True)
     nombre = models.CharField(max_length=100)
@@ -30,6 +33,7 @@ class Municipio(models.Model):
 
     def __str__(self):
         return "Municipio %d: %s" % (self.municipio_id, self.nombre)
+
 
 class InegiLocalidad(models.Model):
     localidad_id = models.IntegerField(primary_key=True)
@@ -54,6 +58,7 @@ class InegiLocalidad(models.Model):
     def __str__(self):
         return "InegiLocalidad %s in %s" % (self.nombre, str(self.municipio))
 
+
 class Ermita(models.Model):
     ermita_id = models.PositiveSmallIntegerField(primary_key=True)
     nombre = models.CharField(max_length=100)
@@ -63,8 +68,9 @@ class Ermita(models.Model):
     # a possible link to an INEGI Localidad. A match is not always possible
     # and sometimes they are a little complicated, so we give an option
     # for a human-readable comment about the quality of the match as well
-    localidad = models.ForeignKey(InegiLocalidad, on_delete=models.CASCADE,
-        null=True, blank=True)
+    localidad = models.ForeignKey(InegiLocalidad,
+                                  on_delete=models.CASCADE,
+                                  null=True, blank=True)
     localidad_nota = models.CharField(max_length=100, blank=True)
 
     class Meta:

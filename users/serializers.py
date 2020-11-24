@@ -75,7 +75,8 @@ class UserChangePasswordSerializer(serializers.ModelSerializer):
         return instance
 
     def validate(self, data):
-        if data.get('old_password', False) and not self.instance.check_password(data.get('old_password')):
+        if (data.get('old_password', False) and
+                not self.instance.check_password(data.get('old_password'))):
             raise serializers.ValidationError({'old_password': 'Wrong password.'})
 
         if data.get('password') != data.get('confirm_password'):
