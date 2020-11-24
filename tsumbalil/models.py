@@ -25,9 +25,18 @@ class Region(models.Model):
         verbose_name_plural = "Regiones"
 
 
+def get_region_sin_asignar():
+    region_sin_asignar, _ = Region.objects.get_or_create(id=20, nombre_de_region="Sin asignar")
+    return region_sin_asignar.pk
+
+
 class Comunidad(models.Model):
     nombre_de_comunidad = models.CharField(max_length=50, blank=False)
-    region = models.ForeignKey(Region, on_delete=models.SET_NULL, null=True, blank=True)
+    region = models.ForeignKey(Region,
+                               on_delete=models.SET_NULL,
+                               null=True,
+                               blank=True,
+                               default=get_region_sin_asignar)
     ermita = models.ForeignKey('ermitas.Ermita', on_delete=models.SET_NULL, null=True, blank=True)
     inegi_extra = models.ForeignKey('ermitas.InegiLocalidad', on_delete=models.SET_NULL, null=True, blank=True)
 
