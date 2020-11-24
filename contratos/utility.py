@@ -1,9 +1,13 @@
-from decimal import Decimal
+from decimal import Decimal, ROUND_DOWN
 from dateutil.relativedelta import relativedelta
 from django.db.models import Sum
 from rest_framework.serializers import ValidationError
 from .models import ContratoCredito
 from pagos.models import Pago
+
+
+def round_decimals_down(number):
+    return Decimal(number).quantize(Decimal('.01'), rounding=ROUND_DOWN)
 
 
 def deuda_calculator(credito, fecha, old_status=False):
@@ -12,7 +16,9 @@ def deuda_calculator(credito, fecha, old_status=False):
             (credito.estatus != ContratoCredito.DEUDA_PENDIENTE and not old_status)):
         return {}
     if fecha < credito.fecha_inicio:
-        raise ValidationError(f"La fecha {fecha.ctime()} es previa a {credito.fecha_inicio.ctime()} de {credito}")
+        raise ValidationError({
+            "non_field_errors": f"La fecha {fecha.strftime('%d %b %Y')} es previa al"
+                                f" inicio del crédito {credito.fecha_inicio.strftime('%d %b %Y')}"})
 
     pagos = Pago.objects.filter(credito=credito, fecha_pago__lte=fecha).order_by('-fecha_pago')
 
@@ -53,7 +59,8 @@ def deuda_calculator(credito, fecha, old_status=False):
             interes_ord_acumulado = ultimo_pago.deuda_prev_int_ord
             interes_mor_acumulado = ultimo_pago.deuda_prev_int_mor
             if fecha < fecha_ultimo_pago:
-                raise ValidationError(f"La fecha {fecha.ctime()} es previa al último pago #{ultimo_pago.folio}")
+                raise ValidationError({
+                    "non_field_errors": f"La fecha {fecha.ctime()} es previa al último pago #{ultimo_pago.folio}"})
 
         dias_transcurridos = fecha - fecha_ultimo_pago
         tasa_diaria = credito.tasa*12/365
@@ -70,16 +77,22 @@ def deuda_calculator(credito, fecha, old_status=False):
     cantidad_pagada = pagos.aggregate(Sum('cantidad'))['cantidad__sum']
     cantidad_pagada = cantidad_pagada if cantidad_pagada else 0
 
-    return {
-            'total_deuda': credito.monto - cantidad_pagada + interes_ordinario + interes_moratorio,
-            'monto_original': credito.monto,
-            'capital_abonado': capital_pagado,
-            'capital_por_pagar': credito.monto - capital_pagado,
-            'interes_ordinario_abonado': interes_ord_pagado,
-            'interes_ordinario_total': interes_ordinario,
-            'interes_ordinario_deuda': interes_ordinario - interes_ord_pagado,
-            'interes_moratorio_abonado': interes_mor_pagado,
-            'interes_moratorio_total': interes_moratorio,
-            'interes_moratorio_deuda': interes_moratorio - interes_mor_pagado,
-            'fecha': fecha
-            }
+    deuda_dictionary = {
+        'total_deuda': credito.monto - cantidad_pagada + interes_ordinario + interes_moratorio,
+        'monto_original': credito.monto,
+        'capital_abonado': capital_pagado,
+        'capital_por_pagar': (credito.monto - capital_pagado),
+        'interes_ordinario_abonado': interes_ord_pagado,
+        'interes_ordinario_total': interes_ordinario,
+        'interes_ordinario_deuda': (interes_ordinario - interes_ord_pagado),
+        'interes_moratorio_abonado': interes_mor_pagado,
+        'interes_moratorio_total': interes_moratorio,
+        'interes_moratorio_deuda': (interes_moratorio - interes_mor_pagado),
+        'fecha': fecha
+    }
+
+    for k, value in deuda_dictionary.items():
+        if k != 'fecha':
+            deuda_dictionary[k] = round_decimals_down(value)
+
+    return deuda_dictionary
