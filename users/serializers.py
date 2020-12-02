@@ -19,7 +19,6 @@ class UserSerializer(serializers.ModelSerializer):
             'password', 'confirm_password', 'email', 'role', 'phone')
 
     def get_clave_socio(self, object):
-        print(object.clave_socio)
         if object.clave_socio:
             return object.clave_socio.clave_socio
         return ''
