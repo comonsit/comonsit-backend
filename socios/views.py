@@ -5,19 +5,22 @@ from .permissions import gerenciaOrRegion
 
 from .models import Socio
 from .serializers import SocioSerializer, SocioListSerializer, SocioSerializerXLS
-from users.permissions import gerenciaOnly
+
+
+def socios_queryset(self):
+    queryset = Socio.objects.all().order_by('clave_socio')
+    if not self.request.user.is_gerencia():
+        return queryset.filter(comunidad__region=self.request.user.clave_socio.comunidad.region)
+
+    return queryset
 
 
 class SocioViewSet(viewsets.ModelViewSet):
-    queryset = Socio.objects.all()
     lookup_field = 'clave_socio'
     permission_classes = [permissions.IsAuthenticated, gerenciaOrRegion]
 
     def get_queryset(self):
-        if self.request.user.is_gerencia():
-            return Socio.objects.all()
-
-        return Socio.objects.filter(comunidad__region=self.request.user.clave_socio.comunidad.region)
+        return socios_queryset(self)
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -26,8 +29,10 @@ class SocioViewSet(viewsets.ModelViewSet):
 
 
 class SocioViewSetXLSX(XLSXFileMixin, viewsets.ReadOnlyModelViewSet):
-    queryset = Socio.objects.all()
     serializer_class = SocioSerializerXLS
     renderer_classes = [XLSXRenderer]
-    permission_classes = [permissions.IsAuthenticated, gerenciaOnly]
+    permission_classes = [permissions.IsAuthenticated, gerenciaOrRegion]
     filename = 'socios.xlsx'
+
+    def get_queryset(self):
+        return socios_queryset(self)

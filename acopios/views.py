@@ -8,7 +8,6 @@ from drf_renderer_xlsx.renderers import XLSXRenderer
 from .models import Acopio
 from .permissions import gerenciaOrRegion
 from .serializers import AcopioSerializer, AcopioTotalsSerializer
-from users.permissions import gerenciaOnly
 
 
 class AcopioViewSet(viewsets.ModelViewSet):
