@@ -98,7 +98,7 @@ class MovimientoConcViewSet(viewsets.ReadOnlyModelViewSet):
 class MovimientoViewSetXLSX(XLSXFileMixin, viewsets.ReadOnlyModelViewSet):
     serializer_class = MovimientoConcSerializer
     renderer_classes = [XLSXRenderer]
-    permission_classes = [permissions.IsAuthenticated, gerenciaOnly]
+    permission_classes = [permissions.IsAuthenticated, gerenciaOrRegion]
     filename = 'aportaciones_retiros.xlsx'
 
     def get_queryset(self):
