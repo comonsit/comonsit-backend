@@ -58,9 +58,9 @@ class UserChangePasswordSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('url', 'username', 'first_name', 'last_name', 'old_password',
+        fields = ('username', 'first_name', 'last_name', 'old_password',
                   'password', 'confirm_password', 'email', 'role', 'phone')
-        read_only_fields = ('url', 'username')
+        read_only_fields = ('username',)
 
     def update(self, instance, validated_data):
         if validated_data.get('password', False):
