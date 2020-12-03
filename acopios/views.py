@@ -53,11 +53,14 @@ class AcopioViewSet(viewsets.ModelViewSet):
 class AcopioViewSetXLSX(XLSXFileMixin, viewsets.ReadOnlyModelViewSet):
     serializer_class = AcopioSerializer
     renderer_classes = [XLSXRenderer]
-    permission_classes = [permissions.IsAuthenticated, gerenciaOnly]
+    permission_classes = [permissions.IsAuthenticated, gerenciaOrRegion]
     filename = 'acopios.xlsx'
 
     def get_queryset(self):
         queryset = Acopio.objects.all().order_by('-fecha')
+        if not self.request.user.is_gerencia():
+            user_region = self.request.user.clave_socio.comunidad.region
+            queryset = Acopio.objects.filter(clave_socio__comunidad__region=user_region).order_by('-fecha')
         type = self.request.query_params.get('tipo_de_producto', None)
         if type:
             queryset = queryset.filter(tipo_de_producto=type)
