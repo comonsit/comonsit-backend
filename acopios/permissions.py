@@ -8,15 +8,9 @@ class gerenciaOrRegion(BasePermission):
     CR   pemission per Region
     """
     def has_permission(self, request, view):
-        if request.user.is_gerencia() or request.method == "GET":
+        if request.user.is_gerencia():
             return True
-        elif request.method == "POST":
-            # only create acopios from same region
-            # TODO: Verify in Serializer instead??? or verify that clave_socio exists???
-            socio_to_validate = Socio.objects.get(clave_socio=request.data['clave_socio'])
-            current_user_socio = request.user.clave_socio
-            return socio_to_validate.comunidad.region == current_user_socio.comunidad.region
-        return False
+        return request.method == "GET"
 
     def has_object_permission(self, request, view, obj):
         if request.user.is_gerencia():
