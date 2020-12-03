@@ -21,12 +21,12 @@ class PagoViewSet(viewsets.ModelViewSet):
         return PagoSerializer
 
     def get_queryset(self):
-        if self.request.user.is_gerencia():
-            queryset = Pago.objects.all().order_by('-fecha_pago')
-            if self.action == 'no_link':
-                queryset = queryset.filter(registrocontable__isnull=True)
-        else:
+        queryset = Pago.objects.all().order_by('-fecha_pago')
+        if not self.request.user.is_gerencia():
             queryset = queryset.filter(credito__clave_socio__comunidad__region=self.request.user.clave_socio.comunidad.region)
+        elif self.action == 'no_link':
+            queryset = queryset.filter(registrocontable__isnull=True)
+
         # TODO: Give Response of unAuthorized socio Search.
         clave_socio = self.request.query_params.get('clave_socio', None)
         if clave_socio:
