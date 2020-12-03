@@ -1,30 +1,23 @@
-from rest_framework.permissions import BasePermission
-from socios.models import Socio
+from rest_framework.permissions import BasePermission, SAFE_METHODS
+
+CREATE_UPDATE_METHODS = ('POST', 'PUT', 'PATCH')
 
 
 class gerenciaOrRegion(BasePermission):
     """
     CRU  permission for Gerencia
-    CR   pemission per Region
+     R   pemission per Region
     """
     def has_permission(self, request, view):
-        if request.method == "GET":
-            return True
-        elif request.method == "POST":
-            if request.user.is_gerencia():
-                return True
-            # TODO: Consider moving to create in Serializer
-            elif request.data['clave_socio']:
-                socio_to_validate = Socio.objects.get(clave_socio=request.data['clave_socio'])
-                current_user_socio = request.user.clave_socio
-                return socio_to_validate.comunidad.region == current_user_socio.comunidad.region
-            return False
-        elif request.method == "PUT" or request.method == "PATCH":
+        if request.method in CREATE_UPDATE_METHODS:
             return request.user.is_gerencia()
-        return False
+        return request.method in SAFE_METHODS
 
+    # TODO: not needed with previous method???
     def has_object_permission(self, request, view, obj):
-        if request.user.is_gerencia():
+        if request.user.is_gerencia() and not request.method == "DELETE":
             return True
         # TODO: Raise meaningful error attempting to create or read from unauthorized region
-        return request.user.clave_socio.comunidad.region == obj.clave_socio.comunidad.region
+        elif request.method in SAFE_METHODS:
+            return request.user.clave_socio.comunidad.region == obj.clave_socio.comunidad.region
+        return False

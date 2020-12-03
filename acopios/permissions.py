@@ -1,5 +1,4 @@
-from rest_framework.permissions import BasePermission
-from socios.models import Socio
+from rest_framework.permissions import BasePermission, SAFE_METHODS
 
 
 class gerenciaOrRegion(BasePermission):
@@ -17,4 +16,6 @@ class gerenciaOrRegion(BasePermission):
             return True
         # TODO: Raise meaningful error attempting to create or read from unauthorized region
         # only see acopios from same region
-        return request.user.clave_socio.comunidad.region == obj.clave_socio.comunidad.region
+        if request.method == "GET" or request.method in SAFE_METHODS:
+            return request.user.clave_socio.comunidad.region == obj.clave_socio.comunidad.region
+        return False
