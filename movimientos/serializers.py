@@ -26,6 +26,16 @@ class MovimientoSerializer(serializers.ModelSerializer):
         aportacion = data.get('aportacion')
         monto = data.get('monto')
         current_user = self.context['request'].user
+
+        # Valitation for APORTACIONES
+        if aportacion:
+            # Promotor can only create aportaiones for its own region
+            if not current_user.is_gerencia() and current_user.clave_socio.comunidad.region != socio.comunidad.region:
+                raise serializers.ValidationError({
+                        'non_field_errors': "",
+                        'clave_socio': "PROMOTORES Sólo se pueden generar aportaciones para Socios de su región."
+                    })
+
         # Validation for RETIROS
         if not aportacion:
             # only Gerencia can save RETIROS
