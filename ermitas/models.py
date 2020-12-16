@@ -16,6 +16,8 @@ class Zona(models.Model):
     zona_id = models.PositiveSmallIntegerField(primary_key=True)
     nombre = models.CharField(max_length=100)
     interzona = models.ForeignKey(Interzona, on_delete=models.CASCADE)
+    poly = models.MultiPolygonField(srid=4326, blank=False, null=True, default=None)
+    poly_encuesta = models.MultiPolygonField(srid=4326, blank=False, null=True, default=None)
 
     class Meta:
         ordering = ["nombre"]

@@ -41,6 +41,7 @@ INSTALLED_APPS = [
 
     'psycopg2',
     'rest_framework',
+    'rest_framework_gis',
     'corsheaders',
 
     'acopios',
