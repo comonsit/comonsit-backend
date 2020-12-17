@@ -8,11 +8,12 @@ from drf_renderer_xlsx.renderers import XLSXRenderer
 from .models import Acopio
 from .permissions import gerenciaOrRegion
 from .serializers import AcopioSerializer, AcopioTotalsSerializer
+from users.permissions import AllowVisitor
 
 
 class AcopioViewSet(viewsets.ModelViewSet):
     queryset = Acopio.objects.all().order_by('-fecha')
-    permission_classes = [permissions.IsAuthenticated, gerenciaOrRegion]
+    permission_classes = [permissions.IsAuthenticated, gerenciaOrRegion | AllowVisitor]
 
     def get_queryset(self):
         if self.request.user.is_gerencia():

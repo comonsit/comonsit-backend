@@ -5,6 +5,7 @@ from .permissions import gerenciaOrRegion
 
 from .models import Socio
 from .serializers import SocioSerializer, SocioListSerializer, SocioSerializerXLS
+from users.permissions import AllowVisitor
 
 
 def socios_queryset(self):
@@ -17,7 +18,7 @@ def socios_queryset(self):
 
 class SocioViewSet(viewsets.ModelViewSet):
     lookup_field = 'clave_socio'
-    permission_classes = [permissions.IsAuthenticated, gerenciaOrRegion]
+    permission_classes = [permissions.IsAuthenticated, gerenciaOrRegion | AllowVisitor]
 
     def get_queryset(self):
         return socios_queryset(self)

@@ -1,4 +1,5 @@
 from rest_framework.permissions import BasePermission
+from users.models import User
 
 
 class ContratoCreditoPermissions(BasePermission):
@@ -7,7 +8,9 @@ class ContratoCreditoPermissions(BasePermission):
      R   Region
     """
     def has_permission(self, request, view):
-        return request.method == "GET" or request.method == "PATCH"
+        if request.user.is_gerencia() or request.user.role == User.ROL_PROMOTOR:
+            return request.method == "GET" or request.method == "PATCH"
+        return False
 
     def has_object_permission(self, request, view, obj):
         # Is gerencia or Read same Region

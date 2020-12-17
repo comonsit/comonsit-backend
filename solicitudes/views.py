@@ -7,13 +7,14 @@ from .models import SolicitudCredito, ChatSolicitudCredito
 from .permissions import SolicitudPermissions, ChatPermissions
 from .serializers import SolicitudCreditoSerializer, SolicitudListSerializer, \
                          SolicitudPartialUpdateSerializer, ChatSolicitudSerializer
+from users.permissions import AllowVisitor
 
 
 class SolicitudCreditoViewSet(viewsets.ModelViewSet):
     queryset = SolicitudCredito.objects.all().order_by('-fecha_solicitud')
     serializer_class = SolicitudCreditoSerializer
     lookup_field = 'folio_solicitud'
-    permission_classes = [permissions.IsAuthenticated, SolicitudPermissions]
+    permission_classes = [permissions.IsAuthenticated, SolicitudPermissions | AllowVisitor]
 
     def get_serializer_class(self):
         if self.action == 'partial_update':
@@ -48,7 +49,7 @@ class SolicitudCreditoViewSet(viewsets.ModelViewSet):
 class ChatSolicitudViewSet(viewsets.ModelViewSet):
     queryset = ChatSolicitudCredito.objects.all().order_by('fecha')
     serializer_class = ChatSolicitudSerializer
-    permission_classes = [permissions.IsAuthenticated, ChatPermissions]
+    permission_classes = [permissions.IsAuthenticated, ChatPermissions | AllowVisitor]
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)

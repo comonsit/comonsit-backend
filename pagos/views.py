@@ -7,11 +7,12 @@ from drf_renderer_xlsx.renderers import XLSXRenderer
 from .models import Pago
 from .serializers import PagoSerializer, PagoListSerializer, PagoPartialUpdateSerializer
 from .permissions import gerenciaOrRegion
+from users.permissions import AllowVisitor
 
 
 class PagoViewSet(viewsets.ModelViewSet):
     serializer_class = PagoSerializer
-    permission_classes = [permissions.IsAuthenticated, gerenciaOrRegion]
+    permission_classes = [permissions.IsAuthenticated, gerenciaOrRegion | AllowVisitor]
 
     def get_serializer_class(self):
         if self.action == 'partial_update':

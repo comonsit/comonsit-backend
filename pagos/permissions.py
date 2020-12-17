@@ -1,13 +1,17 @@
-from rest_framework.permissions import BasePermission
+from rest_framework.permissions import BasePermission, SAFE_METHODS
+from users.models import User
+from users.permissions import CREATE_UPDATE_METHODS
 
 
 class gerenciaOrRegion(BasePermission):
     """
-    CRU   permission for Gerencia
-    CRU   pemission per Region
+    CRU   permission for GERENCIA
+    CRU   pemission per Region PROMOTOR
     """
     def has_permission(self, request, view):
-        return request.method == "GET" or request.method == "POST" or request.method == "PATCH"
+        if request.user.is_gerencia() or request.user.role == User.ROL_PROMOTOR:
+            return request.method in CREATE_UPDATE_METHODS or request.method in SAFE_METHODS
+        return False
 
     def has_object_permission(self, request, view, obj):
         if request.user.is_gerencia():

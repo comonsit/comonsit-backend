@@ -7,11 +7,13 @@ class User(AbstractUser):
     ROL_PROMOTOR = 'PR'
     ROL_COORDINADOR = 'CO'
     ROL_GERENTE = 'GE'
+    ROL_VISITANTE = 'VI'
     USER_ROLES = (
         (ROL_SOCIO, 'Socio'),
         (ROL_PROMOTOR, 'Promotor'),
         (ROL_COORDINADOR, 'Coordinador'),
-        (ROL_GERENTE, 'Gerente')
+        (ROL_GERENTE, 'Gerente'),
+        (ROL_VISITANTE, 'Visitante')
     )
     role = models.CharField(max_length=2, choices=USER_ROLES, default=ROL_SOCIO)
     phone = models.CharField(max_length=20, blank=True)

@@ -1,15 +1,18 @@
 from rest_framework.permissions import BasePermission, SAFE_METHODS
+from users.models import User
 
 
 class gerenciaOrRegion(BasePermission):
     """
     CRUD permission for Gerencia
-    CR   pemission per Region
+     R   pemission per Region
     """
     def has_permission(self, request, view):
         if request.user.is_gerencia():
             return True
-        return request.method == "GET"
+        elif request.user.role == User.ROL_PROMOTOR:
+            return request.method in SAFE_METHODS
+        return False
 
     def has_object_permission(self, request, view, obj):
         if request.user.is_gerencia():

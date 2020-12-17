@@ -7,4 +7,4 @@ class gerenciaOnly(BasePermission):
          No pemissions for others
     """
     def has_permission(self, request, view):
-        return request.method != "DELETE" and request.user.is_gerencia()
+        return request.user.is_gerencia() and request.method != "DELETE"

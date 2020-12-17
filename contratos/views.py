@@ -15,7 +15,7 @@ from .utility import deuda_calculator
 from pagos.models import Pago
 from tsumbalil.models import Region
 from pagos.serializers import PagoSerializer
-from users.permissions import gerenciaOnly
+from users.permissions import gerenciaOnly, AllowVisitor
 
 # used to enablke fromisoformat in previous python versions
 MonkeyPatch.patch_fromisoformat()
@@ -25,7 +25,7 @@ class ContratoCreditoViewSet(viewsets.ModelViewSet):
     queryset = ContratoCredito.objects.all().order_by('-fecha_inicio')
     serializer_class = ContratoCreditoSerializer
     lookup_field = 'pk'  # clave_socio?
-    permission_classes = [permissions.IsAuthenticated, ContratoCreditoPermissions]
+    permission_classes = [permissions.IsAuthenticated, ContratoCreditoPermissions | AllowVisitor]
 
     def get_serializer_class(self):
         if self.action == 'list' or self.action == 'all':

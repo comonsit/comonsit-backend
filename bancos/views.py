@@ -13,11 +13,12 @@ from .serializers import BancoSerializer, SubCuentaSerializer, \
                          SaldosBancoSerializer, RegistroXLSXSerializer, \
                          SaldosSubcuentaSerializer
 from .permissions import gerenciaOnly
+from users.permissions import AllowVisitor
 
 
 class BancoViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Banco.objects.all()
-    permission_classes = [permissions.IsAuthenticated, gerenciaOnly]
+    permission_classes = [permissions.IsAuthenticated, gerenciaOnly | AllowVisitor]
 
     def get_serializer_class(self):
         if self.action == 'saldos':
@@ -59,7 +60,7 @@ class BancoViewSet(viewsets.ReadOnlyModelViewSet):
 
 class SubCuentaViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = SubCuenta.objects.filter(sistema=False)
-    permission_classes = [permissions.IsAuthenticated, gerenciaOnly]
+    permission_classes = [permissions.IsAuthenticated, gerenciaOnly | AllowVisitor]
 
     def get_serializer_class(self):
         if self.action == 'saldos':
@@ -113,7 +114,7 @@ class SubCuentaViewSet(viewsets.ReadOnlyModelViewSet):
 class MovimientoBancoViewSet(viewsets.ModelViewSet):
     queryset = MovimientoBanco.objects.all()
     serializer_class = MovimientoBancoSerializer
-    permission_classes = [permissions.IsAuthenticated, gerenciaOnly]
+    permission_classes = [permissions.IsAuthenticated, gerenciaOnly | AllowVisitor]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -142,7 +143,7 @@ def registros_queryset(self):
 
 
 class RegistroContableViewSet(viewsets.ReadOnlyModelViewSet):
-    permission_classes = [permissions.IsAuthenticated, gerenciaOnly]
+    permission_classes = [permissions.IsAuthenticated, gerenciaOnly | AllowVisitor]
 
     def get_queryset(self):
         return registros_queryset(self)

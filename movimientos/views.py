@@ -9,7 +9,7 @@ from .models import Movimiento
 from .serializers import MovimientoSerializer, MovimientoConcSerializer, \
                          MovimientoPartialUpdateSerializer, MovimientoSingleSerializer
 from .permissions import gerenciaOrRegion
-from users.permissions import gerenciaOnly
+from users.permissions import gerenciaOnly, AllowVisitor
 
 
 def movimientos_queryset(self):
@@ -49,7 +49,7 @@ def movimientos_queryset(self):
 
 class MovimientoViewSet(viewsets.ModelViewSet):
     serializer_class = MovimientoSerializer
-    permission_classes = [permissions.IsAuthenticated, gerenciaOrRegion]
+    permission_classes = [permissions.IsAuthenticated, gerenciaOrRegion | AllowVisitor]
 
     def get_serializer_class(self):
 
@@ -86,7 +86,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
 class MovimientoConcViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Movimiento.objects.filter(registrocontable__isnull=True).order_by('-fecha_entrega')
     serializer_class = MovimientoConcSerializer
-    permission_classes = [permissions.IsAuthenticated, gerenciaOnly]
+    permission_classes = [permissions.IsAuthenticated, gerenciaOnly | AllowVisitor]
 
     def list(self, request):
         q = self.get_queryset()

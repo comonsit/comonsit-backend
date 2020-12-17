@@ -3,6 +3,9 @@ from rest_framework.permissions import BasePermission, SAFE_METHODS
 from users.models import User
 
 
+CREATE_UPDATE_METHODS = ('POST', 'PUT', 'PATCH')
+
+
 class gerenciaOnly(BasePermission):
     """
     CRUD permission for Gerencia
@@ -49,3 +52,10 @@ class CanListUsers(BasePermission):
 
         READ_ROLES = [User.ROL_GERENTE, User.ROL_COORDINADOR]
         return request.user.role in READ_ROLES
+
+
+class AllowVisitor(BasePermission):
+    message = 'Visitantes no tienen permiso de editar o crear contenido.'
+    
+    def has_permission(self, request, view):
+        return request.user.role == User.ROL_VISITANTE and request.method in SAFE_METHODS
