@@ -9,7 +9,7 @@ class Interzona(models.Model):
         ordering = ["nombre"]
 
     def __str__(self):
-        return "Interzona %d: %s" % (self.interzona_id, self.nombre)
+        return "%d: %s" % (self.interzona_id, self.nombre)
 
 
 class Zona(models.Model):
@@ -23,7 +23,7 @@ class Zona(models.Model):
         ordering = ["nombre"]
 
     def __str__(self):
-        return "Zona %d: %s" % (self.zona_id, self.nombre)
+        return "%d: %s" % (self.zona_id, self.nombre)
 
 
 class Municipio(models.Model):
@@ -34,7 +34,7 @@ class Municipio(models.Model):
         ordering = ["nombre"]
 
     def __str__(self):
-        return "Municipio %d: %s" % (self.municipio_id, self.nombre)
+        return "%d: %s" % (self.municipio_id, self.nombre)
 
 
 class InegiLocalidad(models.Model):

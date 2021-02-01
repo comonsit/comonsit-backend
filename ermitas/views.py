@@ -1,7 +1,8 @@
 from rest_framework import viewsets
 
-from .models import InegiLocalidad, Zona
-from .serializers import InegiLocalidadSerializer, ZonaSerializer
+from .models import InegiLocalidad, Zona, Ermita
+from .serializers import InegiLocalidadSerializer, ZonaSerializer, \
+                         ErmitaSerializer
 
 
 class InegiLocalidadViewSet(viewsets.ReadOnlyModelViewSet):
@@ -12,3 +13,8 @@ class InegiLocalidadViewSet(viewsets.ReadOnlyModelViewSet):
 class ZonaViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Zona.objects.all()
     serializer_class = ZonaSerializer
+
+
+class ErmitaViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Ermita.objects.all()
+    serializer_class = ErmitaSerializer

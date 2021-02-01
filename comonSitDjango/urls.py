@@ -23,7 +23,7 @@ from bancos.views import BancoViewSet, SubCuentaViewSet, \
                          MovimientoBancoViewSet, RegistroContableViewSet, \
                          RegistroContableViewSetXLSX
 from contratos.views import ContratoCreditoViewSet, ContratoViewSetXLSX
-from ermitas.views import InegiLocalidadViewSet, ZonaViewSet
+from ermitas.views import InegiLocalidadViewSet, ZonaViewSet, ErmitaViewSet
 from solicitudes.views import SolicitudCreditoViewSet, ChatSolicitudViewSet
 from movimientos.views import MovimientoViewSet, MovimientoConcViewSet, \
                               MovimientoViewSetXLSX
@@ -45,6 +45,7 @@ routers.register(r"contratosXLSX", ContratoViewSetXLSX, basename='contratosXLSX'
 routers.register(r"empresas", EmpresaViewSet)
 routers.register(r"localidades", InegiLocalidadViewSet)
 routers.register(r"fuentes", FuenteViewSet)
+routers.register(r"ermitas", ErmitaViewSet, basename='ermitas')
 routers.register(r"puestos", PuestoViewSet)
 routers.register(r"pagos", PagoViewSet, basename='pagos')
 routers.register(r"pagosXLSX", PagoViewSetXLSX, basename='pagosXLSX')
