@@ -24,7 +24,7 @@ class RegionSerializer(serializers.ModelSerializer):
 class ComunidadSerializer(serializers.ModelSerializer):
     nombre_region = serializers.CharField(source='region.nombre_de_region', read_only=True)
     ubicacion = serializers.SerializerMethodField(read_only=True)
-    ermita = serializers.SerializerMethodField(read_only=True)
+    ermita_name = serializers.SerializerMethodField(read_only=True)
     inegiLocalidad = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
@@ -39,7 +39,7 @@ class ComunidadSerializer(serializers.ModelSerializer):
             return [object.inegi_extra.ubicacion.y, object.inegi_extra.ubicacion.x]
         return None
 
-    def get_ermita(self, object):
+    def get_ermita_name(self, object):
         if object.ermita:
             return str(object.ermita.ermita_id) + ': ' + object.ermita.nombre
         return None
