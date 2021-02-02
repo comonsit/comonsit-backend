@@ -1,4 +1,5 @@
 from django.db.models import Sum, Q
+from django.db.models.functions import Coalesce
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import viewsets, permissions
@@ -41,10 +42,10 @@ class AcopioViewSet(viewsets.ModelViewSet):
             query = query.filter(clave_socio__comunidad__region=region)
 
         q = query.values('fecha__year').annotate(
-                year_sum_cf=Sum('ingreso', filter=Q(tipo_de_producto='CF')),
-                year_sum_mi=Sum('ingreso', filter=Q(tipo_de_producto='MI')),
-                year_sum_ja=Sum('ingreso', filter=Q(tipo_de_producto='JA')),
-                year_sum_sl=Sum('ingreso', filter=Q(tipo_de_producto='SL'))
+                year_sum_cf=Coalesce(Sum('ingreso', filter=Q(tipo_de_producto='CF')), 0),
+                year_sum_mi=Coalesce(Sum('ingreso', filter=Q(tipo_de_producto='MI')), 0),
+                year_sum_ja=Coalesce(Sum('ingreso', filter=Q(tipo_de_producto='JA')), 0),
+                year_sum_sl=Coalesce(Sum('ingreso', filter=Q(tipo_de_producto='SL')), 0)
                 )
         serializer = self.get_serializer(q, many=True)
         return Response(serializer.data)
