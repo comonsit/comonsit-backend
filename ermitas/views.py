@@ -2,7 +2,7 @@ from rest_framework import viewsets
 
 from .models import InegiLocalidad, Zona, Ermita
 from .serializers import InegiLocalidadSerializer, ZonaSerializer, \
-                         ErmitaSerializer
+                         ErmitaSerializer, ErmitaListSerializer
 
 
 class InegiLocalidadViewSet(viewsets.ReadOnlyModelViewSet):
@@ -17,4 +17,8 @@ class ZonaViewSet(viewsets.ReadOnlyModelViewSet):
 
 class ErmitaViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Ermita.objects.all()
-    serializer_class = ErmitaSerializer
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return ErmitaListSerializer
+        return ErmitaSerializer

@@ -23,7 +23,7 @@ class Zona(models.Model):
         ordering = ["nombre"]
 
     def __str__(self):
-        return "%d: %s" % (self.zona_id, self.nombre)
+        return f'{self.nombre} ({self.zona_id})'
 
 
 class Municipio(models.Model):
@@ -34,7 +34,7 @@ class Municipio(models.Model):
         ordering = ["nombre"]
 
     def __str__(self):
-        return "%d: %s" % (self.municipio_id, self.nombre)
+        return f'{self.nombre} ({self.municipio_id})'
 
 
 class InegiLocalidad(models.Model):
