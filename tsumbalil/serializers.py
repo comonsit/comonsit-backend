@@ -49,6 +49,30 @@ class ComunidadSerializer(serializers.ModelSerializer):
             return object.ermita.localidad.localidad_id
 
 
+class ComunidadSerializerXLSX(ComunidadSerializer):
+    ubicacion = None
+    latitud = serializers.SerializerMethodField(read_only=True)
+    longitud = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = Comunidad
+        fields = "__all__"
+
+    def get_latitud(self, object):
+        if object.ermita and object.ermita.localidad:
+            return object.ermita.localidad.ubicacion.y
+        elif object.inegi_extra:
+            return object.inegi_extra.ubicacion.y
+        return None
+
+    def get_longitud(self, object):
+        if object.ermita and object.ermita.localidad:
+            return object.ermita.localidad.ubicacion.x
+        elif object.inegi_extra:
+            return object.inegi_extra.ubicacion.x
+        return None
+
+
 class EmpresaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Empresa

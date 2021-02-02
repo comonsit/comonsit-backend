@@ -32,7 +32,7 @@ from pagos.views import PagoViewSet, PagoViewSetXLSX
 from socios.views import SocioViewSet, SocioViewSetXLSX
 from tsumbalil.views import CargoViewSet, CargoCoopViewSet, RegionViewSet, \
                             ComunidadViewSet, EmpresaViewSet, FuenteViewSet, \
-                            PuestoViewSet
+                            PuestoViewSet, ComunidadViewSetXLSX
 from users.views import UserViewSet
 
 
@@ -41,6 +41,8 @@ routers.register(r"acopios", AcopioViewSet)
 routers.register(r"acopiosXLSX", AcopioViewSetXLSX, basename='acopiosxlsx')
 routers.register(r"cargos", CargoViewSet)
 routers.register(r"banco", BancoViewSet, basename='banco')
+routers.register(r"comunidades", ComunidadViewSet)
+routers.register(r"comunidadesXLSX", ComunidadViewSetXLSX)
 routers.register(r"contratos", ContratoCreditoViewSet)
 routers.register(r"contratosXLSX", ContratoViewSetXLSX, basename='contratosXLSX')
 routers.register(r"empresas", EmpresaViewSet)
@@ -52,7 +54,6 @@ routers.register(r"puestos", PuestoViewSet)
 routers.register(r"pagos", PagoViewSet, basename='pagos')
 routers.register(r"pagosXLSX", PagoViewSetXLSX, basename='pagosXLSX')
 routers.register(r"cargos-coop", CargoCoopViewSet, basename='cargos-coop')
-routers.register(r"comunidades", ComunidadViewSet)
 routers.register(r"movimientos", MovimientoViewSet, basename='movimientos')
 routers.register(r"movimientos-conc", MovimientoConcViewSet, basename='movimientos-conc')
 routers.register(r"movimientos-conc-xlsx", MovimientoViewSetXLSX, basename='movimientos-conc-xlsx')

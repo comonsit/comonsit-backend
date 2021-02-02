@@ -1,9 +1,11 @@
 from rest_framework import viewsets, permissions
+from drf_renderer_xlsx.mixins import XLSXFileMixin
+from drf_renderer_xlsx.renderers import XLSXRenderer
 
 from .models import Cargo, CargoCoop, Region, Comunidad, Empresa, Puesto_Trabajo, Fuente
 from .serializers import CargoSerializer, CargoCoopSerializer, RegionSerializer, \
                          ComunidadSerializer, EmpresaSerializer, PuestoSerializer, \
-                         FuenteSerializer
+                         FuenteSerializer, ComunidadSerializerXLSX
 from users.permissions import gerenciaOrReadOnly, ReadOnly
 
 
@@ -35,6 +37,14 @@ class ComunidadViewSet(viewsets.ModelViewSet):
     queryset = Comunidad.objects.all()
     serializer_class = ComunidadSerializer
     permission_classes = [permissions.IsAuthenticated, gerenciaOrReadOnly]
+
+
+class ComunidadViewSetXLSX(XLSXFileMixin, viewsets.ReadOnlyModelViewSet):
+    queryset = Comunidad.objects.all()
+    serializer_class = ComunidadSerializerXLSX
+    renderer_classes = [XLSXRenderer]
+    permission_classes = [permissions.IsAuthenticated, gerenciaOrReadOnly]
+    filename = 'comunidades.xlsx'
 
 
 class PuestoViewSet(viewsets.ReadOnlyModelViewSet):
