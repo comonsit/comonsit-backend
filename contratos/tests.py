@@ -14,19 +14,22 @@ CONTRATOS_LIST = reverse('api:contratos-list')
 
 
 class ContratoActivationTestCase(SolicitudCreationTestCase):
+    """
+    CASO 1
+    """
     def setUp(self):
         super().setUp()
         self.contrato_date = datetime.datetime.today() - relativedelta(months=5)
-        self.contrato = self.approve_solicitud(self.create_solicitud(self.contrato_date))
-        self.contrato.fecha_inicio = self.contrato_date
-        self.contrato.tipo_tasa = ContratoCredito.FIJA
-        self.contrato.estatus_ejecucion = ContratoCredito.COBRADO
-        self.contrato.save()
+        self.contrato = self.create_contrato(fecha_inicio=self.contrato_date, estatus_ejecucion=ContratoCredito.COBRADO)
 
-    def approve_solicitud(self, solicitud):
+    def create_contrato(
+        self, fecha_inicio=datetime.datetime.today(), monto=500, plazo=3,
+        tipo_tasa=ContratoCredito.FIJA, estatus_ejecucion=None
+    ):
+        solicitud = self.create_solicitud(fecha_inicio)
         solicitud_data = {
-          "monto_aprobado": 500,
-          "plazo_aprobado": 3,
+          "monto_aprobado": monto,
+          "plazo_aprobado": plazo,
           "tasa_aprobada": 4,
           "tasa_mor_aprobada": 1,
           "comentarios_gerente": "Aprobado solo 500",
@@ -38,10 +41,19 @@ class ContratoActivationTestCase(SolicitudCreationTestCase):
                                      json.dumps(solicitud_data),
                                      content_type='application/json',
                                      HTTP_AUTHORIZATION=self.token)
-        return ContratoCredito.objects.get(pk=response.data['contrato'])
+        contrato = ContratoCredito.objects.get(pk=response.data['contrato'])
+        if estatus_ejecucion == ContratoCredito.COBRADO:
+            contrato.fecha_inicio = fecha_inicio
+            contrato.tipo_tasa = ContratoCredito.FIJA
+            contrato.estatus_ejecucion = ContratoCredito.COBRADO
+            contrato.save()
+        return contrato
+
+    def create_active_contract(self, fecha_inicio, plazo, tipo_tasa):
+        pass
 
     def test_contrato_activation(self):
-        contrato = self.approve_solicitud(self.create_solicitud())
+        contrato = self.create_contrato()
         contrato_data = {
           "fecha_inicio": self.contrato_date.strftime("%Y-%m-%d"),
           "tipo_tasa": ContratoCredito.FIJA,

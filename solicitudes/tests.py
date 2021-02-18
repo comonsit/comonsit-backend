@@ -15,9 +15,9 @@ SOLICITUDES_LIST = reverse('api:solic-creditos-list')
 class SolicitudCreationTestCase(SocioBaseAPITestCase):
     def setUp(self):
         super().setUp()
-        self.solicitud = self.create_solicitud()
+        self.solicitud = self.create_solicitud(datetime.datetime.today())
 
-    def create_solicitud(self, date=datetime.datetime.today()):
+    def create_solicitud(self, date):
         solicitud = SolicitudCredito.objects.create(clave_socio=self.productora,
                                                     fecha_solicitud=date,
                                                     proceso=CAFE,
