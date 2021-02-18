@@ -54,7 +54,8 @@ class UserTokenLoginAPITestCase(APITestCase):
         Refresh jwt token
         """
         self.token = json.loads(self.client.post(API_TOKEN_LOGIN,
-                                             {"username": self.username, "password": self.password}).content)['refresh']
+                                                 {"username": self.username, "password": self.password}
+                                                 ).content)['refresh']
         response = self.client.post(API_TOKEN_REFRESH, {"refresh": self.token})
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertTrue("access" in json.loads(response.content))
@@ -102,4 +103,4 @@ class UserBaseAPITestCase(APITestCase):
 
     def api_token_authentication(self, username, password):
         return "Bearer {0}".format(json.loads(self.client.post(API_TOKEN_LOGIN,
-                                             {"username": username, "password": password}).content)['access'])
+                                              {"username": username, "password": password}).content)['access'])

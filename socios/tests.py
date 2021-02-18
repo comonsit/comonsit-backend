@@ -15,19 +15,16 @@ class SocioBaseAPITestCase(UserBaseAPITestCase):
         super().setUp()
         self.productora = self.create_socio()
 
-
     def create_socio(self):
-        socio = Socio.objects.create(
-            nombres = "Susana",
-            apellido_paterno = "Hernandez",
-            genero = Socio.FEMENINO,
-            comunidad = self.comunidad,
-            estatus_cafe = ACTIVO,
-            estatus_miel = NO_PARTICIPA,
-            estatus_yip = NO_PARTICIPA,
-            estatus_trabajador = NO_PARTICIPA,
-            estatus_comonSit = ACTIVO,
-        )
+        socio = Socio.objects.create(nombres="Susana",
+                                     apellido_paterno="Hernandez",
+                                     genero=Socio.FEMENINO,
+                                     comunidad=self.comunidad,
+                                     estatus_cafe=ACTIVO,
+                                     estatus_miel=NO_PARTICIPA,
+                                     estatus_yip=NO_PARTICIPA,
+                                     estatus_trabajador=NO_PARTICIPA,
+                                     estatus_comonSit=ACTIVO,)
         socio.save()
         return socio
 
