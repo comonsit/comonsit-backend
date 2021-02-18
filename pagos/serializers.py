@@ -88,8 +88,8 @@ class PagoSerializer(serializers.ModelSerializer):
         interes_mor = data.get('interes_mor')
         if interes_mor > deuda['interes_moratorio_deuda']:
             raise serializers.ValidationError({
-                "interes_mor": f"El pago {deuda['interes_moratorio_deuda']} es mayor a"
-                               f" lo que se debe de interés moratorio {interes_mor}"})
+                "interes_mor": f"El pago {interes_mor} es mayor a"
+                               f" lo que se debe de interés moratorio {deuda['interes_moratorio_deuda']}"})
 
         abono_capital = data.get('abono_capital')
         if abono_capital > deuda['capital_por_pagar']:
