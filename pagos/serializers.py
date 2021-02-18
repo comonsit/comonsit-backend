@@ -127,6 +127,8 @@ class PagoSerializer(serializers.ModelSerializer):
         return pago
 
     def get_estatus_nuevo(self, object):
+        if object.fecha_pago:
+            return object.credito.get_status(object.fecha_pago)
         return object.credito.get_status()
 
 
