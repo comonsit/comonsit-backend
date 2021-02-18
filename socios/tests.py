@@ -10,7 +10,29 @@ from comonSitDjango.constants import ACTIVO, NO_PARTICIPA
 SOCIOS_LIST = reverse('api:socios-list')
 
 
-class SocioCreationTestCase(UserBaseAPITestCase):
+class SocioBaseAPITestCase(UserBaseAPITestCase):
+    def setUp(self):
+        super().setUp()
+        self.productora = self.create_socio()
+
+
+    def create_socio(self):
+        socio = Socio.objects.create(
+            nombres = "Susana",
+            apellido_paterno = "Hernandez",
+            genero = Socio.FEMENINO,
+            comunidad = self.comunidad,
+            estatus_cafe = ACTIVO,
+            estatus_miel = NO_PARTICIPA,
+            estatus_yip = NO_PARTICIPA,
+            estatus_trabajador = NO_PARTICIPA,
+            estatus_comonSit = ACTIVO,
+        )
+        socio.save()
+        return socio
+
+
+class SocioCreationTestCase(SocioBaseAPITestCase):
     def test_socio_creation(self):
         """
         Test create a new socio
@@ -30,7 +52,7 @@ class SocioCreationTestCase(UserBaseAPITestCase):
         self.assertEqual(status.HTTP_201_CREATED, response.status_code)
 
 
-class SocioReadTestCase(UserBaseAPITestCase):
+class SocioReadTestCase(SocioBaseAPITestCase):
     def test_socio_read(self):
         """
         Test read socios list

@@ -95,6 +95,11 @@ class UserBaseAPITestCase(APITestCase):
 
         self.user.save()
 
+        self.coord = User.objects.create_user("xmary", "maria@comon.com", "1234abc")
+        self.coord.role = User.ROL_COORDINADOR
+        self.token_coord = self.api_token_authentication("xmary", "1234abc")
+        self.coord.save()
+
     def api_token_authentication(self, username, password):
         return "Bearer {0}".format(json.loads(self.client.post(API_TOKEN_LOGIN,
                                              {"username": username, "password": password}).content)['access'])
