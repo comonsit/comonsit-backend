@@ -5,7 +5,7 @@ from dateutil.relativedelta import relativedelta
 from django.urls import reverse
 from rest_framework.views import status
 
-from contratos.tests import ContratoActivationTestCase
+from contratos.tests import ContratoActivationTestCase, CONTRATOS_LIST
 from contratos.models import ContratoCredito
 
 PAGOS_LIST = reverse('api:pagos-list')
@@ -170,6 +170,20 @@ class PagoTestCases(ContratoActivationTestCase):
         self.assertEqual(prev_debt, '950.00')
         self.assertEqual(prev_debt_ord, '40.00')
         self.assertEqual(prev_debt_mor, '10.00')
+
+        """
+        Verify that debt can be calculated for moments before payments
+        """
+        debt_date = c_date + relativedelta(months=3) + relativedelta(days=3)
+        deuda_url = CONTRATOS_LIST + str(contrato.id) + "/deuda/?fecha=" + debt_date.strftime("%Y-%m-%d")
+        response = self.client.get(deuda_url, HTTP_AUTHORIZATION=self.token)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        current_status = json.loads(response.content)['estatus_detail']
+        prev_debt = json.loads(response.content)['total_deuda']
+        prev_debt_ord = json.loads(response.content)['interes_ordinario_deuda']
+        self.assertEqual(current_status, ContratoCredito.VENCIDO)
+        self.assertEqual(prev_debt, 900)
+        self.assertEqual(prev_debt_ord, 0)
 
         """
         PAYMENT 4

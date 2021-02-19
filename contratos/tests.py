@@ -15,8 +15,9 @@ CONTRATOS_LIST = reverse('api:contratos-list')
 
 class ContratoActivationTestCase(SolicitudCreationTestCase):
     """
-    CASO 1
+    CASO 1: Check debt at different times
     """
+
     def setUp(self):
         super().setUp()
         self.contrato_date = datetime.datetime.today() - relativedelta(months=5)
