@@ -213,3 +213,56 @@ class PagoTestCases(ContratoActivationTestCase):
         self.assertEqual(prev_debt, '1010.00')
         self.assertEqual(prev_debt_ord, '160.00')
         self.assertEqual(prev_debt_mor, '50.00')
+
+    def test_payment_unordered(self):
+        """
+        Unordered payment
+        """
+        c_date = datetime.datetime.today() - relativedelta(months=2)
+        # print(f'fecha inicio {c_date}')
+        contrato = self.create_contrato(fecha_inicio=c_date,
+                                        monto=100,
+                                        plazo=3,
+                                        estatus_ejecucion=ContratoCredito.COBRADO)
+        """
+        PAYMENT 1 - REGULAR
+        1 month after
+        """
+        payment_1_date = c_date + relativedelta(months=1)
+        # print(f'payment_1_date {payment_1_date}')
+        pago_data = {
+          "credito": contrato.id,
+          "fecha_pago": payment_1_date.strftime("%Y-%m-%d"),
+          "cantidad": 50,
+          "abono_capital": 50,
+          "interes_ord": 0,
+          "interes_mor": 0
+        }
+        response = self.client.post(PAGOS_LIST,
+                                    json.dumps(pago_data),
+                                    content_type='application/json',
+                                    HTTP_AUTHORIZATION=self.token)
+        self.assertEqual(status.HTTP_201_CREATED, response.status_code)
+
+        """
+        PAYMENT 2 - OUT OF ORDER
+        5 days after start
+        Expected failure
+        """
+        payment_2_date = c_date + relativedelta(days=5)
+        # print(f'payment_2_date {payment_2_date}')
+        pago_data = {
+          "credito": contrato.id,
+          "fecha_pago": payment_2_date.strftime("%Y-%m-%d"),
+          "cantidad": 10,
+          "abono_capital": 10,
+          "interes_ord": 0,
+          "interes_mor": 0
+        }
+        response = self.client.post(PAGOS_LIST,
+                                    json.dumps(pago_data),
+                                    content_type='application/json',
+                                    HTTP_AUTHORIZATION=self.token)
+        self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
+        error_messages = json.loads(response.content)
+        self.assertTrue('fecha_pago' in error_messages, True)
