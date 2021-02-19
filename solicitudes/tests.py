@@ -32,9 +32,6 @@ class SolicitudCreationTestCase(SocioBaseAPITestCase):
         solicitud.save()
         return solicitud
 
-    """
-    Test create a new Solicitud
-    """
     def test_solicitud_creation(self):
         solicitud_data = {
             "clave_socio": self.productora.clave_socio,

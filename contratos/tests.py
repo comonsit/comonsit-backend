@@ -49,9 +49,6 @@ class ContratoActivationTestCase(SolicitudCreationTestCase):
             contrato.save()
         return contrato
 
-    def create_active_contract(self, fecha_inicio, plazo, tipo_tasa):
-        pass
-
     def test_contrato_activation(self):
         contrato = self.create_contrato()
         contrato_data = {

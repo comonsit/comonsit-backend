@@ -51,10 +51,10 @@ class PagoTestCases(ContratoActivationTestCase):
                            " lo que se debe de interés moratorio 10.00")]
         self.assertEqual(response_error, expected_error)
 
-    """
-    CASO 2
-    """
     def test_pay_all_debt(self):
+        """
+        CASO 2: Pay all debt
+        """
         c_date = datetime.datetime.today() - relativedelta(months=4)
         contrato = self.create_contrato(fecha_inicio=c_date,
                                         monto=100,
@@ -78,10 +78,10 @@ class PagoTestCases(ContratoActivationTestCase):
         new_status = json.loads(response.content)['estatus_nuevo']
         self.assertEqual(new_status, ContratoCredito.PAGADO)
 
-    """
-    CASO 3
-    """
     def test_pay_partials(self):
+        """
+        CASO 3: Make various small payments
+        """
         c_date = datetime.datetime.today() - relativedelta(months=8)
         # print(f'fecha inicio {c_date}')
         contrato = self.create_contrato(fecha_inicio=c_date,
@@ -114,6 +114,7 @@ class PagoTestCases(ContratoActivationTestCase):
         self.assertEqual(new_status, ContratoCredito.VIGENTE)
         self.assertEqual(prev_debt, '1040.00')
         self.assertEqual(prev_debt_ord, '40.00')
+
         """
         PAYMENT 2
         3 month after
@@ -140,6 +141,7 @@ class PagoTestCases(ContratoActivationTestCase):
         self.assertEqual(new_status, ContratoCredito.VENCIDO)
         self.assertEqual(prev_debt, '1080.00')
         self.assertEqual(prev_debt_ord, '80.00')
+
         """
         PAYMENT 3
         4 month after
@@ -168,6 +170,7 @@ class PagoTestCases(ContratoActivationTestCase):
         self.assertEqual(prev_debt, '950.00')
         self.assertEqual(prev_debt_ord, '40.00')
         self.assertEqual(prev_debt_mor, '10.00')
+
         """
         PAYMENT 4
         8 month after
