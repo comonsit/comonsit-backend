@@ -45,7 +45,7 @@ class ContratoActivationTestCase(SolicitudCreationTestCase):
         contrato = ContratoCredito.objects.get(pk=response.data['contrato'])
         if estatus_ejecucion == ContratoCredito.COBRADO:
             contrato.fecha_inicio = fecha_inicio
-            contrato.tipo_tasa = ContratoCredito.FIJA
+            contrato.tipo_tasa = tipo_tasa
             contrato.estatus_ejecucion = ContratoCredito.COBRADO
             contrato.save()
         return contrato
