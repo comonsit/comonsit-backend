@@ -33,6 +33,11 @@ class AcopioViewSet(viewsets.ModelViewSet):
         clave_socio = request.query_params.get('clave_socio', None)
         comunidad = request.query_params.get('comunidad', None)
         region = request.query_params.get('region', None)
+        kilos = request.query_params.get('kg', None)
+        coffee = request.query_params.get('CF', None)
+        honey = request.query_params.get('MI', None)
+        soap = request.query_params.get('JA', None)
+        workers = request.query_params.get('SL', None)
         # TODO: Validate if correct queries
         if clave_socio:
             query = query.filter(clave_socio=clave_socio)
@@ -40,12 +45,13 @@ class AcopioViewSet(viewsets.ModelViewSet):
             query = query.filter(clave_socio__comunidad=comunidad)
         elif region:
             query = query.filter(clave_socio__comunidad__region=region)
+        y_axis = 'kilos_de_producto' if kilos else 'ingreso'
 
         q = query.values('fecha__year').annotate(
-                year_sum_cf=Coalesce(Sum('ingreso', filter=Q(tipo_de_producto='CF')), 0),
-                year_sum_mi=Coalesce(Sum('ingreso', filter=Q(tipo_de_producto='MI')), 0),
-                year_sum_ja=Coalesce(Sum('ingreso', filter=Q(tipo_de_producto='JA')), 0),
-                year_sum_sl=Coalesce(Sum('ingreso', filter=Q(tipo_de_producto='SL')), 0)
+                year_sum_cf=Coalesce(Sum(y_axis, filter=Q(tipo_de_producto=coffee)), 0),
+                year_sum_mi=Coalesce(Sum(y_axis, filter=Q(tipo_de_producto=honey)), 0),
+                year_sum_ja=Coalesce(Sum(y_axis, filter=Q(tipo_de_producto=soap)), 0),
+                year_sum_sl=Coalesce(Sum(y_axis, filter=Q(tipo_de_producto=workers)), 0)
                 )
         serializer = self.get_serializer(q, many=True)
         return Response(serializer.data)
