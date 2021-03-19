@@ -9,7 +9,7 @@ class gerenciaOrRegion(BasePermission):
     """
     def has_permission(self, request, view):
         return (request.user.is_gerencia() and request.method != "DELETE"
-                or request.user.role == User.ROL_PROMOTOR and request.method in SAFE_METHODS)
+                or request.method in SAFE_METHODS)
 
     def has_object_permission(self, request, view, obj):
         if request.user.is_gerencia():
