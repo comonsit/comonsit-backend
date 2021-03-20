@@ -141,23 +141,29 @@ class ContratoXLSXSerializer(serializers.ModelSerializer):
     comunidad = serializers.SerializerMethodField(read_only=True)
     amortizado = serializers.SerializerMethodField(read_only=True)
     tipo_credito = serializers.SerializerMethodField(read_only=True)
-    deuda_al_dia = serializers.SerializerMethodField(read_only=True)
+    pagado = serializers.SerializerMethodField(read_only=True)
     estatus_detail = serializers.SerializerMethodField(read_only=True)
     fecha_vencimiento = serializers.SerializerMethodField(read_only=True)
-    pagado = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = ContratoCredito
         fields = '__all__'
 
+    # Method to calculate deuda once per object Serialization
+    def to_representation(self, object):
+        data = super().to_representation(object)
+        deuda = deuda_calculator(object, date.today())
+        deuda_keys = ['capital_por_pagar', 'interes_ordinario_deuda',
+                      'interes_moratorio_deuda', 'total_deuda']
+        for key in deuda_keys:
+            if deuda:
+                data[key] = deuda[key]
+            else:
+                data[key] = 0
+        return data
+
     def get_nombres(self, object):
         return object.clave_socio.nombres_apellidos()
-
-    def get_deuda_al_dia(self, object):
-        deuda = deuda_calculator(object, date.today())
-        if deuda:
-            return deuda['total_deuda']
-        return 0
 
     def get_estatus_detail(self, object):
         return object.get_status()
