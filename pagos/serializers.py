@@ -78,12 +78,13 @@ class PagoSerializer(serializers.ModelSerializer):
         # substitute for final debt calculator (same in interest check!!!)
         if cantidad > deuda['total_deuda']:
             raise serializers.ValidationError({
-                "cantidad": "La cantidad del pago no puede ser mayor que la deuda"})
+                "cantidad": f"La cantidad {cantidad} del pago no puede ser mayor que la deuda {deuda['total_deuda']}"})
 
         interes_ord = data.get('interes_ord')
         if interes_ord > deuda['interes_ordinario_deuda']:
             raise serializers.ValidationError({
-                "interes_ord": "El pago es mayor a lo que se debe de interés ordinario"})
+                "interes_ord": f"El pago de interes ordinario {interes_ord} es mayor"
+                               f" a lo que se debe de interés ordinario {deuda['interes_ordinario_deuda']}"})
 
         interes_mor = data.get('interes_mor')
         if interes_mor > deuda['interes_moratorio_deuda']:
@@ -94,7 +95,7 @@ class PagoSerializer(serializers.ModelSerializer):
         abono_capital = data.get('abono_capital')
         if abono_capital > deuda['capital_por_pagar']:
             raise serializers.ValidationError({
-                "abono_capital": "El pago es mayor a lo que se debe de capital"})
+                "abono_capital": f"El pago {abono_capital} es mayor a lo que se debe de capital {deuda['capital_por_pagar']}"})
 
         """
         Check quantities match
