@@ -43,6 +43,7 @@ class ContratoCreditoViewSet(viewsets.ModelViewSet):
             q = q.filter(registrocontable__isnull=True)
         elif self.action == 'carteras' or self.action == 'carteras_per_region':
             cartera_date = self.request.query_params.get('date', date.today())
+            q = ContratoCredito.objects.filter(estatus=ContratoCredito.DEUDA_PENDIENTE).order_by('-fecha_inicio')
             q = q.filter(fecha_inicio__lte=cartera_date).filter(
                     Q(fecha_final__gt=cartera_date) |
                     Q(fecha_final=None)
@@ -96,7 +97,7 @@ class ContratoCreditoViewSet(viewsets.ModelViewSet):
             # Calculate debt or set to zero
             deuda = deuda_calculator(credito, refDate, True)
             if 'total_deuda' in deuda:
-                deuda_cantidad = deuda['total_deuda']
+                deuda_cantidad = deuda['capital_por_pagar']
             else:
                 deuda_cantidad = 0
 
