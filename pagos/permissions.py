@@ -22,16 +22,16 @@ class gerenciaOrRegion(BasePermission):
 
 class gerenciaCondonacion(BasePermission):
     """
-     R    permission for GERENCIA/Region
-     R    permission for GERENCIA/Region
+     R    permission for GERENTE
+     R    permission for GERENTE
     """
 
     def has_permission(self, request, view):
         if request.method == 'POST':
-            return request.user.is_gerencia()
+            return request.user.role == User.ROL_GERENTE
         return request.method in SAFE_METHODS
 
     def has_object_permission(self, request, view, obj):
         if request.method == 'POST':
-            return request.user.is_gerencia()
+            return request.user.role == User.ROL_GERENTE
         return request.method in SAFE_METHODS
