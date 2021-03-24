@@ -4,9 +4,10 @@ from rest_framework.response import Response
 from drf_renderer_xlsx.mixins import XLSXFileMixin
 from drf_renderer_xlsx.renderers import XLSXRenderer
 
-from .models import Pago
-from .serializers import PagoSerializer, PagoListSerializer, PagoPartialUpdateSerializer
-from .permissions import gerenciaOrRegion
+from .models import Pago, Condonacion
+from .serializers import PagoSerializer, PagoListSerializer, PagoPartialUpdateSerializer, \
+                         CondonacionSerializer, CondonacionListSerializer
+from .permissions import gerenciaOrRegion, gerenciaCondonacion
 from users.permissions import AllowVisitor
 
 
@@ -56,3 +57,14 @@ class PagoViewSetXLSX(XLSXFileMixin, viewsets.ReadOnlyModelViewSet):
             queryset = Pago.objects.filter(credito__clave_socio__comunidad__region=self.request.user.clave_socio.comunidad.region).order_by('-fecha_pago')
         # TODO: Pagination limit?
         return queryset
+
+
+class CondonacionViewSet(viewsets.ModelViewSet):
+    serializer_class = CondonacionSerializer
+    permission_classes = [permissions.IsAuthenticated, gerenciaCondonacion | AllowVisitor]
+    queryset = Condonacion.objects.all().order_by('-fecha_pago')
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return CondonacionSerializer
+        return CondonacionListSerializer

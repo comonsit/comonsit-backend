@@ -12,9 +12,9 @@ from .permissions import ContratoCreditoPermissions
 from .serializers import ContratoCreditoSerializer, ContratoCreditoListSerializer,  \
                          ContratoXLSXSerializer, ContratoUnLinkedSerializer
 from .utility import deuda_calculator
-from pagos.models import Pago
+from pagos.models import Pago, Condonacion
 from tsumbalil.models import Region
-from pagos.serializers import PagoSerializer
+from pagos.serializers import PagoSerializer, CondonacionSerializer
 from users.permissions import gerenciaOnly, AllowVisitor
 
 # used to enablke fromisoformat in previous python versions
@@ -63,6 +63,13 @@ class ContratoCreditoViewSet(viewsets.ModelViewSet):
         credito = self.get_object()
         q = Pago.objects.filter(credito=credito).order_by('-fecha_pago')
         serializer = PagoSerializer(q, many=True)
+        return Response(serializer.data)
+
+    @action(methods=['get'], detail=True)
+    def condonado(self, request, pk=None):
+        credito = self.get_object()
+        q = Condonacion.objects.filter(credito=credito).order_by('-fecha_pago')
+        serializer = CondonacionSerializer(q)
         return Response(serializer.data)
 
     @action(methods=['get'], detail=True)

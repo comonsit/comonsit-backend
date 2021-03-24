@@ -1,6 +1,6 @@
 from datetime import date
 from rest_framework import serializers
-from .models import Pago
+from .models import Pago, Condonacion
 from contratos.models import ContratoCredito
 from contratos.utility import deuda_calculator
 
@@ -153,3 +153,63 @@ class PagoListSerializer(serializers.ModelSerializer):
 
     def get_region(self, object):
         return object.credito.clave_socio.comunidad.region.id
+
+
+class CondonacionListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Condonacion
+        fields = "__all__"
+
+
+class CondonacionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Condonacion
+        fields = ['credito', 'justificacion']
+
+    def validate(self, data):
+        credito = data.get('credito')
+        # TODO: Next two checks are duplicated with PagoSerializer.validate
+        """
+        check credito is not already paid.
+        """
+        if credito.estatus != ContratoCredito.DEUDA_PENDIENTE:
+            raise serializers.ValidationError({
+                "credito": f'Este crédito está {credito.get_estatus_display()}'})
+
+        """
+        Check if credit has been executed
+        """
+        if credito.estatus_ejecucion != ContratoCredito.COBRADO:
+            raise serializers.ValidationError({
+                "credito": f'Este crédito está {credito.get_estatus_ejecucion_display()}'})
+
+        """
+        Check if no capital is due
+        """
+        deuda = deuda_calculator(credito, date.today())
+        if deuda['capital_por_pagar'] > 0:
+            raise serializers.ValidationError({
+                "credito": f"Sólo se pueden condonar créditos sin capital pendiente por pagar."
+                           f"Este crédito tiene {deuda['capital_por_pagar']} de capital pendiente."})
+
+    def create(self, validated_data):
+        current_user = self.context['request'].user
+        credito = validated_data.get('credito', None)
+        justificacion = validated_data.get('justificacion', None)
+        deuda = deuda_calculator(credito, date.today())
+
+        condonacion = Condonacion.objects.create(credito=credito,
+                                                 fecha_condonacion=date.today(),
+                                                 autor=current_user,
+                                                 cantidad=deuda['total_deuda'],
+                                                 interes_ord=deuda['interes_ordinario_deuda'],
+                                                 interes_mor=deuda['interes_moratorio_deuda'],
+                                                 estatus_previo=credito.get_status(date.today()),
+                                                 justificacion=justificacion)
+
+        # Credit is automatically set as payed
+        credito.estatus = ContratoCredito.CONDONADO
+        credito.fecha_final = date.today()
+        credito.save()
+
+        return condonacion

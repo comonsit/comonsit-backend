@@ -18,3 +18,20 @@ class gerenciaOrRegion(BasePermission):
             return True
         # TODO: Raise meaningful error attempting to create or read from unauthorized region
         return request.user.clave_socio.comunidad.region == obj.credito.clave_socio.comunidad.region
+
+
+class gerenciaCondonacion(BasePermission):
+    """
+     R    permission for GERENCIA/Region
+     R    permission for GERENCIA/Region
+    """
+
+    def has_permission(self, request, view):
+        if request.method == 'POST':
+            return request.user.is_gerencia()
+        return request.method in SAFE_METHODS
+
+    def has_object_permission(self, request, view, obj):
+        if request.method == 'POST':
+            return request.user.is_gerencia()
+        return request.method in SAFE_METHODS

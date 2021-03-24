@@ -9,9 +9,11 @@ class ContratoCredito(models.Model):
     VENCIDO = 'VE'
     VIGENTE = 'VI'
     PAGADO = 'PA'
+    CONDONADO = 'CN'
     ESTATUS_CHOICES = [
         (DEUDA_PENDIENTE, 'Deuda Pendiente'),
-        (PAGADO, 'Pagado')
+        (PAGADO, 'Pagado'),
+        (CONDONADO, 'Condonado'),
     ]
 
     COBRADO = 'CO'
