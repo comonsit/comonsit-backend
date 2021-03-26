@@ -192,6 +192,8 @@ class CondonacionSerializer(serializers.ModelSerializer):
                 "credito": f"Sólo se pueden condonar créditos sin capital pendiente por pagar."
                            f"Este crédito tiene {deuda['capital_por_pagar']} de capital pendiente."})
 
+        return data
+
     def create(self, validated_data):
         current_user = self.context['request'].user
         credito = validated_data.get('credito', None)

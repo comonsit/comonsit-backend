@@ -28,7 +28,7 @@ from ermitas.views import InegiLocalidadViewSet, ZonaViewSet, \
 from solicitudes.views import SolicitudCreditoViewSet, ChatSolicitudViewSet
 from movimientos.views import MovimientoViewSet, MovimientoConcViewSet, \
                               MovimientoViewSetXLSX
-from pagos.views import PagoViewSet, PagoViewSetXLSX
+from pagos.views import PagoViewSet, PagoViewSetXLSX, CondonacionViewSet
 from socios.views import SocioViewSet, SocioViewSetXLSX
 from tsumbalil.views import CargoViewSet, CargoCoopViewSet, RegionViewSet, \
                             ComunidadViewSet, EmpresaViewSet, FuenteViewSet, \
@@ -40,6 +40,7 @@ routers = routers.DefaultRouter()
 routers.register(r"acopios", AcopioViewSet)
 routers.register(r"acopiosXLSX", AcopioViewSetXLSX, basename='acopiosxlsx')
 routers.register(r"cargos", CargoViewSet)
+routers.register(r"condonaciones", CondonacionViewSet, basename='condonaciones')
 routers.register(r"banco", BancoViewSet, basename='banco')
 routers.register(r"comunidades", ComunidadViewSet)
 routers.register(r"comunidadesXLSX", ComunidadViewSetXLSX)
