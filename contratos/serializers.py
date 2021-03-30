@@ -207,3 +207,29 @@ class ContratoUnLinkedSerializer(serializers.ModelSerializer):
 
     def get_region(self, object):
         return object.clave_socio.comunidad.region.id
+
+
+class ContratoProrrogaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContratoCredito
+        fields = ['pk', 'prorroga', 'prorroga_justificacion']
+
+    def validate_prorroga(self, prorroga):
+        if not(1 <= prorroga <= 12):
+            raise serializers.ValidationError("La prórroga debe ser entre 1 y 12 meses máximo")
+        if self.instance.prorroga:
+            raise serializers.ValidationError("El crédito ya tiene una prórroga y no se puede otorgar otra.")
+        return prorroga
+
+    def update(self, instance, validated_data):
+        prorroga = validated_data.pop('prorroga')
+        prorroga_justificacion = validated_data.pop('prorroga_justificacion')
+        if instance.estatus != ContratoCredito.DEUDA_PENDIENTE:
+            raise serializers.ValidationError("El Crédito no está corriendo y no se puede otorgar una prórroga")
+        if instance.estatus_ejecucion != ContratoCredito.COBRADO:
+            raise serializers.ValidationError("El Crédito no ha sido cobrado y no se puede otorgar una prórroga")
+        else:
+            instance.prorroga = prorroga
+            instance.prorroga_justificacion = prorroga_justificacion
+        instance.save()
+        return instance

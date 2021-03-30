@@ -10,7 +10,7 @@ from drf_renderer_xlsx.renderers import XLSXRenderer
 from .models import ContratoCredito
 from .permissions import ContratoCreditoPermissions
 from .serializers import ContratoCreditoSerializer, ContratoCreditoListSerializer,  \
-                         ContratoXLSXSerializer, ContratoUnLinkedSerializer
+                         ContratoXLSXSerializer, ContratoUnLinkedSerializer, ContratoProrrogaSerializer
 from .utility import deuda_calculator
 from pagos.models import Pago, Condonacion
 from tsumbalil.models import Region
@@ -32,6 +32,8 @@ class ContratoCreditoViewSet(viewsets.ModelViewSet):
             return ContratoCreditoListSerializer
         elif self.action == 'no_link':
             return ContratoUnLinkedSerializer
+        elif self.action == 'prorroga':
+            return ContratoProrrogaSerializer
         return ContratoCreditoSerializer
 
     # Is Gerencia or Region
@@ -169,6 +171,15 @@ class ContratoCreditoViewSet(viewsets.ModelViewSet):
             result['region'] = region.id
             results.append(result)
         return Response(results)
+
+    @action(methods=['patch'], detail=True, url_path='prorroga', url_name='prorroga')
+    def prorroga(self, request, pk):
+        credito = self.get_object()
+        serializer = self.get_serializer(credito, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'fecha_vencimiento': credito.fecha_vencimiento()})
+        return Response(serializer.errors, status=400)
 
 
 class ContratoViewSetXLSX(XLSXFileMixin, viewsets.ReadOnlyModelViewSet):
