@@ -23,6 +23,7 @@ class SolicitudCredito(models.Model):
     ELAB_ALIMENTOS = 'EL'
     ELAB_ARTESANIA = 'ER'
     HERRAMIENTA = 'HE'
+    APIARIO = 'AP'
     OTRO = 'OT'
     TIPO_ACTIV_PROD_CHOICES = [
         (CAFETAL, 'Cafetal'),
@@ -37,6 +38,7 @@ class SolicitudCredito(models.Model):
         (ELAB_ALIMENTOS, 'Elaboración de Alimentos'),
         (ELAB_ARTESANIA, 'Elaboración de Artesanía'),
         (HERRAMIENTA, 'Herramientas y Equipo de Trabajo'),
+        (APIARIO, 'Trabajo con Apiarios'),
         (OTRO, 'Otro')
     ]
 
