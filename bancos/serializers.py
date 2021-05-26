@@ -30,7 +30,7 @@ def referencia_selector(self, object):
         tipo = 'Credito #' + str(object.pago.credito.id)
         nombre = object.pago.credito.clave_socio.nombres_apellidos()
     elif object.ej_credito:
-        tipo = 'Credito #' + str(object.id)
+        tipo = 'Credito #' + str(object.ej_credito.id)
         nombre = object.ej_credito.clave_socio.nombres_apellidos()
 
     if nombre:
