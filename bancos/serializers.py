@@ -170,7 +170,7 @@ class MovimientoBancoSerializer(serializers.ModelSerializer):
                 RegistroContable.objects.create(subcuenta=subcuenta,
                                                 movimiento_banco=instance,
                                                 aport_retiro=mov,
-                                                cantidad=cantidad,
+                                                cantidad=mov.monto,
                                                 ingr_egr=mov.aportacion)
 
         elif data_type == "Pagos":
@@ -210,7 +210,7 @@ class MovimientoBancoSerializer(serializers.ModelSerializer):
                 RegistroContable.objects.create(subcuenta=subcuenta,
                                                 movimiento_banco=instance,
                                                 ej_credito=credito,
-                                                cantidad=cantidad,
+                                                cantidad=credito.monto,
                                                 ingr_egr=False)
 
         elif data_type == "Otros":
