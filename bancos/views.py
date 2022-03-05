@@ -17,7 +17,7 @@ from users.permissions import AllowVisitor
 
 
 class BancoViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Banco.objects.all()
+    queryset = Banco.objects.filter(externo=False)
     permission_classes = [permissions.IsAuthenticated, gerenciaOnly | AllowVisitor]
 
     def get_serializer_class(self):
@@ -59,7 +59,7 @@ class BancoViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class SubCuentaViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = SubCuenta.objects.filter(sistema=False)
+    queryset = SubCuenta.objects.filter(sistema=False).filter(banco__externo=False)
     permission_classes = [permissions.IsAuthenticated, gerenciaOnly | AllowVisitor]
 
     def get_serializer_class(self):
@@ -68,7 +68,7 @@ class SubCuentaViewSet(viewsets.ReadOnlyModelViewSet):
         return SubCuentaSerializer
 
     def get_queryset(self):
-        q = SubCuenta.objects.all().order_by('id_contable')
+        q = SubCuenta.objects.filter(banco__externo=False).order_by('id_contable')
         if self.action == 'list':
             return q.filter(sistema=False)
         return q

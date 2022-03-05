@@ -38,14 +38,15 @@ class ContratoCreditoViewSet(viewsets.ModelViewSet):
 
     # Is Gerencia or Region
     def get_queryset(self):
-        q = ContratoCredito.objects.all().order_by('-fecha_inicio')
+        fondo_comun = self.request.query_params.get('fondocomun', False)
+        q = ContratoCredito.objects.filter(fondo_comun=fondo_comun)
         if self.action == 'list':
-            q = ContratoCredito.objects.filter(estatus=ContratoCredito.DEUDA_PENDIENTE).order_by('-fecha_inicio')
+            q = q.filter(estatus=ContratoCredito.DEUDA_PENDIENTE).order_by('-fecha_inicio')
         elif self.action == 'no_link':
-            q = q.filter(registrocontable__isnull=True)
+            q = q.filter(registrocontable__isnull=True).order_by('-fecha_inicio')
         elif self.action == 'carteras' or self.action == 'carteras_per_region':
             cartera_date = self.request.query_params.get('date', date.today())
-            q = ContratoCredito.objects.filter(estatus=ContratoCredito.DEUDA_PENDIENTE).order_by('-fecha_inicio')
+            q = q.filter(estatus=ContratoCredito.DEUDA_PENDIENTE).order_by('-fecha_inicio')
             q = q.filter(fecha_inicio__lte=cartera_date).filter(
                     Q(fecha_final__gt=cartera_date) |
                     Q(fecha_final=None)

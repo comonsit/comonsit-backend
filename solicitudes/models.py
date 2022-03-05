@@ -6,9 +6,11 @@ class SolicitudCredito(models.Model):
 
     MICROCREDITO = 'MC'
     CREDITO_PRODUCTIVO = 'CP'
+    FONDO_COMUN = 'FC'
     TIPO_CREDITO_CHOICES = [
         (MICROCREDITO, 'Microcrédito'),
-        (CREDITO_PRODUCTIVO, 'Crédito Productivo')
+        (CREDITO_PRODUCTIVO, 'Crédito Productivo'),
+        (FONDO_COMUN, 'Fondo Común'),
     ]
 
     CAFETAL = 'CA'

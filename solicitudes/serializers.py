@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from .models import SolicitudCredito, ChatSolicitudCredito
 from contratos.models import ContratoCredito
-from contratos.serializers import ContratoCreditoSerializer
 from users.models import User
 
 
@@ -119,7 +118,6 @@ class SolicitudListSerializer(serializers.ModelSerializer):
 class SolicitudPartialUpdateSerializer(serializers.ModelSerializer):
     promotor = serializers.StringRelatedField(read_only=True)
     chat = ChatSolStartSerializer(many=True)
-    contrato = ContratoCreditoSerializer()
     monto_aprobado = serializers.DecimalField(max_digits=9, decimal_places=2, write_only=True)
     plazo_aprobado = serializers.IntegerField(min_value=1, write_only=True)
     tasa_aprobada = serializers.DecimalField(max_digits=7, decimal_places=4, write_only=True)
@@ -165,6 +163,8 @@ class SolicitudPartialUpdateSerializer(serializers.ModelSerializer):
                     plazo_aprobado = validated_data.get('plazo_aprobado', None)
                     tasa_aprobada = validated_data.get('tasa_aprobada', None)
                     tasa_mor_aprobada = validated_data.get('tasa_mor_aprobada', None)
+                    fondo_comun = instance.tipo_credito == SolicitudCredito.FONDO_COMUN
+
                     ContratoCredito.objects.create(solicitud=instance,
                                                    clave_socio=instance.clave_socio,
                                                    monto=monto_aprobado,
@@ -172,7 +172,8 @@ class SolicitudPartialUpdateSerializer(serializers.ModelSerializer):
                                                    tasa=tasa_aprobada,
                                                    tasa_moratoria=tasa_mor_aprobada,
                                                    estatus=ContratoCredito.DEUDA_PENDIENTE,
-                                                   estatus_ejecucion=ContratoCredito.POR_COBRAR)
+                                                   estatus_ejecucion=ContratoCredito.POR_COBRAR,
+                                                   fondo_comun=fondo_comun)
 
             # Promotor/Coord requesting reNegotiation
             elif(eval_status == SolicitudCredito.REVISION and

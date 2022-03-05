@@ -9,9 +9,11 @@ EJ_CRED_PROD = 2
 EJ_CRED_TRAB = 4
 INGR_INT_ORD = 25
 INGR_INT_MOR = 26
-
+EJ_CRED_PROD_FONDO_COMUN = 35
 
 def get_type_credito(credito):
+    if credito.fondo_comun:
+        return EJ_CRED_PROD_FONDO_COMUN
     if credito.solicitud.proceso != SUELDOS:
         return EJ_CRED_PROD
     return EJ_CRED_TRAB
@@ -24,6 +26,7 @@ PAGO_VIGENTE_PROD = 3
 PAGO_VIGENTE_TRAB = 5
 PAGO_VENCIDO_PROD = 6
 PAGO_VENCIDO_TRAB = 7
+PAGO_CAPITAL_FONDO_COMUN = 36
 
 SET_VIGENTES = {PAGO_VIGENTE_PROD, PAGO_VIGENTE_TRAB}
 SET_PAGO_PROD = {PAGO_VIGENTE_PROD, PAGO_VENCIDO_PROD}
@@ -33,6 +36,9 @@ def get_type_pago(pago):
     filt_set = {
         PAGO_VIGENTE_PROD, PAGO_VENCIDO_PROD, PAGO_VIGENTE_TRAB, PAGO_VENCIDO_TRAB
         }
+    if pago.credito.fondo_comun:
+        return PAGO_CAPITAL_FONDO_COMUN
+
     if pago.estatus_previo == ContratoCredito.VIGENTE:
         filt_set = filt_set & SET_VIGENTES
     else:

@@ -142,11 +142,12 @@ class PagoPartialUpdateSerializer(serializers.ModelSerializer):
 class PagoListSerializer(serializers.ModelSerializer):
     nombres = serializers.SerializerMethodField(read_only=True)
     region = serializers.SerializerMethodField(read_only=True)
+    tipo = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Pago
         fields = ['id', 'credito', 'fecha_pago', 'nombres', 'region', 'cantidad',
-                  'estatus_previo', 'fecha_banco', 'referencia_banco']
+                  'estatus_previo', 'fecha_banco', 'referencia_banco', 'tipo']
 
     def get_nombres(self, object):
         return object.credito.clave_socio.nombres_apellidos()
@@ -154,6 +155,8 @@ class PagoListSerializer(serializers.ModelSerializer):
     def get_region(self, object):
         return object.credito.clave_socio.comunidad.region.id
 
+    def get_tipo(self, object):
+        return object.credito.solicitud.get_tipo_credito_display()
 
 class CondonacionListSerializer(serializers.ModelSerializer):
     class Meta:

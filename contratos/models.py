@@ -50,6 +50,7 @@ class ContratoCredito(models.Model):
     referencia_banco = models.CharField(max_length=20, blank=True, null=True)
     fecha_banco = models.DateField(blank=True, null=True)
     estatus_ejecucion = models.CharField(max_length=2, choices=ESTATUS_EJE_CHOICES, blank=False)
+    fondo_comun = models.BooleanField(blank=False, default=False)  # True if contrato type fondo común
 
     def __str__(self):
         return '{0}- ({1}) ${2}'.format(self.pk, self.clave_socio, self.estatus)
