@@ -9,7 +9,7 @@ class BancoAdmin(admin.ModelAdmin):
 
 class SubCuentaAdmin(admin.ModelAdmin):
     model = SubCuenta
-    list_display = ("nombre", "id_contable")
+    list_display = ("nombre", "id_contable", "tipo")
 
 
 class MovimientoBancoAdmin(admin.ModelAdmin):

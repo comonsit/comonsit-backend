@@ -9,11 +9,11 @@ __pycache__/
 *.so
 
 # DJANGO
-/comonSitDjango/comonSitDjango/settings_secret.py
-/comonSitDjango/fixtures/*
+comonSitDjango/settings_secret.py
+fixtures/*
 comonSitDjango/fixtures/
-/comonSitDjango/*/fixtures/*
-/comonSitDjango/logBUGS/*
+*/fixtures/*
+logBUGS/*
 
 # Distribution / packaging
 .Python
