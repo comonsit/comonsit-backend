@@ -63,7 +63,6 @@ Python3 & venv, npm & yarn & postgresql & postgis
 
 7. Make initial migrations and superuser
    ```bash
-   cd comonSitDjango
    python manage.py migrate
    python manage.py createsuperuser
    python manage.py runserver
